@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData">
+  <component name="PublishConfigData" autoUpload="Always" serverName="S12 dev">
     <serverData>
       <paths name="Baseball WWW">
         <serverdata>
@@ -37,10 +37,10 @@
           </mappings>
         </serverdata>
       </paths>
-      <paths name="S12 www">
+      <paths name="S12 dev">
         <serverdata>
           <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/" local="$PROJECT_DIR$" web="/rdb2js" />
           </mappings>
         </serverdata>
       </paths>
@@ -73,5 +73,6 @@
         </serverdata>
       </paths>
     </serverData>
+    <option name="myAutoUpload" value="ALWAYS" />
   </component>
 </project>
