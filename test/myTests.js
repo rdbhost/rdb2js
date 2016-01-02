@@ -11,7 +11,7 @@ module('Connection tests', {
         Rdbhost.connect(domain, acct_number);
     },
     teardown: function() {
-        Rdbhost.disconnect(1, '');
+        Rdbhost.disconnect(1000, '');
     }
 });
 
@@ -37,7 +37,7 @@ asyncTest('connected event', function() {
     Rdbhost.connect(domain, acct_number);
     var e = Rdbhost.preauth();
     ok(e, 'connection created');
-    ok('authCode' in e, 'conn has authCode attribute ');
+    // ok('authCode' in e, 'conn has authCode attribute ');
     ok(e.role === 'preauth', 'role is preauth ');
 
 });
@@ -81,13 +81,12 @@ asyncTest('reader request ok', 5, function() {
                 ok(d.result_sets[0].rows[0].a === 1, d.status);
                 clearTimeout(st);
                 start();
-            },
-            function(e) {
+            })
+            .catch(function(e) {
                 ok(false, 'then error called');
                 clearTimeout(st);
                 start();
-            }
-        )
+            })
     });
 
     var st = setTimeout(function() { start(); }, 1000);
@@ -109,42 +108,15 @@ asyncTest('reader request ok 2', 3, function() {
             ok(d.result_sets[0].rows[0].a === 1, d.status);
             clearTimeout(st);
             start();
-        },
-        function(e) {
+        })
+        .catch(function(e) {
             ok(false, 'then error called');
             clearTimeout(st);
             start();
-        }
-    );
+        });
 
     var st = setTimeout(function() { start(); }, 1000);
 });
-
-// send preauth request with query, verify promise fulfilled with error
-//
-asyncTest('reader request ok 3', 3, function() {
-
-    var e = Rdbhost.preauth()
-        .query('SELECT 1 AS a');
-
-    var p = e.go();
-    ok(p.constructor.name === 'lib$es6$promise$promise$$Promise', p);
-    p.then(function(d) {
-            ok(false, 'then called');
-            clearTimeout(st);
-            start();
-        },
-        function(e) {
-            ok(true, 'then error called');
-            ok(e.message.substr(0, 11) === 'error rdb10', e.message);
-            clearTimeout(st);
-            start();
-        }
-    );
-
-    var st = setTimeout(function() { start(); }, 1000);
-});
-
 
 // send reader request with query, verify promise fulfilled
 //
@@ -162,13 +134,12 @@ asyncTest('repeat request ok', 3, function() {
             ok(d.result_sets.length === 2, d.result_sets.length);
             clearTimeout(st);
             start();
-        },
-        function(e) {
+      })
+      .catch(function(e) {
             ok(false, 'then error called');
             clearTimeout(st);
             start();
-        }
-    );
+      });
 
     var st = setTimeout(function() { start(); }, 1000);
 });
@@ -189,14 +160,13 @@ asyncTest('proxy request ok', 3, function() {
             ok(false, 'then called');
             clearTimeout(st);
             start();
-        },
-        function(e) {
+        })
+        .catch(function(e) {
             ok(true, 'then error called');
             ok(e.message.substr(0, 11) === 'error rdb21', e.message);
             clearTimeout(st);
             start();
-        }
-    );
+        });
 
     var st = setTimeout(function() { start(); }, 1000);
 });
@@ -219,53 +189,58 @@ asyncTest('listen request ok', 4, function() {
             ok(d.result_sets[0].records.rows[0].a == 1, 'column value === 1');
             clearTimeout(st);
             start();
-        },
-        function(e) {
+      })
+      .catch(function(e) {
             ok(false, 'then error called');
             clearTimeout(st);
             start();
-        }
-    );
+      });
 
     var st = setTimeout(function() { start(); }, 1000);
 });
 
 
-/*
-
-module('SQLEngine AJAX tests', {
+module('formData (fetch) tests', {
 
   setup: function () {
-    this.e = new SQLEngine(demo_r_role,'-',domain);
+      Rdbhost.connect(domain, acct_number);
+  },
+  teardown: function() {
+      Rdbhost.disconnect(1000, '');
   }
 });
 
-asyncTest('ajax SELECT', 4, function() {
 
-  this.e.query({
+// send reader request as formData
+//
+asyncTest('formData reader request ok', 4, function() {
 
-      q: "SELECT 1 as one",
-      format: 'json-easy',
+    var fData = new FormData();
+    fData.append('arg000', '1');
 
-      callback: function (resp) {
+    var e = Rdbhost.reader()
+        .query('SELECT %s AS a')
+        .form_data(fData);
+    ok(e, 'connection created');
 
-            ok(typeof resp === 'object', 'response is object'); // 0th assert
-            ok(resp.status[1].toLowerCase() == 'ok', 'status is not ok: ' + resp.status[1]); // 1st assert
-            ok(resp.row_count[0] > 0, 'data row found');
-            ok(resp.records.rows[0]['one'] === 1, 'data is ' + resp.records.rows[0]['one']);
+    var p = e.go();
+    ok(p.constructor.name === 'lib$es6$promise$promise$$Promise', p);
+    p.then(function(d) {
+            ok(true, 'then called');
+            ok(d.result_sets[0].rows[0].a === '1', d.status);
+            clearTimeout(st);
             start();
-          },
+        })
+        .catch(function(e) {
+            ok(false, 'then error called');
+            clearTimeout(st);
+            start();
+        });
 
-      errback: function(err) {
-
-          ok(false, 'errback called ' + err[0] + ' ' + err[1]);
-          start();
-      }
-    });
+    var st = setTimeout(function() { start(); }, 1000);
 });
 
 
-*/
 
 /*
 *

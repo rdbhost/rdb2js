@@ -20,4 +20,4 @@ var domain = 'dev.rdbhost.com',
 
 var domain = 'dev.rdbhost.com',
     acct_number = 14,
-    demo_email = 'js@travelbyroad.net';
+    demo_email = 'jsdemos@travelbyroad.net';
