@@ -172,32 +172,6 @@ asyncTest('proxy request ok', 3, function() {
 });
 
 
-// send reader request with query, verify promise fulfilled
-//
-asyncTest('listen request ok', 4, function() {
-
-    var e = Rdbhost.reader()
-        .query('SELECT %s AS a')
-        .params([1])
-        .listen('abc');
-
-    var p = e.go();
-    ok(p.constructor.name === 'lib$es6$promise$promise$$Promise', p);
-    p.then(function(d) {
-            ok(true, 'then called');
-            ok(d.result_sets.length == 1, 'result_sets len');
-            ok(d.result_sets[0].records.rows[0].a == 1, 'column value === 1');
-            clearTimeout(st);
-            start();
-      })
-      .catch(function(e) {
-            ok(false, 'then error called');
-            clearTimeout(st);
-            start();
-      });
-
-    var st = setTimeout(function() { start(); }, 1000);
-});
 
 
 module('formData (fetch) tests', {

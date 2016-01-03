@@ -1,4 +1,13 @@
-<div id="super-auth">
+<div id="partial-super-auth">
+  <style scoped type="text/css">
+    #partial-super-auth {
+      position: fixed;
+      width: 400px;
+      height: 400px;
+      left: 100px;
+      top: 100px;
+    }
+  </style>
 
   <form>
 
@@ -6,12 +15,18 @@
 
     Super Auth Form.
 
+    <span class="notice"></span>
+
     <span class="error"></span>
 
     Email: <input type="text" name="email" size="20" /><br>
     Password: <input type="password" name="password" size="20" /><br>
 
     Submit: <input type="submit" />
+
+    <span class="notice"></span>
+
   </form>
+
 
 </div>
