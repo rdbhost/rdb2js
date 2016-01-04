@@ -118,7 +118,7 @@ asyncTest('reader request ok 2', 3, function() {
     var st = setTimeout(function() { start(); }, 1000);
 });
 
-// send reader request with query, verify promise fulfilled
+// send reader request with repeated query, verify promise fulfilled
 //
 asyncTest('repeat request ok', 3, function() {
 
@@ -140,6 +140,95 @@ asyncTest('repeat request ok', 3, function() {
             clearTimeout(st);
             start();
       });
+
+    var st = setTimeout(function() { start(); }, 1000);
+});
+
+
+// send reader request with query multiple times by cloning, verify promise fulfilled
+//
+asyncTest('cloned request ok', 8, function() {
+
+    var r1 = Rdbhost.reader()
+        .query('SELECT %s AS a')
+        .params([1]);
+
+    var r2 = r1.clone().params([5]);
+
+    var p1 = r1.go();
+    ok(p1.constructor.name === 'lib$es6$promise$promise$$Promise', 'p1 is promise');
+    var p1a = p1.then(function(d) {
+            ok(true, 'then called');
+            ok(d.result_sets.length === 1, d.result_sets.length);
+            ok(d.result_sets[0].rows[0].a === '1', 'value1 '+d.result_sets[0].rows[0].a);
+        })
+        .catch(function(e) {
+            ok(false, 'then error called');
+        });
+
+    var p2 = r2.go();
+    ok(p2.constructor.name === 'lib$es6$promise$promise$$Promise', 'p2 is promise');
+    var p2a = p2.then(function(d) {
+            ok(true, 'then called');
+            ok(d.result_sets.length === 1, d.result_sets.length);
+            ok(d.result_sets[0].rows[0].a === '5', 'value2 '+d.result_sets[0].rows[0].a);
+        })
+        .catch(function(e) {
+            ok(false, 'then error called');
+        });
+
+    Promise.all([p1a, p2a]).then(function(d) {
+            clearTimeout(st);
+            start();
+        },
+        function(e) {
+            clearTimeout(st);
+            start();
+        });
+
+    var st = setTimeout(function() { start(); }, 1000);
+});
+
+
+// send reader request with query multiple times by cloning, one failing, verify promise fulfilled
+//
+asyncTest('cloned request ok 2', 7, function() {
+
+    var r1 = Rdbhost.reader()
+        .query('SELECT %s AS a')
+        .params([1]);
+
+    var r2 = r1.clone().query('SLCT 1;');
+
+    var p1 = r1.go();
+    ok(p1.constructor.name === 'lib$es6$promise$promise$$Promise', 'p1 is promise');
+    var p1a = p1.then(function(d) {
+            ok(true, 'then called');
+            ok(d.result_sets.length === 1, d.result_sets.length);
+            ok(d.result_sets[0].rows[0].a === '1', 'value1 '+d.result_sets[0].rows[0].a);
+        })
+        .catch(function(e) {
+            ok(false, 'then error called');
+        });
+
+    var p2 = r2.go();
+    ok(p2.constructor.name === 'lib$es6$promise$promise$$Promise', 'p2 is promise');
+    var p2a = p2.then(function(d) {
+            ok(false, 'then called');
+        })
+        .catch(function(e) {
+            ok(true, 'then error called');
+            ok(e.message.indexOf('syntax error at') >= 0, 'error message ok')
+        });
+
+    Promise.all([p1a, p2a]).then(function(d) {
+            clearTimeout(st);
+            start();
+        },
+        function(e) {
+            clearTimeout(st);
+            start();
+        });
 
     var st = setTimeout(function() { start(); }, 1000);
 });
