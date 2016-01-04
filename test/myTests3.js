@@ -96,7 +96,7 @@ asyncTest('preauth request cancel', 3, function() {
         });
 
     setTimeout(function() {
-        var frm = document.getElementById('preauth-auth'),
+        var frm = document.getElementById('partial-preauth-auth'),
             cncl = frm.querySelector('.cancel');
         cncl.click();
     }, 500);
@@ -127,7 +127,7 @@ asyncTest('preauth request confirm', 3, function() {
         });
 
     setTimeout(function() {
-        var frm = document.getElementById('preauth-auth');
+        var frm = document.getElementById('partial-preauth-auth');
         if ( !frm )
             return;
 

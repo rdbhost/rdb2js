@@ -143,6 +143,53 @@ asyncTest('listen request invokes reloader on image', 8, function() {
 });
 
 
+// verify that reloader filters pages
+//   should not reload page
+//
+asyncTest('listen reloader filters on paths', 7, function() {
+
+    var notifyrecd = false;
+
+    Rdbhost.once('notify-received:rdbhost_ftp_channel', function f(ch, pl) {
+        ok(fail, 'notify-received should not be received');
+    });
+    Rdbhost.once('reload-request:rdbhost_ftp_channel', function f(ch, pl) {
+        ok('event', 'notify event received');
+        ok(ch === 'rdbhost_ftp_channel', 'channel is correct');
+        ok(pl.substr(0,6) === 'SAVE F', 'payload is correct');
+        notifyrecd = true;
+    });
+
+    var r = Rdbhost.reader()
+        .query("NOTIFY \"rdbhost_ftp_channel\", 'SAVE FILE /in.html';")
+        .listen('rdbhost_ftp_channel');
+
+    function cleanup() {
+        setTimeout(function() {
+            clearTimeout(st);
+            start();
+        }, 50)
+    }
+
+    var p = r.go();
+    ok(p.constructor.name === 'lib$es6$promise$promise$$Promise', p);
+    p.then(function(d) {
+            ok(true, 'then called');
+            ok(d.result_sets.length == 1, 'result_sets len');
+            ok(d.result_sets[0].row_count[0] == -1, 'row_count === 1');
+            if ( notifyrecd ) {
+                cleanup();
+            }
+        })
+        .catch(function(e) {
+            ok(false, 'then error called');
+            cleanup();
+        });
+
+    var st = setTimeout(function() { start(); }, 1000);
+});
+
+
 
 /*
 *

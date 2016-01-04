@@ -48,7 +48,7 @@ asyncTest('super request cancel', 3, function() {
         });
 
     setTimeout(function() {
-        var frm = document.getElementById('super-auth'),
+        var frm = document.getElementById('partial-super-auth'),
             cncl = frm.querySelector('.cancel');
         cncl.click();
     }, 500);
@@ -79,7 +79,7 @@ asyncTest('super request confirm', 3, function() {
         });
 
     setTimeout(function() {
-        var frm = document.getElementById('super-auth'),
+        var frm = document.getElementById('partial-super-auth'),
             eml = frm.querySelector("input[name='email']"),
             pw = frm.querySelector("input[name='password']"),
             sub = frm.querySelector("input[type='submit']");
@@ -116,7 +116,7 @@ asyncTest('super request http confirm', 3, function() {
         });
 
     setTimeout(function() {
-        var frm = document.getElementById('super-auth'),
+        var frm = document.getElementById('partial-super-auth'),
             eml = frm.querySelector("input[name='email']"),
             pw = frm.querySelector("input[name='password']"),
             sub = frm.querySelector("input[type='submit']");
@@ -154,7 +154,7 @@ asyncTest('super request http cancel', 3, function() {
         });
 
     setTimeout(function() {
-        var frm = document.getElementById('super-auth'),
+        var frm = document.getElementById('partial-super-auth'),
             cncl = frm.querySelector('.cancel');
         cncl.click();
     }, 500);
