@@ -83,13 +83,13 @@ asyncTest('reader request ok', 5, function() {
                 start();
             })
             .catch(function(e) {
-                ok(false, 'then error called');
+                ok(false, 'then error called '+e.message);
                 clearTimeout(st);
                 start();
             })
     });
 
-    var st = setTimeout(function() { start(); }, 1000);
+    var st = setTimeout(function() { start(); }, 5000);
 });
 
 
@@ -110,12 +110,12 @@ asyncTest('reader request ok 2', 3, function() {
             start();
         })
         .catch(function(e) {
-            ok(false, 'then error called');
+            ok(false, 'then error called '+ e.message);
             clearTimeout(st);
             start();
         });
 
-    var st = setTimeout(function() { start(); }, 1000);
+    var st = setTimeout(function() { start(); }, 5000);
 });
 
 // send reader request with repeated query, verify promise fulfilled
@@ -136,12 +136,12 @@ asyncTest('repeat request ok', 3, function() {
             start();
       })
       .catch(function(e) {
-            ok(false, 'then error called');
+            ok(false, 'then error called '+ e.message);
             clearTimeout(st);
             start();
       });
 
-    var st = setTimeout(function() { start(); }, 1000);
+    var st = setTimeout(function() { start(); }, 5000);
 });
 
 
@@ -163,7 +163,7 @@ asyncTest('cloned request ok', 8, function() {
             ok(d.result_sets[0].rows[0].a === '1', 'value1 '+d.result_sets[0].rows[0].a);
         })
         .catch(function(e) {
-            ok(false, 'then error called');
+            ok(false, 'then error called '+ e.message);
         });
 
     var p2 = r2.go();
@@ -174,7 +174,7 @@ asyncTest('cloned request ok', 8, function() {
             ok(d.result_sets[0].rows[0].a === '5', 'value2 '+d.result_sets[0].rows[0].a);
         })
         .catch(function(e) {
-            ok(false, 'then error called');
+            ok(false, 'then error called '+ e.message);
         });
 
     Promise.all([p1a, p2a]).then(function(d) {
@@ -186,7 +186,7 @@ asyncTest('cloned request ok', 8, function() {
             start();
         });
 
-    var st = setTimeout(function() { start(); }, 1000);
+    var st = setTimeout(function() { start(); }, 5000);
 });
 
 
@@ -208,7 +208,7 @@ asyncTest('cloned request ok 2', 7, function() {
             ok(d.result_sets[0].rows[0].a === '1', 'value1 '+d.result_sets[0].rows[0].a);
         })
         .catch(function(e) {
-            ok(false, 'then error called');
+            ok(false, 'then error called '+e.message);
         });
 
     var p2 = r2.go();
@@ -230,7 +230,7 @@ asyncTest('cloned request ok 2', 7, function() {
             start();
         });
 
-    var st = setTimeout(function() { start(); }, 1000);
+    var st = setTimeout(function() { start(); }, 5000);
 });
 
 
@@ -257,7 +257,7 @@ asyncTest('proxy request ok', 3, function() {
             start();
         });
 
-    var st = setTimeout(function() { start(); }, 1000);
+    var st = setTimeout(function() { start(); }, 5000);
 });
 
 
@@ -295,12 +295,45 @@ asyncTest('formData reader request ok', 4, function() {
             start();
         })
         .catch(function(e) {
-            ok(false, 'then error called');
+            ok(false, 'then error called '+e.message);
             clearTimeout(st);
             start();
         });
 
-    var st = setTimeout(function() { start(); }, 1000);
+    var st = setTimeout(function() { start(); }, 5000);
+});
+
+
+// send reader request as formData
+//
+asyncTest('listen/repeat conflict trapped', 4, function() {
+
+    var fData = new FormData();
+    fData.append('arg000', '1');
+
+    var e = Rdbhost.reader()
+        .query('SELECT %s AS a')
+        .form_data(fData)
+        .listen('abc')
+        .repeat(2);
+
+    ok(e, 'connection created');
+
+    var p = e.go();
+    ok(p.constructor.name === 'lib$es6$promise$promise$$Promise', 'promise is object');
+    p.then(function(d) {
+            ok(false, 'then called');
+            clearTimeout(st);
+            start();
+        })
+        .catch(function(e) {
+            ok(true, 'then error called');
+            ok(e.message.indexOf('listen and repeat cannot') >= 0, 'correct error message');
+            clearTimeout(st);
+            start();
+        });
+
+    var st = setTimeout(function() { start(); }, 5000);
 });
 
 

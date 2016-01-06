@@ -124,7 +124,7 @@ asyncTest('preauth request confirm', 3, function() {
             start();
         })
         .catch(function(e) {
-            ok(false, 'then error called');
+            ok(false, 'then error called '+e.message);
             clearTimeout(st);
             start();
         });
