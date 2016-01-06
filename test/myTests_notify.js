@@ -23,7 +23,7 @@ asyncTest('listen request ok', 4, function() {
         .listen('abc');
 
     var p = e.go();
-    ok(p.constructor.name === 'lib$es6$promise$promise$$Promise', p);
+    ok(p.constructor.name === 'lib$es6$promise$promise$$Promise', 'promise is object');
     p.then(function(d) {
             ok(true, 'then called');
             ok(d.result_sets.length == 1, 'result_sets len');
@@ -60,7 +60,7 @@ asyncTest('listen request receives ok', 7, function() {
         .listen('abc');
 
     var p = r.go();
-    ok(p.constructor.name === 'lib$es6$promise$promise$$Promise', p);
+    ok(p.constructor.name === 'lib$es6$promise$promise$$Promise', 'promise is object');
     p.then(function(d) {
             ok(true, 'then called');
             ok(d.result_sets.length == 1, 'result_sets len');
@@ -125,7 +125,7 @@ asyncTest('listen request invokes reloader on image', 8, function() {
     }
 
     var p = r.go();
-    ok(p.constructor.name === 'lib$es6$promise$promise$$Promise', p);
+    ok(p.constructor.name === 'lib$es6$promise$promise$$Promise', 'promise is object');
     p.then(function(d) {
             ok(true, 'then called');
             ok(d.result_sets.length == 1, 'result_sets len');
@@ -172,7 +172,7 @@ asyncTest('listen reloader filters on paths', 7, function() {
     }
 
     var p = r.go();
-    ok(p.constructor.name === 'lib$es6$promise$promise$$Promise', p);
+    ok(p.constructor.name === 'lib$es6$promise$promise$$Promise', 'promise is object');
     p.then(function(d) {
             ok(true, 'then called');
             ok(d.result_sets.length == 1, 'result_sets len');
@@ -187,6 +187,73 @@ asyncTest('listen reloader filters on paths', 7, function() {
         });
 
     var st = setTimeout(function() { start(); }, 1000);
+});
+
+
+// check that listen is applied independently of query in
+//    cloned queries
+//
+asyncTest('listen request receives w cloning', 12, function() {
+
+    var notifyrecd = 0;
+
+    Rdbhost.on('notify-received:abc', function f(ch, pl) {
+        ok('event', 'notify event received');
+        ok(ch === 'abc', 'channel is correct');
+        if (pl.substr(0,8) === 'test mes')
+            ok(true, 'payload 1 is correct');
+        if (pl.substr(0,8) === 'another ')
+            ok(true, 'payload 2 is correct');
+        notifyrecd = notifyrecd + 1;
+    });
+
+    var r1 = Rdbhost.reader()
+        .query("NOTIFY \"abc\", 'test message on channel abc';")
+        .listen('abc');
+
+    var r2 = r1.clone()
+        .query("NOTIFY \"abc\", 'another test msg on ';");
+
+    var p1 = r1.go();
+    ok(p1.constructor.name === 'lib$es6$promise$promise$$Promise', 'promise is object');
+    p1.then(function(d) {
+            // ok(true, 'then called');
+            ok(d.result_sets.length == 1, 'result_sets len');
+            ok(d.result_sets[0].row_count[0] == -1, 'row_count === 1');
+            if ( notifyrecd > 1 ) {
+                clearTimeout(st);
+                Rdbhost.off('notify-received:abc');
+                start();
+            }
+        })
+        .catch(function(e) {
+            ok(false, 'then error called');
+            clearTimeout(st);
+            start();
+        });
+
+    var p2 = r2.go();
+    ok(p2.constructor.name === 'lib$es6$promise$promise$$Promise', 'pomise is object');
+    p2.then(function(d) {
+            // ok(true, 'then called');
+            ok(d.result_sets.length == 1, 'result_sets len');
+            ok(d.result_sets[0].row_count[0] == -1, 'row_count === 1');
+            if ( notifyrecd > 1 ) {
+                clearTimeout(st);
+                Rdbhost.off('notify-received:abc');
+                start();
+            }
+        })
+        .catch(function(e) {
+            ok(false, 'then error called');
+            clearTimeout(st);
+            start();
+        });
+
+    var st = setTimeout(function() {
+        Rdbhost.off('notify-received:abc');
+        start();
+    }, 1000);
 });
 
 
