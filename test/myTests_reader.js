@@ -304,7 +304,7 @@ asyncTest('formData reader request ok', 4, function() {
 });
 
 
-// send reader request as formData
+// use of listen and repeat together throws exception
 //
 asyncTest('listen/repeat conflict trapped', 4, function() {
 
@@ -336,6 +336,71 @@ asyncTest('listen/repeat conflict trapped', 4, function() {
     var st = setTimeout(function() { start(); }, 5000);
 });
 
+
+// use of form_data and params together throws exception
+//
+test('params/formdata conflict trapped', 1, function() {
+
+    var fData = new FormData();
+    fData.append('arg000', '1');
+
+    try {
+        var p = Rdbhost.reader()
+            .query('SELECT %s AS a')
+            .form_data(fData)
+            .params([1,2]);
+    }
+    catch(e) {
+
+        ok(e.message.indexOf('params and FormData cannot be') >= 0, 'params/formdata conflict')
+    }
+
+});
+
+// use of two objects to params throws exception
+//
+test('two objects to params conflict trapped', function() {
+
+    var fData = new FormData();
+    fData.append('arg000', '1');
+
+    try {
+        var p = Rdbhost.reader()
+            .query('SELECT %s AS a')
+            .params({a:1}, {b:2});
+    }
+    catch(e) {
+
+        ok(e.message.indexOf('two objects were provided to p') >= 0, 'params args conflict '+ e.message);
+    }
+
+    try {
+        var p1 = Rdbhost.reader()
+            .query('SELECT %s AS a')
+            .params([1], [2]);
+    }
+    catch(e) {
+
+        ok(e.message.indexOf('two arrays were provided to p') >= 0, 'params args conflict '+ e.message);
+    }
+
+    try {
+        var p2 = Rdbhost.reader()
+            .query('SELECT %s AS a')
+            .params([1], {b:2});
+        ok(true, 'one of each is ok');
+
+        ok(p2.namedParams, 'namedParams there');
+        ok(p2.namedParams.b === 2, 'namedParams.b is correct');
+        ok(p2.args, 'arg there');
+        ok(p2.args[0] === 1, 'arg is correct');
+    }
+    catch(e) {
+
+        ok(false, 'unexpected exceptions');
+    }
+
+});
 
 
 /*
