@@ -34,7 +34,7 @@ asyncTest('super request cancel', 3, function() {
                    .query('SELECT 1 AS a');
 
     var p = e.go();
-    ok(p.constructor.name === 'lib$es6$promise$promise$$Promise', p);
+    ok(p.constructor.name.indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(false, 'then called');
             clearTimeout(st);
@@ -65,7 +65,7 @@ asyncTest('super request confirm', 3, function() {
         .query('SELECT 1 AS a');
 
     var p = e.go();
-    ok(p.constructor.name === 'lib$es6$promise$promise$$Promise', p);
+    ok(p.constructor.name.indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(true, 'then called');
             ok(d.result_sets[0].rows[0].a === 1, d.status);
@@ -102,7 +102,7 @@ asyncTest('super request http confirm', 3, function() {
         .form_data(new FormData());
 
     var p = e.go();
-    ok(p.constructor.name === 'lib$es6$promise$promise$$Promise', p);
+    ok(p.constructor.name.indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(true, 'then called');
             ok(d.result_sets[0].rows[0].a === 1, d.status);
@@ -140,7 +140,7 @@ asyncTest('super request http cancel', 3, function() {
         .form_data(new FormData());
 
     var p = e.go();
-    ok(p.constructor.name === 'lib$es6$promise$promise$$Promise', p);
+    ok(p.constructor.name.indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(false, 'then called');
             clearTimeout(st);
@@ -161,9 +161,6 @@ asyncTest('super request http cancel', 3, function() {
 
     var st = setTimeout(function() { start(); }, 5000);
 });
-
-
-
 
 
 /*

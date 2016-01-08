@@ -4,21 +4,46 @@
   <title>QUnit Test Suite</title>
   <link rel="stylesheet" href="qunit/qunit.css" type="text/css" media="screen">
   <script type="text/javascript" src="qunit/qunit.js"></script>
-  <!-- script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script -->
 
-  <script type="text/javascript" src="/rdb2js/vendor/reconnecting-websocket/reconnecting-websocket.js"></script>
-  <script type="text/javascript" src="/rdb2js/vendor/es6-promises/dist/es6-promise.js"></script>
-  <script type="text/javascript" src="/rdb2js/vendor/fetch/fetch.js"></script>
-  <!-- script type="text/javascript" src="/rdb2js/vendor/microevent/microevent-debug.js"></script -->
-  <script type="text/javascript" src="/rdb2js/vendor/eventemitter/EventEmitter.js"></script>
+  <script type="text/javascript" src="/rdb2js/vendor/labjs/LAB.js"></script>
+  <script>
+    function hasPromises() {
+      var e = window;
+      return "Promise" in e &&
+          "resolve" in e.Promise && "reject" in e.Promise &&
+          "all" in e.Promise && "race" in e.Promise &&
+          function () {
+            var n;
+            new e.Promise(function (e) {
+              n = e
+            });
+            return "function" == typeof n;
+          }()
+    }
 
-  <!-- Your project file goes here -->
-  <script type="text/javascript" src="/rdb2js/lib/js/us.js"></script>
-  <script type="text/javascript" src="/rdb2js/lib/js/rdbhost.js"></script>
-  <script type="text/javascript" src="private.js"></script>
+    function hasFetch() {
+      return "fetch" in window;
+    }
+
+    var $L = $LAB
+        .script('/rdb2js/vendor/reconnecting-websocket/reconnecting-websocket.js').wait()
+        .script('/rdb2js/vendor/tiny-emitter/dist/tinyemitter.js')
+        .script('/rdb2js/lib/js/us.js').wait()
+        .script('/rdb2js/lib/js/rdbhost.js').wait()
+        .script('/rdb2js/test/private.js')
+        ;//.script('/rdb2js/lib/js/rdbhost_livereload.js').wait();
+
+    if ( !hasPromises() )
+      $L = $L.script('/rdb2js/vendor/es6-promises/dist/es6-promise.js');
+    if ( !hasFetch() )
+      $L = $L.script('/rdb2js/vendor/fetch/fetch.js').wait();
+    $L.script('myTests_preauth.js');
+
+    $L =  $L.wait().script('/rdb2js/lib/js/rdbhost_livereload.js');
+  </script>
 
   <!-- Your tests file goes here -->
-  <script type="text/javascript" src="myTests_preauth.js"></script>
+  <!-- script type="text/javascript" src="myTests_preauth.js"></script -->
 </head>
   <body>
     <h1 id="qunit-header">QUnit Test Suite</h1>

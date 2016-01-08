@@ -4,6 +4,7 @@ module('Notify tests', {
 
     setup: function () {
         Rdbhost.connect(domain, acct_number);
+        Rdbhost.activate_reloader(Rdbhost.reader());
     },
     teardown: function() {
         Rdbhost.disconnect(1000, '');
@@ -23,7 +24,7 @@ asyncTest('listen request ok', 4, function() {
         .listen('abc');
 
     var p = e.go();
-    ok(p.constructor.name === 'lib$es6$promise$promise$$Promise', 'promise is object');
+    ok(p.constructor.name.indexOf('Promise') >= 0, 'promise is object');
     p.then(function(d) {
             ok(true, 'then called');
             ok(d.result_sets.length == 1, 'result_sets len');
@@ -60,7 +61,7 @@ asyncTest('listen request receives ok', 7, function() {
         .listen('abc');
 
     var p = r.go();
-    ok(p.constructor.name === 'lib$es6$promise$promise$$Promise', 'promise is object');
+    ok(p.constructor.name.indexOf('Promise') >= 0, 'promise is object');
     p.then(function(d) {
             ok(true, 'then called');
             ok(d.result_sets.length == 1, 'result_sets len');
@@ -125,7 +126,7 @@ asyncTest('listen request invokes reloader on image', 8, function() {
     }
 
     var p = r.go();
-    ok(p.constructor.name === 'lib$es6$promise$promise$$Promise', 'promise is object');
+    ok(p.constructor.name.indexOf('Promise') >= 0, 'promise is object');
     p.then(function(d) {
             ok(true, 'then called');
             ok(d.result_sets.length == 1, 'result_sets len');
@@ -172,7 +173,7 @@ asyncTest('listen reloader filters on paths', 7, function() {
     }
 
     var p = r.go();
-    ok(p.constructor.name === 'lib$es6$promise$promise$$Promise', 'promise is object');
+    ok(p.constructor.name.indexOf('Promise') >= 0, 'promise is object');
     p.then(function(d) {
             ok(true, 'then called');
             ok(d.result_sets.length == 1, 'result_sets len');
@@ -215,7 +216,7 @@ asyncTest('listen request receives w cloning', 12, function() {
         .query("NOTIFY \"abc\", 'another test msg on ';");
 
     var p1 = r1.go();
-    ok(p1.constructor.name === 'lib$es6$promise$promise$$Promise', 'promise is object');
+    ok(p1.constructor.name.indexOf('Promise') >= 0, 'promise is object');
     p1.then(function(d) {
             // ok(true, 'then called');
             ok(d.result_sets.length == 1, 'result_sets len');
@@ -233,7 +234,7 @@ asyncTest('listen request receives w cloning', 12, function() {
         });
 
     var p2 = r2.go();
-    ok(p2.constructor.name === 'lib$es6$promise$promise$$Promise', 'pomise is object');
+    ok(p2.constructor.name.indexOf('Promise') >= 0, 'pomise is object');
     p2.then(function(d) {
             // ok(true, 'then called');
             ok(d.result_sets.length == 1, 'result_sets len');
