@@ -1,4 +1,13 @@
 
+PASSWORD = undefined;
+
+function get_password() {
+
+    if ( ! PASSWORD )
+        PASSWORD = 'horosh00'; //prompt('password');
+    return PASSWORD;
+}
+
 
 module('Notify tests', {
 
@@ -7,7 +16,11 @@ module('Notify tests', {
         Rdbhost.activate_reloader(Rdbhost.reader());
     },
     teardown: function() {
+        QUnit.stop();
         Rdbhost.disconnect(1000, '');
+        setTimeout(function() {
+            QUnit.start();
+        }, 500);
     }
 });
 
@@ -99,12 +112,12 @@ asyncTest('listen request invokes reloader on image', 8, function() {
     document.body.appendChild(el);
     var savedImgSrc = el.src;
 
-    Rdbhost.once('notify-received:rdbhost_ftp_channel', function f(ch, pl) {
+    Rdbhost.once('notify-received:rdbhost_ftp_channel:reader', function f(ch, pl) {
         ok(fail, 'notify-received should not be received');
     });
-    Rdbhost.once('reload-request:rdbhost_ftp_channel', function f(ch, pl) {
+    Rdbhost.once('reload-request', function f(ch, pl) {
         ok('event', 'notify event received');
-        ok(ch === 'rdbhost_ftp_channel', 'channel is correct');
+        ok(ch === 'rdbhost_ftp_channel:reader', 'channel is correct');
         ok(pl.substr(0,6) === 'SAVE F', 'payload is correct');
         notifyrecd = true;
         setTimeout(function() {
@@ -114,8 +127,8 @@ asyncTest('listen request invokes reloader on image', 8, function() {
     });
 
     var r = Rdbhost.reader()
-        .query("NOTIFY \"rdbhost_ftp_channel\", 'SAVE FILE /dummy.gif';")
-        .listen('rdbhost_ftp_channel');
+        .query("NOTIFY \"rdbhost_ftp_channel:reader\", 'SAVE FILE /dummy.gif';")
+        .listen('rdbhost_ftp_channel:reader');
 
     function cleanup() {
         setTimeout(function() {
@@ -144,6 +157,74 @@ asyncTest('listen request invokes reloader on image', 8, function() {
 });
 
 
+// send reader listen request with preauth query, verify promise fulfilled
+//    but no notifies received
+//
+asyncTest('listen request ignored from wrong role', 4, function() {
+
+    // add a (nonexistant) image tag to page
+    var el = document.createElement('img'),
+        src = document.createAttribute('src'),
+        id = document.createAttribute('id');
+    src.value = '/dummy.gif';
+    id.value = 'test-image';
+    el.setAttributeNode(src);
+    el.setAttributeNode(id);
+    document.body.appendChild(el);
+    var savedImgSrc = el.src;
+
+    function cleanup() {
+        setTimeout(function() {
+            clearTimeout(st);
+            document.body.removeChild(el);
+            start();
+        }, 50)
+    }
+
+    Rdbhost.once('notify-received:rdbhost_ftp_channel:reader', function f(ch, pl) {
+        ok(false, 'notify-received should not be received');
+    });
+/*
+    Rdbhost.once('reload-request', function f(ch, pl) {
+        ok(false, 'notify event received');
+    });
+*/
+
+    var r = Rdbhost.preauth()
+        .query("NOTIFY \"rdbhost_ftp_channel:reader\", 'SAVE FILE /dummy.gif';")
+        .listen('rdbhost_ftp_channel:reader');
+
+    var p = r.go();
+    ok(p.constructor.name.indexOf('Promise') >= 0, 'promise is object');
+    p.then(function(d) {
+            ok(true, 'then called');
+            ok(d.result_sets.length == 1, 'result_sets len');
+            ok(d.result_sets[0].row_count[0] == -1, 'row_count === 1');
+        })
+        .catch(function(e) {
+            ok(false, 'then error called');
+        });
+
+    setTimeout(function() {
+        var frm = document.getElementById('partial-preauth-auth');
+        if ( !frm )
+            return;
+
+        var eml = frm.querySelector("input[name='email']"),
+            pw = frm.querySelector("input[name='password']"),
+            sub = frm.querySelector("input[type='submit']");
+
+        eml.value = demo_email;
+        pw.value = get_password();
+        sub.click();
+    }, 500);
+
+    var st = setTimeout(function() {
+        cleanup();
+    }, 1000);
+});
+
+
 // verify that reloader filters pages
 //   should not reload page
 //
@@ -151,19 +232,19 @@ asyncTest('listen reloader filters on paths', 7, function() {
 
     var notifyrecd = false;
 
-    Rdbhost.once('notify-received:rdbhost_ftp_channel', function f(ch, pl) {
+    Rdbhost.once('notify-received:rdbhost_ftp_channel:reader', function f(ch, pl) {
         ok(fail, 'notify-received should not be received');
     });
-    Rdbhost.once('reload-request:rdbhost_ftp_channel', function f(ch, pl) {
+    Rdbhost.once('reload-request:rdbhost_ftp_channel:reader', function f(ch, pl) {
         ok('event', 'notify event received');
-        ok(ch === 'rdbhost_ftp_channel', 'channel is correct');
+        ok(ch === 'rdbhost_ftp_channel:reader', 'channel is correct');
         ok(pl.substr(0,6) === 'SAVE F', 'payload is correct');
         notifyrecd = true;
     });
 
     var r = Rdbhost.reader()
-        .query("NOTIFY \"rdbhost_ftp_channel\", 'SAVE FILE /in.html';")
-        .listen('rdbhost_ftp_channel');
+        .query("NOTIFY \"rdbhost_ftp_channel:reader\", 'SAVE FILE /in.html';")
+        .listen('rdbhost_ftp_channel:reader');
 
     function cleanup() {
         setTimeout(function() {
