@@ -3,7 +3,7 @@
 <head>
   <title>Notify Observer page</title>
 
-  <script type="text/javascript" src="/rdb2js/vendor/labjs/LAB.js"></script>
+  <script type="text/javascript" src="../../vendor/labjs/LAB.js"></script>
   <script>
     function hasPromises() {
       var e = window;
@@ -24,23 +24,23 @@
     }
 
     var $L = $LAB
-        .script('/rdb2js/vendor/reconnecting-websocket/reconnecting-websocket.js').wait()
-        .script('/rdb2js/vendor/tiny-emitter/dist/tinyemitter.js')
-        .script('/rdb2js/lib/js/us.js').wait()
-        .script('/rdb2js/lib/js/rdbhost.js').wait()
-        .script('/rdb2js/test/private.js')
-        .script('/rdb2js/lib/js/rdbhost_livereload.js').wait();
+        .script('../../vendor/reconnecting-websocket/reconnecting-websocket.js').wait()
+        .script('../../vendor/tiny-emitter/dist/tinyemitter.js')
+        .script('../../lib/js/us.js').wait()
+        .script('../../lib/js/rdbhost.js').wait()
+        .script('../../test/private.js')
+        .script('../../lib/js/rdbhost_livereload.js').wait();
 
     if ( !hasPromises() )
-      $L = $L.script('/rdb2js/vendor/es6-promises/dist/es6-promise.js');
+      $L = $L.script('../../vendor/es6-promises/dist/es6-promise.js');
     if ( !hasFetch() )
-      $L = $L.script('/rdb2js/vendor/fetch/fetch.js').wait();
+      $L = $L.script('../../vendor/fetch/fetch.js').wait();
     $L = $L.wait(function() {
       Rdbhost.connect(domain, 14);
       var preauth = Rdbhost.preauth();
     });
 
-    $L =  $L.wait().script('/rdb2js/lib/js/rdbhost_livereload.js');
+    $L =  $L.wait().script('../../lib/js/rdbhost_livereload.js');
   </script>
 
   <!-- Your tests file goes here -->

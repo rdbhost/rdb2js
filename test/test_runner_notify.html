@@ -5,7 +5,7 @@
   <link rel="stylesheet" href="qunit/qunit.css" type="text/css" media="screen">
   <script type="text/javascript" src="qunit/qunit.js"></script>
 
-  <script type="text/javascript" src="/rdb2js/vendor/labjs/LAB.js"></script>
+  <script type="text/javascript" src="../vendor/labjs/LAB.js"></script>
   <script>
     function hasPromises() {
       var e = window;
@@ -26,20 +26,16 @@
     }
 
     var $L = $LAB
-        .script('/rdb2js/vendor/reconnecting-websocket/reconnecting-websocket.js').wait()
-        .script('/rdb2js/vendor/tiny-emitter/dist/tinyemitter.js')
-        .script('/rdb2js/lib/js/us.js').wait()
-        .script('/rdb2js/lib/js/rdbhost.js').wait()
-        .script('/rdb2js/test/private.js')
-        .script('/rdb2js/lib/js/rdbhost_livereload.js').wait();
+        .script('../lib/js/rdbhost-bundle.js').wait()
+        .script('../test/private.js').wait()
+        .script('../lib/js/rdbhost_livereload.js');
 
     if ( !hasPromises() )
-      $L = $L.script('/rdb2js/vendor/es6-promises/dist/es6-promise.js');
+      $L = $L.script('../vendor/es6-promises/dist/es6-promise.js');
     if ( !hasFetch() )
-      $L = $L.script('/rdb2js/vendor/fetch/fetch.js').wait();
+      $L = $L.script('../vendor/fetch/fetch.js').wait();
     $L.script('myTests_notify.js');
 
-    $L =  $L.wait().script('/rdb2js/lib/js/rdbhost_livereload.js');
   </script>
 
   <!-- Your tests file goes here -->
