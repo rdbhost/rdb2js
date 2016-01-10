@@ -24,12 +24,9 @@
     }
 
     var $L = $LAB
-        .script('../../vendor/reconnecting-websocket/reconnecting-websocket.js').wait()
-        .script('../../vendor/tiny-emitter/dist/tinyemitter.js')
-        .script('../../lib/js/us.js').wait()
-        .script('../../lib/js/rdbhost.js').wait()
-        .script('../../test/private.js')
-        .script('../../lib/js/rdbhost_livereload.js').wait();
+        .script('../../lib/js/rdbhost-bundle.js')
+        .script('../../test/private.js').wait()
+        .script('../../lib/js/rdbhost_livereload.js');
 
     if ( !hasPromises() )
       $L = $L.script('../../vendor/es6-promises/dist/es6-promise.js');
@@ -38,9 +35,9 @@
     $L = $L.wait(function() {
       Rdbhost.connect(domain, 14);
       var preauth = Rdbhost.preauth();
+      Rdbhost.activate_reloader(preauth);
     });
 
-    $L =  $L.wait().script('../../lib/js/rdbhost_livereload.js');
   </script>
 
   <!-- Your tests file goes here -->

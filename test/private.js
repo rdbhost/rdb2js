@@ -8,7 +8,6 @@
  * To change this template use File | Settings | File Templates.
  */
 
-
 /*
 var domain = 'dev.rdbhost.com',
     acct_number = 9,
