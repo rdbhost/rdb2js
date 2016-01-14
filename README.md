@@ -95,16 +95,17 @@ Most of these methods return the request object `this`, allowing methods to be c
   returns Promise
 
 If a `super` request was made without providing the authcode, then the request processing will 
-ask the user for the login email and password, connect to the server for the authcode,
+ask the user for the login email and password, connect to the server for the `authcode`,
 and continue with the request query.
 
 If a `preauth` request gets an error from the server, then it presents the user a form for
-login email and password, and connects to the server to add the preauth query to the whitelist
-and execute it.
+login email and password, and connects to the server to get the `authcode`, and again to add the 
+preauth query to the whitelist and execute it.
+
+In either case, the `authcode` is cached in the client once retrieved.
 
 
-
-A simple example:
+###A simple example:
 
     var prom = Rdbhost.reader()
                .query('SELECT name, address FROM contacts;')
