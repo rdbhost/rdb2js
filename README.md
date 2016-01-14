@@ -49,49 +49,49 @@ The `super` and `auth` constructors take an optional authcode parameter.
 Most of these methods return the request object `this`, allowing methods to be chained.  
 
 ######query(sql)
-  provides the sql query to the request.
+  provides the sql query to the request.  
   returns `this`
 
 ######listen(channel)
    wraps the query sql in additional sql that catches any NOTIFYs that get emitted 
    by the query.  It also registers this client to recieve all NOTIFYs payloads on the given _channel_. 
    Once this client is registered, it will receive all NOTIFY payloads on that channel from any connection by
-   any client.
+   any client.  
   returns `this`
 
-#####params(args, namedParams)
+######params(args, namedParams)
 
   provides args (a list of values) or namedParams (a dictionary of names and
   values) to the request.  Can take either type of parameter, or one of each.  Can be called without 
-  parameters to clear any data from request.
+  parameters to clear any data from request.  
   returns `this`
 
-#####form_data(formData)
+######form_data(formData)
 
   provides a FormData object to the request.  Cannot be used with params in same
   request.  FormData objects contain field data to submit to server.  Any query (q) in the FormData
-  will be overwritten by the query provided in query method.
+  will be overwritten by the query provided in query method.   
   returns `this`
 
-#####proxy(mode)
+######proxy(mode)
 
   if a mode other than data query is needed, this method sets the mode.  Possible modes
-  are 'email', 'credit', and 'proxy'.
+  are 'email', 'credit', and 'proxy'.   
   returns `this`
 
-#####repeat(ct)
+######repeat(ct)
 
-  if query is to be done repeatedly in the same request, this method records the repeat count.
+  if query is to be done repeatedly in the same request, this method records the repeat count.   
   returns `this`
 
-#####clone()
+######clone()
 
   returns a copy of the request, complete with all above options.  Each request can only
-  be called once, but can be cloned and each clone called once.
+  be called once, but can be cloned and each clone called once.   
   returns new request
 
-#####go()
-  submits the request to the server, and returns a Promise for the results.
+######go()
+  submits the request to the server, and returns a Promise for the results.   
   returns Promise
 
 
