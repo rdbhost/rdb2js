@@ -48,12 +48,12 @@ The `super` and `auth` constructors take an optional authcode parameter.
 
 Most of these methods return the request object `this`, allowing methods to be chained.  
 
-###query(sql)
+#####query(sql)
   provides the sql query to the request.
 
   returns `this`
 
-###listen(channel)
+######listen(channel)
    wraps the query sql in additional sql that catches any NOTIFYs that get emitted 
    by the query.  It also registers this client to recieve all NOTIFYs payloads on the given _channel_. 
    Once this client is registered, it will receive all NOTIFY payloads on that channel from any connection by
