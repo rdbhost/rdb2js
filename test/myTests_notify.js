@@ -94,7 +94,7 @@ asyncTest('listen request receives ok', 7, function() {
 });
 
 
-// send reader listen request with query, verify promise fulfilled
+// send super listen request with query, verify promise fulfilled
 //    and that notify is independently received
 //
 asyncTest('listen request invokes reloader on image', 8, function() {
@@ -112,12 +112,12 @@ asyncTest('listen request invokes reloader on image', 8, function() {
     document.body.appendChild(el);
     var savedImgSrc = el.src;
 
-    Rdbhost.once('notify-received:rdbhost_ftp_channel:reader', function f(ch, pl) {
+    Rdbhost.once('notify-received:rdbhost_ftp_channel:super', function f(ch, pl) {
         ok(fail, 'notify-received should not be received');
     });
     Rdbhost.once('reload-request', function f(ch, pl) {
         ok('event', 'notify event received');
-        ok(ch === 'rdbhost_ftp_channel:reader', 'channel is correct');
+        ok(ch === 'rdbhost_ftp_channel:super', 'channel is correct');
         ok(pl.substr(0,6) === 'SAVE F', 'payload is correct');
         notifyrecd = true;
         setTimeout(function() {
@@ -126,9 +126,9 @@ asyncTest('listen request invokes reloader on image', 8, function() {
         }, 10);
     });
 
-    var r = Rdbhost.reader()
-        .query("NOTIFY \"rdbhost_ftp_channel:reader\", 'SAVE FILE /dummy.gif';")
-        .listen('rdbhost_ftp_channel:reader');
+    var r = Rdbhost.super()
+        .query("NOTIFY \"rdbhost_ftp_channel:super\", 'SAVE FILE /dummy.gif';")
+        .listen('rdbhost_ftp_channel:super');
 
     function cleanup() {
         setTimeout(function() {
@@ -152,6 +152,17 @@ asyncTest('listen request invokes reloader on image', 8, function() {
             ok(false, 'then error called');
             cleanup();
         });
+
+    setTimeout(function() {
+        var frm = document.getElementById('partial-super-auth'),
+            eml = frm.querySelector("input[name='email']"),
+            pw = frm.querySelector("input[name='password']"),
+            sub = frm.querySelector("input[type='submit']");
+
+        eml.value = demo_email;
+        pw.value = get_password();
+        sub.click();
+    }, 500);
 
     var st = setTimeout(function() { start(); }, 1000);
 });
@@ -339,6 +350,54 @@ asyncTest('listen request receives w cloning', 12, function() {
 });
 
 
+/*
+
+module('CorsTest tests', {
+
+    setup: function () {
+        Rdbhost.connect(domain, bad_acct_number);
+    },
+    teardown: function() {
+        Rdbhost.disconnect(1000, '');
+    }
+});
+
+
+// /acct/corstest
+
+// send preauth request with query, verify promise fulfilled with error
+//
+asyncTest('reader wrong-account request', 4, function() {
+
+    var e = Rdbhost.reader()
+        .form_data(new FormData())
+        .query('SELECT 1 AS a; /!* testing-delete *!/');
+
+    var p = e.go();
+    ok(p.constructor.name.indexOf('Promise') >= 0, p);
+    p.then(function(d) {
+            ok(false, 'then called');
+            clearTimeout(st);
+            start();
+        })
+        .catch(function(e) {
+            ok(true, 'then error called');
+            ok(e.message.substr(0, 11) === 'Failed to f', e.message);
+            clearTimeout(st);
+            start();
+        });
+
+    Rdbhost.once('connection-open-failed', function(evt) {
+        ok(true, 'connection-open-failed event emitted');
+    });
+
+    var st = setTimeout(function() {
+        start();
+    }, 50000);
+});
+
+
+*/
 
 /*
 *
