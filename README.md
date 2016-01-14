@@ -94,6 +94,15 @@ Most of these methods return the request object `this`, allowing methods to be c
   submits the request to the server, and returns a Promise for the results.   
   returns Promise
 
+If a `super` request was made without providing the authcode, then the request processing will 
+ask the user for the login email and password, connect to the server for the authcode,
+and continue with the request query.
+
+If a `preauth` request gets an error from the server, then it presents the user a form for
+login email and password, and connects to the server to add the preauth query to the whitelist
+and execute it.
+
+
 
 A simple example:
 
