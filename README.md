@@ -61,13 +61,15 @@ Most of these methods return the request object `this`, allowing methods to be c
    
   returns `this`
 
-params(args, namedParams):  provides args (a list of values) or namedParams (a dictionary of names and
++ params(args, namedParams)
+  provides args (a list of values) or namedParams (a dictionary of names and
   values) to the request.  Can take either type of parameter, or one of each.  Can be called without 
   parameters to clear any data from request.
    
   returns `this`
 
-form_data(formData): provides a FormData object to the request.  Cannot be used with params in same
+1 form_data(formData)
+  provides a FormData object to the request.  Cannot be used with params in same
   request.  FormData objects contain field data to submit to server.  Any query (q) in the FormData
   will be overwritten by the query provided in query method.
   
