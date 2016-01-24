@@ -1,10 +1,4 @@
 
-/*
-*
-* tests for the SQLEngine
-*
-*
-*/
 
 PASSWORD = undefined;
 
@@ -75,6 +69,7 @@ module('Alternate Template Location tests', {
         Rdbhost.disconnect(1000, '');
     }
 });
+
 
 // send super request, confirm with authorization dialog from alt location
 //

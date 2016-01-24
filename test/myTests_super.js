@@ -32,7 +32,7 @@ module('Authorization tests', {
 
 // send super request, cancel authorization dialog
 //
-asyncTest('super request cancel', 3, function() {
+asyncTest('super request cancel', 4, function() {
 
     var e = Rdbhost.super()
                    .query('SELECT 1 AS a');
@@ -54,6 +54,7 @@ asyncTest('super request cancel', 3, function() {
     setTimeout(function() {
         var frm = document.getElementById('partial-super-auth'),
             cncl = frm.querySelector('.cancel');
+        ok(frm.innerText.indexOf('SELECT 1') >= 0, 'sql found');
         cncl.click();
     }, 500);
 
@@ -63,7 +64,7 @@ asyncTest('super request cancel', 3, function() {
 
 // send super request, confirm with authorization dialog
 //
-asyncTest('super request confirm', 3, function() {
+asyncTest('super request confirm', 4, function() {
 
     var e = Rdbhost.super()
         .query('SELECT 1 AS a');
@@ -87,6 +88,8 @@ asyncTest('super request confirm', 3, function() {
             eml = frm.querySelector("input[name='email']"),
             pw = frm.querySelector("input[name='password']"),
             sub = frm.querySelector("input[type='submit']");
+
+        ok(frm.innerText.indexOf('SELECT 1 AS a') >= 0, 'sql found');
 
         eml.value = demo_email;
         pw.value = get_password();
