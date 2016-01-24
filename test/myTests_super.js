@@ -22,6 +22,10 @@ module('Authorization tests', {
         get_password();
     },
     teardown: function() {
+        QUnit.stop();
+        Rdbhost.once('connection-closed:super', function() {
+            QUnit.start()
+        });
         Rdbhost.disconnect(1000, '');
     }
 });
