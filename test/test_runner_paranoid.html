@@ -7,33 +7,18 @@
 
   <script type="text/javascript" src="../vendor/labjs/LAB.js"></script>
   <script>
-    function hasPromises() {
-      var e = window;
-      return "Promise" in e &&
-          "resolve" in e.Promise && "reject" in e.Promise &&
-          "all" in e.Promise && "race" in e.Promise &&
-          function () {
-            var n;
-            new e.Promise(function (e) {
-              n = e
-            });
-            return "function" == typeof n;
-          }()
-    }
-
-    function hasFetch() {
-      return "fetch" in window;
-    }
-
     var $L = $LAB
-        .script('../lib/js/rdbhost-bundle.js').wait()
-        .script('../test/private.js')
-        .script('../lib/js/rdbhost_livereload.js').wait();
+        .script('../lib/js/rdbhost-bundle.js').wait(
+            function() {
 
-    if ( !hasPromises() )
-      $L = $L.script('../vendor/es6-promises/dist/es6-promise.js');
-    if ( !hasFetch() )
-      $L = $L.script('../vendor/fetch/fetch.js').wait();
+              if ( !hasPromises() )
+                $L = $L.script('../vendor/es6-promises/dist/es6-promise.js');
+              if ( !hasFetch() )
+                $L = $L.script('../vendor/fetch/fetch.js').wait();
+            }
+        );
+    $L = $L.script('../test/private.js').wait()
+        .script('../lib/js/rdbhost_livereload.js');
     $L.script('myTests_paranoid.js');
 
   </script>

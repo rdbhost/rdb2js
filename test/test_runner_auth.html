@@ -7,14 +7,18 @@
   <script type="text/javascript" src="../vendor/labjs/LAB.js"></script>
   <script>
     var $L = $LAB
-        .script('../lib/js/rdbhost-bundle.js')
-        .script('../test/private.js').wait()
+        .script('../lib/js/rdbhost-bundle.js').wait(
+            function() {
+
+              if ( !hasPromises() )
+                $L = $L.script('../vendor/es6-promises/dist/es6-promise.js');
+              if ( !hasFetch() )
+                $L = $L.script('../vendor/fetch/fetch.js').wait();
+            }
+        );
+    $L = $L.script('../test/private.js').wait()
         .script('../lib/js/rdbhost_livereload.js');
 
-    if ( !hasPromises() )
-      $L = $L.script('../vendor/es6-promises/dist/es6-promise.js');
-    if ( !hasFetch() )
-      $L = $L.script('../vendor/fetch/fetch.js').wait();
     $L.script('myTests_auth.js');
 
   </script>
