@@ -120,7 +120,7 @@ asyncTest('reader request ok 2', 3, function() {
 
 // send reader request with repeated query, verify promise fulfilled
 //
-asyncTest('repeat request ok', 3, function() {
+asyncTest('repeat request ok', 4, function() {
 
     var e = Rdbhost.reader()
                    .query('SELECT %s AS a')
@@ -130,15 +130,20 @@ asyncTest('repeat request ok', 3, function() {
     var p = e.go();
     ok(p.constructor.name.indexOf('Promise') >= 0, 'promise is Promise');
     p.then(function(d) {
-            ok(true, 'then called');
-            ok(d.result_sets.length === 2, d.result_sets.length);
-            clearTimeout(st);
-            start();
+          ok(true, 'then called');
+          ok(d.result_sets.length === 2, d.result_sets.length);
+
+          var p1 = e.clone().repeat().go();
+          p1.then(function(d1) {
+              ok(d1.result_sets.length == 1, 'result_sets_length === 1');
+              clearTimeout(st);
+              start();
+          });
       })
       .catch(function(e) {
-            ok(false, 'then error called '+ e.message);
-            clearTimeout(st);
-            start();
+          ok(false, 'then error called '+ e.message);
+          clearTimeout(st);
+          start();
       });
 
     var st = setTimeout(function() { start(); }, 5000);
