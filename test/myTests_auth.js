@@ -102,7 +102,7 @@ asyncTest('preauth request cancel', 3, function() {
             frm = document.getElementById('partial-preauth_auth');
         var cncl = frm.querySelector('.cancel');
         cncl.click();
-    }, 500);
+    }, 1000);
 
     var st = setTimeout(function() { start(); }, 5000);
 });
@@ -154,9 +154,9 @@ asyncTest('preauth request confirm', 3, function() {
             eml.value = demo_email;
             pw.value = get_password();
             sub.click();
-        }, 500);
+        }, 1000);
 
-    }, 500);
+    }, 1000);
 
     var st = setTimeout(function() { start(); }, 5000);
 });
