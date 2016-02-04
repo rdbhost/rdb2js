@@ -170,6 +170,85 @@ asyncTest('super request http cancel', 3, function() {
 });
 
 
+module('modal-force tests', {
+
+    setup: function () {
+        Rdbhost.connect(domain, acct_number);
+        get_password();
+
+        Rdbhost.clickrecd = [];
+        Rdbhost.clicktried = [];
+        function oclick(evt) {
+            Rdbhost.clickrecd.push(evt);
+        }
+
+        // add an a tag to page
+        var el = document.createElement('a'),
+            href = document.createAttribute('href'),
+            id = document.createAttribute('id');
+        href.value = '#';
+        id.value = 'test-link';
+        el.setAttributeNode(href);
+        el.setAttributeNode(id);
+        el.addEventListener('click', oclick);
+
+        document.body.appendChild(el);
+
+    },
+    teardown: function() {
+        QUnit.stop();
+        Rdbhost.once('connection-closed:super', function() {
+            QUnit.start()
+        });
+        Rdbhost.disconnect(1000, '');
+        var el = document.getElementById('test-link');
+        document.body.removeChild(el);
+        delete Rdbhost.clickrecd;
+        delete Rdbhost.clicktried;
+    }
+});
+
+// send super request, cancel authorization dialog
+//
+asyncTest('super request modal', 4, function() {
+
+    var el = document.getElementById('test-link');
+    el.click();
+    Rdbhost.clicktried.push(1);
+
+    var e = Rdbhost.super()
+        .query('SELECT 1 AS a');
+
+    var p = e.go();
+    ok(p.constructor.name.indexOf('Promise') >= 0, p);
+    p.then(function(d) {
+            ok(false, 'then called');
+            clearTimeout(st);
+            start();
+        })
+        .catch(function(e) {
+            ok(true, 'then error called');
+            clearTimeout(st);
+            ok(Rdbhost.clickrecd.length === 1, 'wrong number clicks '+Rdbhost.clickrecd.length);
+            ok(Rdbhost.clicktried.length === 2, 'wrong number click tries '+Rdbhost.clicktried.length);
+            start();
+        });
+
+    setTimeout(function() {
+        el.click();
+        Rdbhost.clicktried.push(1);
+    }, 500);
+    setTimeout(function() {
+        var frm = document.getElementById('partial-super-auth'),
+            cncl = frm.querySelector('.cancel');
+        cncl.click();
+    }, 800);
+
+    var st = setTimeout(function() { start(); }, 5000);
+});
+
+
+
 
 /*
 *
