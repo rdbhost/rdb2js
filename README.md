@@ -21,9 +21,9 @@ I recommend you use Lab.Js to load all modules, with a code block like:
           .script('../test/private.js').wait()
           .script('../lib/js/rdbhost_livereload.js');
 
-      if (!hasPromises())
+      if (!Rdbhost.featuredetects.hasPromises())
         $L = $L.script('../vendor/es6-promises/dist/es6-promise.js');
-      if (!hasFetch())
+      if (!Rdbhost.featuredetects.hasFetch())
         $L = $L.script('../vendor/fetch/fetch.js').wait();
       $L.script('myTests_auth.js');
     </script>

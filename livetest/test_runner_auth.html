@@ -6,32 +6,14 @@
   <script type="text/javascript" src="../test/qunit/qunit.js"></script>
   <script type="text/javascript" src="//dev.rdbhost.com/vendor/labjs/LAB.js"></script>
   <script>
-    function hasPromises() {
-      var e = window;
-      return "Promise" in e &&
-          "resolve" in e.Promise && "reject" in e.Promise &&
-          "all" in e.Promise && "race" in e.Promise &&
-          function () {
-            var n;
-            new e.Promise(function (e) {
-              n = e
-            });
-            return "function" == typeof n;
-          }()
-    }
-
-    function hasFetch() {
-      return "fetch" in window;
-    }
-
     var $L = $LAB
         .script('//dev.rdbhost.com/vendor/rdbhost/2.0/lib/js/rdbhost-bundle.js')
         .script('../test/private.js').wait()
         .script('//dev.rdbhost.com/vendor/rdbhost/2.0/lib/js/rdbhost_livereload.js');
 
-    if ( !hasPromises() )
+    if ( !Rdbhost.featuredetects.hasPromises() )
       $L = $L.script('//dev.rdbhost.com/vendor/rdbhost/2.0/vendor/es6-promises/dist/es6-promise.js');
-    if ( !hasFetch() )
+    if ( !Rdbhost.featuredetects.hasFetch() )
       $L = $L.script('//dev.rdbhost.com/vendor/rdbhost/2.0/vendor/fetch/fetch.js').wait();
     $L.script('myTests_auth.js');
 
