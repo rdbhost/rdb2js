@@ -60,6 +60,10 @@ asyncTest('reader wrong-account request', 4, function() {
 module('Alternate Template Location tests', {
 
     setup: function () {
+        if (!window.location.origin) {
+            window.location.origin = window.location.protocol + "//" + window.location.hostname +
+                (window.location.port ? ':' + window.location.port: '');
+        }
         var path = window.location.pathname.replace('/test_runner_misc.html', '/tpl/');
         Rdbhost.connect(domain, acct_number, window.location.origin + path);
         get_password();
