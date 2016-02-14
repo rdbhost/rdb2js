@@ -39,7 +39,7 @@ asyncTest('reader wrong-account request', 4, function() {
         })
         .catch(function(e) {
             ok(true, 'then error called');
-            ok(e.message.toLowerCase().indexOf('failed')>=0, e.message);
+            ok(e.message.toLowerCase().indexOf('failed')>=0 || e.message.toLowerCase().indexOf('error')>=0, e.message);
             clearTimeout(st);
             setTimeout(function() {
 
@@ -103,7 +103,7 @@ asyncTest('super request alt path', 4, function() {
     setTimeout(function() {
         var frm = document.getElementById('partial-super-auth'),
             cncl = frm.querySelector('.cancel');
-        ok(frm.innerText.indexOf('ALTERNATE LOCAT') >= 0, 'ALTERN .. text found');
+        ok(frm.textContent.indexOf('ALTERNATE LOCAT') >= 0, 'ALTERN .. text found');
         cncl.click();
     }, 500);
 

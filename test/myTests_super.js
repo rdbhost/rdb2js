@@ -54,7 +54,7 @@ asyncTest('super request cancel', 4, function() {
     setTimeout(function() {
         var frm = document.getElementById('partial-super-auth'),
             cncl = frm.querySelector('.cancel');
-        ok(frm.innerText.indexOf('SELECT 1') >= 0, 'sql found');
+        ok(frm.textContent.indexOf('SELECT 1') >= 0, 'sql found');
         cncl.click();
     }, 1500);
 
@@ -89,7 +89,7 @@ asyncTest('super request confirm', 4, function() {
             pw = frm.querySelector("input[name='password']"),
             sub = frm.querySelector("input[type='submit']");
 
-        ok(frm.innerText.indexOf('SELECT 1 AS a') >= 0, 'sql found');
+        ok(frm.textContent.indexOf('SELECT 1 AS a') >= 0, 'sql found');
 
         eml.value = demo_email;
         pw.value = get_password();
