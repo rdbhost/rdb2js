@@ -82,7 +82,7 @@ asyncTest('preauth request cancel', 3, function() {
         .query('SELECT 1 AS a; /* testing-delete */');
 
     var p = e.go();
-    ok(p.constructor.name.indexOf('Promise') >= 0, p);
+    ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(false, 'then called');
             clearTimeout(st);
@@ -113,7 +113,7 @@ asyncTest('preauth request confirm', 3, function() {
         .query('SELECT 1 AS a; /* testing-delete */');
 
     var p = e.go();
-    ok(p.constructor.name.indexOf('Promise') >= 0, p);
+    ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(true, 'then called');
             ok(d.result_sets[0].rows[0].a === 1, d.status);

@@ -12,14 +12,14 @@
             function() {
 
               if ( !Rdbhost.featuredetects.hasPromises() )
-                $L = $L.script('../vendor/es6-promises/dist/es6-promise.js');
+                $L = $L.script('../vendor/es6-promises/dist/es6-promise.js').wait();
               if ( !Rdbhost.featuredetects.hasFetch() )
                 $L = $L.script('../vendor/fetch/fetch.js').wait();
+              $L = $L.script('../test/private.js').wait()
+                  .script('../lib/js/rdbhost_livereload.js');
+              $L.script('myTests_super.js');
             }
         );
-    $L = $L.script('../test/private.js').wait()
-        .script('../lib/js/rdbhost_livereload.js');
-    $L.script('myTests_super.js');
 
   </script>
 

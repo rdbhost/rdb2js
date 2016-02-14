@@ -31,7 +31,7 @@ asyncTest('reader wrong-account request', 4, function() {
         .query('SELECT 1 AS a; /* testing-delete */');
 
     var p = e.go();
-    ok(p.constructor.name.indexOf('Promise') >= 0, p);
+    ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(false, 'then called');
             clearTimeout(st);
@@ -39,9 +39,12 @@ asyncTest('reader wrong-account request', 4, function() {
         })
         .catch(function(e) {
             ok(true, 'then error called');
-            ok(e.message.substr(0, 11) === 'Failed to f', e.message);
+            ok(e.message.toLowerCase().indexOf('failed')>=0, e.message);
             clearTimeout(st);
-            start();
+            setTimeout(function() {
+
+                start();
+            }, 100);
         });
 
     Rdbhost.once('connection-open-failed', function(evt) {
@@ -80,7 +83,7 @@ asyncTest('super request alt path', 4, function() {
         .form_data(new FormData());
 
     var p = e.go();
-    ok(p.constructor.name.indexOf('Promise') >= 0, p);
+    ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(false, 'then called');
             clearTimeout(st);

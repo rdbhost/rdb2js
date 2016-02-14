@@ -14,11 +14,11 @@
                 $L = $L.script('../vendor/es6-promises/dist/es6-promise.js');
               if ( !Rdbhost.featuredetects.hasFetch() )
                 $L = $L.script('../vendor/fetch/fetch.js').wait();
+              $L = $L.script('../test/private.js').wait()
+                  .script('../lib/js/rdbhost_livereload.js');
+              $L.script('myTests_misc.js');
             }
         );
-    $L = $L.script('../test/private.js').wait()
-        .script('../lib/js/rdbhost_livereload.js');
-    $L.script('myTests_misc.js');
 
   </script>
 

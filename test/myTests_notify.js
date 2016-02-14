@@ -37,7 +37,7 @@ asyncTest('listen request ok', 4, function() {
         .listen('abc');
 
     var p = e.go();
-    ok(p.constructor.name.indexOf('Promise') >= 0, 'promise is object');
+    ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is object');
     p.then(function(d) {
             ok(true, 'then called');
             ok(d.result_sets.length == 1, 'result_sets len');
@@ -74,7 +74,7 @@ asyncTest('listen request receives ok', 7, function() {
         .listen('abc');
 
     var p = r.go();
-    ok(p.constructor.name.indexOf('Promise') >= 0, 'promise is object');
+    ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is object');
     p.then(function(d) {
             ok(true, 'then called');
             ok(d.result_sets.length == 1, 'result_sets len');
@@ -139,7 +139,7 @@ asyncTest('listen request invokes reloader on image', 8, function() {
     }
 
     var p = r.go();
-    ok(p.constructor.name.indexOf('Promise') >= 0, 'promise is object');
+    ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is object');
     p.then(function(d) {
             ok(true, 'then called');
             ok(d.result_sets.length == 1, 'result_sets len');
@@ -206,7 +206,7 @@ asyncTest('listen request ignored from wrong role', 4, function() {
         .listen('rdbhost_ftp_channel:reader');
 
     var p = r.go();
-    ok(p.constructor.name.indexOf('Promise') >= 0, 'promise is object');
+    ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is object');
     p.then(function(d) {
             ok(true, 'then called');
             ok(d.result_sets.length == 1, 'result_sets len');
@@ -265,7 +265,7 @@ asyncTest('listen reloader filters on paths', 7, function() {
     }
 
     var p = r.go();
-    ok(p.constructor.name.indexOf('Promise') >= 0, 'promise is object');
+    ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is object');
     p.then(function(d) {
             ok(true, 'then called');
             ok(d.result_sets.length == 1, 'result_sets len');
@@ -308,7 +308,7 @@ asyncTest('listen request receives w cloning', 12, function() {
         .query("NOTIFY \"abc\", 'another test msg on ';");
 
     var p1 = r1.go();
-    ok(p1.constructor.name.indexOf('Promise') >= 0, 'promise is object');
+    ok(p1.constructor.toString().indexOf('Promise') >= 0, 'promise is object');
     p1.then(function(d) {
             // ok(true, 'then called');
             ok(d.result_sets.length == 1, 'result_sets len');
@@ -326,7 +326,7 @@ asyncTest('listen request receives w cloning', 12, function() {
         });
 
     var p2 = r2.go();
-    ok(p2.constructor.name.indexOf('Promise') >= 0, 'pomise is object');
+    ok(p2.constructor.toString().indexOf('Promise') >= 0, 'pomise is object');
     p2.then(function(d) {
             // ok(true, 'then called');
             ok(d.result_sets.length == 1, 'result_sets len');
@@ -374,7 +374,7 @@ asyncTest('reader wrong-account request', 4, function() {
         .query('SELECT 1 AS a; /!* testing-delete *!/');
 
     var p = e.go();
-    ok(p.constructor.name.indexOf('Promise') >= 0, p);
+    ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(false, 'then called');
             clearTimeout(st);

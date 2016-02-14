@@ -75,7 +75,7 @@ asyncTest('reader request ok', 5, function() {
 
         ok('event', 'opened event received');
         var p = e.go();
-        ok(p.constructor.name.indexOf('Promise') >= 0, 'promise is Promise');
+        ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is Promise');
         p.then(function(d) {
                 ok(true, 'then called');
                 ok(d.result_sets[0].rows[0].a === 1, d.status);
@@ -102,7 +102,7 @@ asyncTest('reader request ok 2', 3, function() {
                    .query('SELECT 1 AS a');
 
     var p = e.go();
-    ok(p.constructor.name.indexOf('Promise') >= 0, 'promise is Promise');
+    ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is Promise');
     p.then(function(d) {
             ok(true, 'then called');
             ok(d.result_sets[0].rows[0].a === 1, d.status);
@@ -128,7 +128,7 @@ asyncTest('repeat request ok', 4, function() {
                    .repeat(2);
 
     var p = e.go();
-    ok(p.constructor.name.indexOf('Promise') >= 0, 'promise is Promise');
+    ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is Promise');
     p.then(function(d) {
           ok(true, 'then called');
           ok(d.result_sets.length === 2, d.result_sets.length);
@@ -161,7 +161,7 @@ asyncTest('cloned request ok', 8, function() {
     var r2 = r1.clone().params([5]);
 
     var p1 = r1.go();
-    ok(p1.constructor.name.indexOf('Promise') >= 0, 'promise is Promise');
+    ok(p1.constructor.toString().indexOf('Promise') >= 0, 'promise is Promise');
     var p1a = p1.then(function(d) {
             ok(true, 'then called');
             ok(d.result_sets.length === 1, d.result_sets.length);
@@ -172,7 +172,7 @@ asyncTest('cloned request ok', 8, function() {
         });
 
     var p2 = r2.go();
-    ok(p2.constructor.name.indexOf('Promise') >= 0, 'promise is Promise');
+    ok(p2.constructor.toString().indexOf('Promise') >= 0, 'promise is Promise');
     var p2a = p2.then(function(d) {
             ok(true, 'then called');
             ok(d.result_sets.length === 1, d.result_sets.length);
@@ -206,7 +206,7 @@ asyncTest('cloned request ok 2', 7, function() {
     var r2 = r1.clone().query('SLCT 1;');
 
     var p1 = r1.go();
-    ok(p1.constructor.name.indexOf('Promise') >= 0, 'promise is Promise');
+    ok(p1.constructor.toString().indexOf('Promise') >= 0, 'promise is Promise');
     var p1a = p1.then(function(d) {
             ok(true, 'then called');
             ok(d.result_sets.length === 1, d.result_sets.length);
@@ -217,7 +217,7 @@ asyncTest('cloned request ok 2', 7, function() {
         });
 
     var p2 = r2.go();
-    ok(p2.constructor.name.indexOf('Promise') >= 0, 'promise is Promise');
+    ok(p2.constructor.toString().indexOf('Promise') >= 0, 'promise is Promise');
     var p2a = p2.then(function(d) {
             ok(false, 'then called');
         })
@@ -249,7 +249,7 @@ asyncTest('proxy request ok', 3, function() {
         .proxy('email');
 
     var p = e.go();
-    ok(p.constructor.name.indexOf('Promise') >= 0, 'promise is Promise');
+    ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is Promise');
     p.then(function(d) {
             ok(false, 'then called');
             clearTimeout(st);
@@ -292,7 +292,7 @@ asyncTest('formData reader request ok', 4, function() {
     ok(e, 'connection created');
 
     var p = e.go();
-    ok(p.constructor.name.indexOf('Promise') >= 0, 'promise is Promise');
+    ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is Promise');
     p.then(function(d) {
             ok(true, 'then called');
             ok(d.result_sets[0].rows[0].a === '1', d.status);
@@ -325,7 +325,7 @@ asyncTest('listen/repeat conflict trapped', 4, function() {
     ok(e, 'connection created');
 
     var p = e.go();
-    ok(p.constructor.name.indexOf('Promise') >= 0, 'promise is Promise');
+    ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is Promise');
     p.then(function(d) {
             ok(false, 'then called');
             clearTimeout(st);

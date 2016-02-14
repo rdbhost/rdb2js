@@ -38,7 +38,7 @@ asyncTest('super request cancel', 4, function() {
                    .query('SELECT 1 AS a');
 
     var p = e.go();
-    ok(p.constructor.name.indexOf('Promise') >= 0, p);
+    ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(false, 'then called');
             clearTimeout(st);
@@ -56,7 +56,7 @@ asyncTest('super request cancel', 4, function() {
             cncl = frm.querySelector('.cancel');
         ok(frm.innerText.indexOf('SELECT 1') >= 0, 'sql found');
         cncl.click();
-    }, 500);
+    }, 1500);
 
     var st = setTimeout(function() { start(); }, 5000);
 });
@@ -70,7 +70,7 @@ asyncTest('super request confirm', 4, function() {
         .query('SELECT 1 AS a');
 
     var p = e.go();
-    ok(p.constructor.name.indexOf('Promise') >= 0, p);
+    ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(true, 'then called');
             ok(d.result_sets[0].rows[0].a === 1, d.status);
@@ -94,7 +94,7 @@ asyncTest('super request confirm', 4, function() {
         eml.value = demo_email;
         pw.value = get_password();
         sub.click();
-    }, 500);
+    }, 1500);
 
     var st = setTimeout(function() { start(); }, 5000);
 });
@@ -109,7 +109,7 @@ asyncTest('super request http confirm', 3, function() {
         .form_data(new FormData());
 
     var p = e.go();
-    ok(p.constructor.name.indexOf('Promise') >= 0, p);
+    ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(true, 'then called');
             ok(d.result_sets[0].rows[0].a === 1, d.status);
@@ -131,7 +131,7 @@ asyncTest('super request http confirm', 3, function() {
         eml.value = demo_email;
         pw.value = get_password();
         sub.click();
-    }, 500);
+    }, 1500);
 
     var st = setTimeout(function() { start(); }, 5000);
 });
@@ -147,7 +147,7 @@ asyncTest('super request http cancel', 3, function() {
         .form_data(new FormData());
 
     var p = e.go();
-    ok(p.constructor.name.indexOf('Promise') >= 0, p);
+    ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(false, 'then called');
             clearTimeout(st);
@@ -164,7 +164,7 @@ asyncTest('super request http cancel', 3, function() {
         var frm = document.getElementById('partial-super-auth'),
             cncl = frm.querySelector('.cancel');
         cncl.click();
-    }, 500);
+    }, 1500);
 
     var st = setTimeout(function() { start(); }, 5000);
 });
@@ -220,7 +220,7 @@ asyncTest('super request modal', 4, function() {
         .query('SELECT 1 AS a');
 
     var p = e.go();
-    ok(p.constructor.name.indexOf('Promise') >= 0, p);
+    ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(false, 'then called');
             clearTimeout(st);
@@ -237,12 +237,12 @@ asyncTest('super request modal', 4, function() {
     setTimeout(function() {
         el.click();
         Rdbhost.clicktried.push(1);
-    }, 500);
+    }, 1500);
     setTimeout(function() {
         var frm = document.getElementById('partial-super-auth'),
             cncl = frm.querySelector('.cancel');
         cncl.click();
-    }, 800);
+    }, 1800);
 
     var st = setTimeout(function() { start(); }, 5000);
 });
