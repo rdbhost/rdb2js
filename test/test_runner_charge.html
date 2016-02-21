@@ -2,26 +2,25 @@
 <html>
 <head>
   <title>QUnit Test Suite</title>
-  <link rel="stylesheet" href="qunit/qunit.css" type="text/css" media="screen">
-  <script type="text/javascript" src="qunit/qunit.js"></script>
+  <link rel="stylesheet" href="qunit/qunit-1.21.0.css" type="text/css" media="screen">
+  <script type="text/javascript" src="qunit/qunit-1.21.0.js"></script>
+  <script>QUnit.config.autostart = false;</script>
 
   <script type="text/javascript" src="../vendor/labjs/LAB.js"></script>
   <script>
     var $L = $LAB
-        .script('../lib/js/rdbhost-bundle.js').wait(
-            function() {
-
+        .script('../lib/js/rdbhost-bundle.js').wait(function() {
               if ( !Rdbhost.featuredetects.hasPromises() )
                 $L = $L.script('../vendor/es6-promises/dist/es6-promise.js');
               if ( !Rdbhost.featuredetects.hasFetch() )
                 $L = $L.script('../vendor/fetch/fetch.js').wait();
+              $L = $L.script('../test/private.js').wait()
+                  .script('../lib/js/rdbhost_livereload.js')
+                  .script('../lib/js/rdbhost-charge.js');
+              $L.script('myTests_charge.js').wait(function() { QUnit.start() });
             }
         );
-    $L = $L.script('../test/private.js').wait()
-        .script('../lib/js/rdbhost_livereload.js')
-        .script('../lib/js/rdbhost-charge.js');
 
-    $L.script('myTests_charge.js');
 
   </script>
 
