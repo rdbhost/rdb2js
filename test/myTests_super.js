@@ -1,10 +1,4 @@
 
-/*
-*
-* tests for the SQLEngine
-*
-*
-*/
 
 PASSWORD = undefined;
 
@@ -15,16 +9,20 @@ function get_password() {
     return PASSWORD;
 }
 
-module('Authorization tests', {
+QUnit.module('Authorization tests', {
 
-    setup: function () {
+    beforeEach: function (assert) {
+        console.log('beforeEach');
+        var done = assert.async();
         Rdbhost.connect(domain, acct_number);
         get_password();
+        done();
     },
-    teardown: function() {
-        QUnit.stop();
+    afterEach: function(assert) {
+        console.log('afterEach');
+        var done = assert.async();
         Rdbhost.once('connection-closed:super', function() {
-            QUnit.start()
+            done();
         });
         Rdbhost.disconnect(1000, '');
     }
@@ -32,23 +30,25 @@ module('Authorization tests', {
 
 // send super request, cancel authorization dialog
 //
-asyncTest('super request cancel', 4, function() {
+QUnit.test('super request cancel', function(assert) {
 
+    console.log('test super req cancel');
+    var done = assert.async();
     var e = Rdbhost.super()
-                   .query('SELECT 1 AS a');
+                   .query('SELECT 1 AS a;');
 
     var p = e.go();
     ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(false, 'then called');
             clearTimeout(st);
-            start();
+            done();
         })
         .catch(function(e) {
             ok(true, 'then error called');
             ok(e.message.substr(0, 11) === 'authorizati', 'cancellation ');
             clearTimeout(st);
-            start();
+            done();
         });
 
     setTimeout(function() {
@@ -56,31 +56,33 @@ asyncTest('super request cancel', 4, function() {
             cncl = frm.querySelector('.cancel');
         ok(frm.textContent.indexOf('SELECT 1') >= 0, 'sql found');
         cncl.click();
-    }, 1500);
+    }, 500);
 
-    var st = setTimeout(function() { start(); }, 5000);
+    var st = setTimeout(function() { done(); }, 5000);
 });
 
 
 // send super request, confirm with authorization dialog
 //
-asyncTest('super request confirm', 4, function() {
+QUnit.test('super request confirm', function(assert) {
 
+    console.log('test super req confirm');
+    var done = assert.async();
     var e = Rdbhost.super()
-        .query('SELECT 1 AS a');
+        .query('SELECT 1 AS b');
 
     var p = e.go();
     ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(true, 'then called');
-            ok(d.result_sets[0].rows[0].a === 1, d.status);
+            ok(d.result_sets[0].rows[0].b === 1, d.status);
             clearTimeout(st);
-            start();
+            done();
         })
         .catch(function(e) {
             ok(false, 'then error called');
             clearTimeout(st);
-            start();
+            done();
         });
 
     setTimeout(function() {
@@ -89,37 +91,39 @@ asyncTest('super request confirm', 4, function() {
             pw = frm.querySelector("input[name='password']"),
             sub = frm.querySelector("input[type='submit']");
 
-        ok(frm.textContent.indexOf('SELECT 1 AS a') >= 0, 'sql found');
+        ok(frm.textContent.indexOf('SELECT 1 AS b') >= 0, 'sql found');
 
         eml.value = demo_email;
         pw.value = get_password();
         sub.click();
-    }, 1500);
+    }, 500);
 
-    var st = setTimeout(function() { start(); }, 5000);
+    var st = setTimeout(function() { done(); }, 5000);
 });
 
 
 // send super request, confirm with authorization dialog
 //
-asyncTest('super request http confirm', 3, function() {
+QUnit.test('super request http confirm', function(assert) {
 
+    console.log('test super req http confirm');
+    var done = assert.async();
     var e = Rdbhost.super()
-        .query('SELECT 1 AS a;')
+        .query('SELECT 1 AS c;')
         .form_data(new FormData());
 
     var p = e.go();
     ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(true, 'then called');
-            ok(d.result_sets[0].rows[0].a === 1, d.status);
+            ok(d.result_sets[0].rows[0].c === 1, d.status);
             clearTimeout(st);
-            start();
+            done();
         })
         .catch(function(e) {
             ok(false, 'then error called');
             clearTimeout(st);
-            start();
+            done();
         });
 
     setTimeout(function() {
@@ -131,19 +135,22 @@ asyncTest('super request http confirm', 3, function() {
         eml.value = demo_email;
         pw.value = get_password();
         sub.click();
-    }, 1500);
+    }, 500);
 
-    var st = setTimeout(function() { start(); }, 5000);
+    var st = setTimeout(function() { done(); }, 5000);
 });
 
 
 
 // send super request, confirm with authorization dialog
 //
-asyncTest('super request http cancel', 3, function() {
+QUnit.test('super request http cancel', function(assert) {
 
+    console.log('test super req http cancel');
+
+    var done = assert.async();
     var e = Rdbhost.super()
-        .query('SELECT 1 AS a;')
+        .query('SELECT 1 AS d;')
         .form_data(new FormData());
 
     var p = e.go();
@@ -151,28 +158,30 @@ asyncTest('super request http cancel', 3, function() {
     p.then(function(d) {
             ok(false, 'then called');
             clearTimeout(st);
-            start();
+            done();
         })
         .catch(function(e) {
             ok(true, 'then error called');
             ok(e.message.substr(0, 11) === 'authorizati', 'cancellation ');
             clearTimeout(st);
-            start();
+            done();
         });
 
     setTimeout(function() {
         var frm = document.getElementById('partial-super-auth'),
             cncl = frm.querySelector('.cancel');
         cncl.click();
-    }, 1500);
+    }, 500);
 
-    var st = setTimeout(function() { start(); }, 5000);
+    var st = setTimeout(function() { done(); }, 5000);
 });
 
 
-module('modal-force tests', {
+QUnit.module('modal-force tests', {
 
-    setup: function () {
+    beforeEach: function (assert) {
+
+        console.log('beforeEach 1');
         Rdbhost.connect(domain, acct_number);
         get_password();
 
@@ -195,10 +204,12 @@ module('modal-force tests', {
         document.body.appendChild(el);
 
     },
-    teardown: function() {
-        QUnit.stop();
+    afterEach: function(assert) {
+
+        console.log('afterEach 1');
+        var done = assert.async();
         Rdbhost.once('connection-closed:super', function() {
-            QUnit.start()
+            done();
         });
         Rdbhost.disconnect(1000, '');
         var el = document.getElementById('test-link');
@@ -210,41 +221,44 @@ module('modal-force tests', {
 
 // send super request, cancel authorization dialog
 //
-asyncTest('super request modal', 4, function() {
+QUnit.test('super request modal', function(assert) {
+
+    console.log('test super req modal');
 
     var el = document.getElementById('test-link');
     el.click();
     Rdbhost.clicktried.push(1);
 
+    var done = assert.async();
     var e = Rdbhost.super()
-        .query('SELECT 1 AS a');
+        .query('SELECT 1 AS e');
 
     var p = e.go();
     ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(false, 'then called');
             clearTimeout(st);
-            start();
+            done();
         })
         .catch(function(e) {
             ok(true, 'then error called');
             clearTimeout(st);
             ok(Rdbhost.clickrecd.length === 1, 'wrong number clicks '+Rdbhost.clickrecd.length);
             ok(Rdbhost.clicktried.length === 2, 'wrong number click tries '+Rdbhost.clicktried.length);
-            start();
+            done();
         });
 
     setTimeout(function() {
         el.click();
         Rdbhost.clicktried.push(1);
-    }, 1500);
+    }, 500);
     setTimeout(function() {
         var frm = document.getElementById('partial-super-auth'),
             cncl = frm.querySelector('.cancel');
         cncl.click();
-    }, 1800);
+    }, 800);
 
-    var st = setTimeout(function() { start(); }, 5000);
+    var st = setTimeout(function() { done(); }, 5000);
 });
 
 
