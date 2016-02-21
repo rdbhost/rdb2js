@@ -257,7 +257,7 @@ asyncTest('proxy request ok', 3, function() {
         })
         .catch(function(e) {
             ok(true, 'then error called');
-            ok(e.message.substr(0, 11) === 'error rdb21', e.message);
+            ok(e.message.substr(0, 5) === 'rdb21', e.message);
             clearTimeout(st);
             start();
         });

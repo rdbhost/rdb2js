@@ -4,7 +4,7 @@ PASSWORD = undefined;
 function get_password() {
 
     if ( ! PASSWORD )
-        PASSWORD = 'horosh00'; //prompt('password');
+        PASSWORD = 'horosh00'; // prompt('password');
     return PASSWORD;
 }
 
@@ -23,7 +23,6 @@ module('Notify tests', {
         }, 500);
     }
 });
-
 
 
 
