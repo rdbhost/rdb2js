@@ -3,6 +3,7 @@ PASSWORD = undefined;
 
 function get_password() {
 
+    PASSWORD = PASSWORD || demo_pass;
     if ( ! PASSWORD )
         PASSWORD = prompt('password');
     return PASSWORD;
