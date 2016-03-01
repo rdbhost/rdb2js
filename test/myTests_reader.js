@@ -118,6 +118,56 @@ asyncTest('reader request ok 2', 3, function() {
     var st = setTimeout(function() { start(); }, 5000);
 });
 
+// send reader request with query and namedParams, verify promise fulfilled
+//
+asyncTest('reader request ok namedParams', 3, function() {
+
+    var e = Rdbhost.reader()
+        .query('SELECT %(b)s AS a')
+        .params({'b': 1});
+
+    var p = e.go();
+    ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is Promise');
+    p.then(function(d) {
+            ok(true, 'then called');
+            ok(d.result_sets[0].rows[0].a === '1', d.status);
+            clearTimeout(st);
+            start();
+        })
+        .catch(function(e) {
+            ok(false, 'then error called '+ e.message);
+            clearTimeout(st);
+            start();
+        });
+
+    var st = setTimeout(function() { start(); }, 5000);
+});
+
+// send reader request with query and namedParams, verify promise fulfilled
+//
+asyncTest('reader request ok args', 3, function() {
+
+    var e = Rdbhost.reader()
+        .query('SELECT %s AS a')
+        .params([1]);
+
+    var p = e.go();
+    ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is Promise');
+    p.then(function(d) {
+            ok(true, 'then called');
+            ok(d.result_sets[0].rows[0].a === '1', d.status);
+            clearTimeout(st);
+            start();
+        })
+        .catch(function(e) {
+            ok(false, 'then error called '+ e.message);
+            clearTimeout(st);
+            start();
+        });
+
+    var st = setTimeout(function() { start(); }, 5000);
+});
+
 // send reader request with repeated query, verify promise fulfilled
 //
 asyncTest('repeat request ok', 4, function() {
