@@ -26,10 +26,10 @@
   </style>
 
   <title>Dialog Stress Page</title>
-  <script type="text/javascript" src="http://dev.rdbhost.com/vendor/labjs/LAB.js"></script>
+  <script type="text/javascript" src="https://dev.rdbhost.com/vendor/labjs/LAB.js"></script>
   <script>
     var $L = $LAB
-        .script('http://devdemos.noservercoding.com/rdb2js/lib/js/rdbhost-bundle.js').wait(
+        .script('https://dev.rdbhost.com/vendor/rdbhost/latest/lib/js/rdbhost-bundle.js').wait(
             function() {
 
               if ( !Rdbhost.featuredetects.hasPromises() )
@@ -38,11 +38,11 @@
                 $L = $L.script('../../vendor/fetch/fetch.js').wait();
             }
         );
-    $L = $L.script('private.js').wait()
-        .script('http://devdemos.noservercoding.com/rdb2js/lib/js/rdbhost_livereload.js');
+    $L = $L.script('../../test/private.js').wait()
+        .script('../../lib/js/rdbhost_livereload.js');
 
     $L = $L.wait(function() {
-      Rdbhost.connect(domain, 14);
+      Rdbhost.connect(private.getItem('domain'), parseInt(private.getItem('acct_number'), 10));
       var preauth = Rdbhost.preauth();
       Rdbhost.activate_reloader(preauth);
     });
@@ -53,52 +53,50 @@
 
         // ## edit the localhost line to show path to templates.  must end in '/'
         var path = window.location.toString();
-        path = path.replace(/\w+.html/g,'');
+        path = path.replace(/\/test\/observe\/\w+.html/g,'/lib/partials/');
 
-        Rdbhost.connect(domain, 14, path+'dialog/');
+        Rdbhost.connect(private.getItem('domain'), parseInt(private.getItem('acct_number'), 10), path);
         var preauth = Rdbhost.preauth();
 
         var p = preauth.query('SELECT 123; \n\n SELECT \'abc\'; UPDATE whatever SET a=1;\n\nINSERT INTO wherever (b) VALUES(2);').go();
         p.catch(function(e) {
-          alert(e);
+          // alert(e);
         });
 
         evt.stopImmediatePropagation();
         evt.preventDefault();
       });
 
-/*
       document.getElementById('auth').addEventListener('click', function(evt) {
 
         // ## edit the localhost line to show path to templates.  must end in '/'
         var path = window.location.toString();
-        path = path.replace(/\w+.html/g,'');
+        path = path.replace(/\/test\/observe\/\w+.html/g,'/lib/partials/');
 
-        Rdbhost.connect(domain, 14, path+'dialog/');
+        Rdbhost.connect(private.getItem('domain'), parseInt(private.getItem('acct_number'), 10), path);
         var auth = Rdbhost.preauth();
 
         var p = auth.query('SELECT 123; \n\n SELECT \'abc\'; UPDATE whatever SET a=1;\n\nINSERT INTO wherever (b) VALUES(2);').go();
         p.catch(function(e) {
-          alert(e);
+          // alert(e);
         });
 
         evt.stopImmediatePropagation();
         evt.preventDefault();
       });
-*/
 
       document.getElementById('super').addEventListener('click', function(evt) {
 
         // ## edit the localhost line to show path to templates.  must end in '/'
         var path = window.location.toString();
-        path = path.replace(/\w+.html/g,'');
+        path = path.replace(/\/test\/observe\/\w+.html/g,'/lib/partials/');
 
-        Rdbhost.connect(domain, 14, path+'dialog/');
+        Rdbhost.connect(private.getItem('domain'), parseInt(private.getItem('acct_number'), 10), path);
         var spr = Rdbhost.super();
 
         var p = spr.query('SELECT 123; \n\n SELECT \'abc\'; UPDATE whatever SET a=1;\n\nINSERT INTO wherever (b) VALUES(2);').go();
         p.catch(function(e) {
-          alert(e);
+          // alert(e);
         });
 
         evt.stopImmediatePropagation();
@@ -117,7 +115,7 @@
     <ol>
       <li><a href="" id="preauth">preauth</a></li>
       <li><a href="" id="super">super</a></li>
-      <!-- li><a href="" id="auth">auth</a></li -->
+      <li><a href="" id="auth">auth</a></li>
     </ol>
   </div>
   </body>

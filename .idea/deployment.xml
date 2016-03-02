@@ -12,7 +12,7 @@
       <paths name="DEV.rdbhost.com">
         <serverdata>
           <mappings>
-            <mapping deploy="/webroot/www/rdbjs" local="$PROJECT_DIR$" web="/vendor/rdbhost/latest" />
+            <mapping deploy="/webroot/www/rdb2js" local="$PROJECT_DIR$" web="/vendor/rdbhost/latest" />
           </mappings>
         </serverdata>
       </paths>
