@@ -6,7 +6,9 @@
 *
 */
 
-PASSWORD = undefined;
+var demo_pass, demo_email, domain, acct_number;
+
+// PASSWORD = undefined;
 SUPER_AUTH = undefined;
 
 function get_auth(init, acctnum, email, passwd) {
@@ -37,20 +39,19 @@ function get_auth(init, acctnum, email, passwd) {
 var get_super_auth = get_auth.bind(null, 'super');
 
 
-function get_password() {
-
-    if ( ! PASSWORD )
-        PASSWORD = 'horosh00'; //prompt('password');
-    return PASSWORD;
-}
-
 module('Authorization tests', {
 
-    setup: function () {
+    beforeEach: function () {
         QUnit.stop();
+
+        domain = private.getItem('domain');
+        acct_number = parseInt(private.getItem('acct_number'), 10);
+        demo_email = private.getItem('demo_email');
+        demo_pass = private.getItem('demo_pass');
+
         Rdbhost.connect(domain, acct_number);
-        get_password();
-        var p = get_super_auth(acct_number, demo_email, PASSWORD);
+        // get_password();
+        var p = get_super_auth(acct_number, demo_email, demo_pass);
         p.then(function(d){
             SUPER_AUTH = d.authcode;
             var p1 = Rdbhost.super(SUPER_AUTH)
@@ -63,7 +64,7 @@ module('Authorization tests', {
                 });
         });
     },
-    teardown: function() {
+    afterEach: function() {
         QUnit.stop();
         Rdbhost.disconnect(1000, '');
         setTimeout(function() {
@@ -136,7 +137,7 @@ asyncTest('preauth request confirm', 3, function() {
             sub = frm.querySelector("input[type='submit']");
 
         eml.value = demo_email;
-        pw.value = get_password();
+        pw.value = private.getItem('demo_pass'); //get_password();
         sub.click();
     }, 500);
 

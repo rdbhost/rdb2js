@@ -1,13 +1,6 @@
 
 PASSWORD = undefined;
 
-function get_password() {
-
-    PASSWORD = PASSWORD || demo_pass;
-    if ( ! PASSWORD )
-        PASSWORD = prompt('password');
-    return PASSWORD;
-}
 
 var SETUP_OK = false;
 
@@ -51,8 +44,14 @@ module('all tables ok', {
     beforeEach: function (assert) {
         SETUP_OK = true;
         var done = assert.async();
+
+        var domain = private.getItem('domain'),
+            acct_number = private.getItem('acct_number');
         Rdbhost.connect(domain, acct_number);
-        get_password();
+        //get_password();
+
+        var demo_stripe_key = private.getItem('demo_stripe_key'),
+            demo_stripe_email = private.getItem('demo_stripe_email');
 
         var q = [dropApiTable, createApiKeyTable, addApiKey, dropChargesTable, createChargesTable].join('\n');
 

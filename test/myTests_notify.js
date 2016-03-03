@@ -1,34 +1,36 @@
 
-PASSWORD = undefined;
-
-function get_password() {
-
-    if ( ! PASSWORD )
-        PASSWORD = 'horosh00'; // prompt('password');
-    return PASSWORD;
-}
+var demo_pass, demo_email, acct_number, domain,
+    SUPER_AUTH = undefined, PASSWORD = undefined;
 
 
 module('Notify tests', {
 
-    setup: function () {
+    setup: function (assert) {
+
+        domain = private.getItem('domain');
+        acct_number = parseInt(private.getItem('acct_number'), 10);
+        demo_email = private.getItem('demo_email');
+        demo_pass = private.getItem('demo_pass');
+
         Rdbhost.connect(domain, acct_number);
         Rdbhost.activate_reloader(Rdbhost.reader());
     },
-    teardown: function() {
-        QUnit.stop();
+    teardown: function(assert) {
+        var done = assert.async();
+
         Rdbhost.disconnect(1000, '');
         setTimeout(function() {
-            QUnit.start();
+            done();
         }, 500);
     }
 });
 
 
-
 // send reader request with query, verify promise fulfilled
 //
-asyncTest('listen request ok', 4, function() {
+test('listen request ok', 4, function(assert){
+
+    var done = assert.async();
 
     var e = Rdbhost.reader()
         .query('SELECT %s AS a')
@@ -42,23 +44,24 @@ asyncTest('listen request ok', 4, function() {
             ok(d.result_sets.length == 1, 'result_sets len');
             ok(d.result_sets[0].records.rows[0].a == 1, 'column value === 1');
             clearTimeout(st);
-            start();
+            done();
       })
       .catch(function(e) {
             ok(false, 'then error called');
             clearTimeout(st);
-            start();
+            done();
       });
 
-    var st = setTimeout(function() { start(); }, 1000);
+    var st = setTimeout(function() { done(); }, 1000);
 });
 
 
 // send reader listen request with query, verify promise fulfilled
 //    and that notify is independently received
 //
-asyncTest('listen request receives ok', 7, function() {
+test('listen request receives ok', 7, function(assert){
 
+    var done = assert.async();
     var notifyrecd = false;
 
     Rdbhost.once('notify-received:abc', function f(ch, pl) {
@@ -80,24 +83,25 @@ asyncTest('listen request receives ok', 7, function() {
             ok(d.result_sets[0].row_count[0] == -1, 'row_count === 1');
             if ( notifyrecd ) {
                 clearTimeout(st);
-                start();
+                done();
             }
         })
         .catch(function(e) {
             ok(false, 'then error called');
             clearTimeout(st);
-            start();
+            done();
         });
 
-    var st = setTimeout(function() { start(); }, 1000);
+    var st = setTimeout(function() { done(); }, 1000);
 });
 
 
 // send super listen request with query, verify promise fulfilled
 //    and that notify is independently received
 //
-asyncTest('listen request invokes reloader on image', 8, function() {
+test('listen request invokes reloader on image', 8, function(assert){
 
+    var done = assert.async();
     var notifyrecd = false;
 
     // add a (nonexistant) image tag to page
@@ -133,7 +137,7 @@ asyncTest('listen request invokes reloader on image', 8, function() {
         setTimeout(function() {
             clearTimeout(st);
             document.body.removeChild(el);
-            start();
+            done();
         }, 50)
     }
 
@@ -159,18 +163,20 @@ asyncTest('listen request invokes reloader on image', 8, function() {
             sub = frm.querySelector("input[type='submit']");
 
         eml.value = demo_email;
-        pw.value = get_password();
+        pw.value = private.getItem('demo_pass');
         sub.click();
     }, 500);
 
-    var st = setTimeout(function() { start(); }, 1000);
+    var st = setTimeout(function() { done(); }, 1000);
 });
 
 
 // send reader listen request with preauth query, verify promise fulfilled
 //    but no notifies received
 //
-asyncTest('listen request ignored from wrong role', 4, function() {
+test('listen request ignored from wrong role', 4, function(assert){
+
+    var done = assert.async();
 
     // add a (nonexistant) image tag to page
     var el = document.createElement('img'),
@@ -187,7 +193,7 @@ asyncTest('listen request ignored from wrong role', 4, function() {
         setTimeout(function() {
             clearTimeout(st);
             document.body.removeChild(el);
-            start();
+            done();
         }, 50)
     }
 
@@ -225,7 +231,7 @@ asyncTest('listen request ignored from wrong role', 4, function() {
             sub = frm.querySelector("input[type='submit']");
 
         eml.value = demo_email;
-        pw.value = get_password();
+        pw.value = private.getItem('demo_pass');
         sub.click();
     }, 500);
 
@@ -238,8 +244,9 @@ asyncTest('listen request ignored from wrong role', 4, function() {
 // verify that reloader filters pages
 //   should not reload page
 //
-asyncTest('listen reloader filters on paths', 7, function() {
+test('listen reloader filters on paths', 7, function(assert){
 
+    var done = assert.async();
     var notifyrecd = false;
 
     Rdbhost.once('notify-received:rdbhost_ftp_channel:reader', function f(ch, pl) {
@@ -259,7 +266,7 @@ asyncTest('listen reloader filters on paths', 7, function() {
     function cleanup() {
         setTimeout(function() {
             clearTimeout(st);
-            start();
+            done();
         }, 50)
     }
 
@@ -278,15 +285,16 @@ asyncTest('listen reloader filters on paths', 7, function() {
             cleanup();
         });
 
-    var st = setTimeout(function() { start(); }, 1000);
+    var st = setTimeout(function() { done(); }, 1000);
 });
 
 
 // check that listen is applied independently of query in
 //    cloned queries
 //
-asyncTest('listen request receives w cloning', 12, function() {
+test('listen request receives w cloning', 12, function(assert){
 
+    var done = assert.async();
     var notifyrecd = 0;
 
     Rdbhost.on('notify-received:abc', function f(ch, pl) {
@@ -315,13 +323,13 @@ asyncTest('listen request receives w cloning', 12, function() {
             if ( notifyrecd > 1 ) {
                 clearTimeout(st);
                 Rdbhost.off('notify-received:abc');
-                start();
+                done();
             }
         })
         .catch(function(e) {
             ok(false, 'then error called');
             clearTimeout(st);
-            start();
+            done();
         });
 
     var p2 = r2.go();
@@ -333,18 +341,18 @@ asyncTest('listen request receives w cloning', 12, function() {
             if ( notifyrecd > 1 ) {
                 clearTimeout(st);
                 Rdbhost.off('notify-received:abc');
-                start();
+                done();
             }
         })
         .catch(function(e) {
             ok(false, 'then error called');
             clearTimeout(st);
-            start();
+            done();
         });
 
     var st = setTimeout(function() {
         Rdbhost.off('notify-received:abc');
-        start();
+        done();
     }, 1000);
 });
 
@@ -377,13 +385,13 @@ asyncTest('reader wrong-account request', 4, function() {
     p.then(function(d) {
             ok(false, 'then called');
             clearTimeout(st);
-            start();
+            done();
         })
         .catch(function(e) {
             ok(true, 'then error called');
             ok(e.message.substr(0, 11) === 'Failed to f', e.message);
             clearTimeout(st);
-            start();
+            done();
         });
 
     Rdbhost.once('connection-open-failed', function(evt) {
@@ -391,7 +399,7 @@ asyncTest('reader wrong-account request', 4, function() {
     });
 
     var st = setTimeout(function() {
-        start();
+        done();
     }, 50000);
 });
 

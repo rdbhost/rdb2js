@@ -2,8 +2,9 @@
 <html>
 <head>
   <title>QUnit Test Suite</title>
-  <link rel="stylesheet" href="qunit/qunit.css" type="text/css" media="screen">
-  <script type="text/javascript" src="qunit/qunit.js"></script>
+  <link rel="stylesheet" href="qunit/qunit-1.21.0.css" type="text/css" media="screen">
+  <script type="text/javascript" src="qunit/qunit-1.21.0.js"></script>
+  <script>QUnit.config.autostart = false;</script>
 
   <script type="text/javascript" src="../vendor/labjs/LAB.js"></script>
   <script>
@@ -15,12 +16,12 @@
                 $L = $L.script('../vendor/es6-promises/dist/es6-promise.js');
               if ( !Rdbhost.featuredetects.hasFetch() )
                 $L = $L.script('../vendor/fetch/fetch.js').wait();
-              $L = $L.script('../test/private.js').wait()
-                  .script('../lib/js/rdbhost_livereload.js');
-
-              $L.script('myTests_notify.js');
             }
         );
+    $L = $L.script('../test/private.js').wait()
+        .script('../lib/js/rdbhost_livereload.js');
+
+    $L.script('myTests_notify.js').wait(function() { QUnit.start(); } );
 
   </script>
 

@@ -5,18 +5,25 @@
 *
 *
 */
+
+var domain, acct_number;
+
 module('Connection tests', {
 
-    setup: function () {
+    beforeEach: function () {
+        domain = private.getItem('domain');
+        acct_number = parseInt(private.getItem('acct_number'), 10);
         Rdbhost.connect(domain, acct_number);
     },
-    teardown: function() {
+    afterEach: function() {
         Rdbhost.disconnect(1000, '');
     }
 });
 
 // create connection
-asyncTest('connected event', function() {
+test('connected event', function(assert){
+
+    var done = assert.async();
 
     Rdbhost.once('connection-opened', function f() {
         ok('event', 'opened event received');
@@ -26,12 +33,12 @@ asyncTest('connected event', function() {
     Rdbhost.once('connection-closed', function f() {
         ok('event', 'closed event received');
         clearTimeout(st);
-        start();
+        done();
     });
 
     var st = setTimeout(function() {
         ok(false, 'event received');
-        start();
+        done();
     }, 2000);
 
     Rdbhost.connect(domain, acct_number);
@@ -44,10 +51,12 @@ asyncTest('connected event', function() {
 
 module('Request tests', {
 
-    setup: function () {
+    beforeEach: function () {
+        domain = private.getItem('domain');
+        acct_number = parseInt(private.getItem('acct_number'), 10);
         Rdbhost.connect(domain, acct_number);
     },
-    teardown: function() {
+    afterEach: function() {
         Rdbhost.disconnect(1000, '');
     }
 });
@@ -65,7 +74,9 @@ test('request fail', 2, function() {
 
 // send readerrequest with query, verify connection event
 //
-asyncTest('reader request ok', 5, function() {
+test('reader request ok', 5, function(assert){
+
+    var done = assert.async();
 
     var e = Rdbhost.reader()
                    .query('SELECT 1 AS a');
@@ -80,23 +91,25 @@ asyncTest('reader request ok', 5, function() {
                 ok(true, 'then called');
                 ok(d.result_sets[0].rows[0].a === 1, d.status);
                 clearTimeout(st);
-                start();
+                done();
             })
             .catch(function(e) {
                 ok(false, 'then error called '+e.message);
                 clearTimeout(st);
-                start();
+                done();
             })
     });
 
-    var st = setTimeout(function() { start(); }, 5000);
+    var st = setTimeout(function() { done(); }, 5000);
 });
 
 
 
 // send reader request with query, verify promise fulfilled
 //
-asyncTest('reader request ok 2', 3, function() {
+test('reader request ok 2', 3, function(assert){
+
+    var done = assert.async();
 
     var e = Rdbhost.reader()
                    .query('SELECT 1 AS a');
@@ -107,20 +120,22 @@ asyncTest('reader request ok 2', 3, function() {
             ok(true, 'then called');
             ok(d.result_sets[0].rows[0].a === 1, d.status);
             clearTimeout(st);
-            start();
+            done();
         })
         .catch(function(e) {
             ok(false, 'then error called '+ e.message);
             clearTimeout(st);
-            start();
+            done();
         });
 
-    var st = setTimeout(function() { start(); }, 5000);
+    var st = setTimeout(function() { done(); }, 5000);
 });
 
 // send reader request with query and namedParams, verify promise fulfilled
 //
-asyncTest('reader request ok namedParams', 3, function() {
+test('reader request ok namedParams', 3, function(assert){
+
+    var done = assert.async();
 
     var e = Rdbhost.reader()
         .query('SELECT %(b)s AS a')
@@ -132,20 +147,22 @@ asyncTest('reader request ok namedParams', 3, function() {
             ok(true, 'then called');
             ok(d.result_sets[0].rows[0].a === '1', d.status);
             clearTimeout(st);
-            start();
+            done();
         })
         .catch(function(e) {
             ok(false, 'then error called '+ e.message);
             clearTimeout(st);
-            start();
+            done();
         });
 
-    var st = setTimeout(function() { start(); }, 5000);
+    var st = setTimeout(function() { done(); }, 5000);
 });
 
 // send reader request with query and namedParams, verify promise fulfilled
 //
-asyncTest('reader request ok args', 3, function() {
+test('reader request ok args', 3, function(assert){
+
+    var done = assert.async();
 
     var e = Rdbhost.reader()
         .query('SELECT %s AS a')
@@ -157,20 +174,22 @@ asyncTest('reader request ok args', 3, function() {
             ok(true, 'then called');
             ok(d.result_sets[0].rows[0].a === '1', d.status);
             clearTimeout(st);
-            start();
+            done();
         })
         .catch(function(e) {
             ok(false, 'then error called '+ e.message);
             clearTimeout(st);
-            start();
+            done();
         });
 
-    var st = setTimeout(function() { start(); }, 5000);
+    var st = setTimeout(function() { done(); }, 5000);
 });
 
 // send reader request with repeated query, verify promise fulfilled
 //
-asyncTest('repeat request ok', 4, function() {
+test('repeat request ok', 4, function(assert){
+
+    var done = assert.async();
 
     var e = Rdbhost.reader()
                    .query('SELECT %s AS a')
@@ -187,22 +206,24 @@ asyncTest('repeat request ok', 4, function() {
           p1.then(function(d1) {
               ok(d1.result_sets.length == 1, 'result_sets_length === 1');
               clearTimeout(st);
-              start();
+              done();
           });
       })
       .catch(function(e) {
           ok(false, 'then error called '+ e.message);
           clearTimeout(st);
-          start();
+          done();
       });
 
-    var st = setTimeout(function() { start(); }, 5000);
+    var st = setTimeout(function() { done(); }, 5000);
 });
 
 
 // send reader request with query multiple times by cloning, verify promise fulfilled
 //
-asyncTest('cloned request ok', 8, function() {
+test('cloned request ok', 8, function(assert){
+
+    var done = assert.async();
 
     var r1 = Rdbhost.reader()
         .query('SELECT %s AS a')
@@ -234,20 +255,22 @@ asyncTest('cloned request ok', 8, function() {
 
     Promise.all([p1a, p2a]).then(function(d) {
             clearTimeout(st);
-            start();
+            done();
         },
         function(e) {
             clearTimeout(st);
-            start();
+            done();
         });
 
-    var st = setTimeout(function() { start(); }, 5000);
+    var st = setTimeout(function() { done(); }, 5000);
 });
 
 
 // send reader request with query multiple times by cloning, one failing, verify promise fulfilled
 //
-asyncTest('cloned request ok 2', 7, function() {
+test('cloned request ok 2', 7, function(assert){
+
+    var done = assert.async();
 
     var r1 = Rdbhost.reader()
         .query('SELECT %s AS a')
@@ -278,20 +301,22 @@ asyncTest('cloned request ok 2', 7, function() {
 
     Promise.all([p1a, p2a]).then(function(d) {
             clearTimeout(st);
-            start();
+            done();
         },
         function(e) {
             clearTimeout(st);
-            start();
+            done();
         });
 
-    var st = setTimeout(function() { start(); }, 5000);
+    var st = setTimeout(function() { done(); }, 5000);
 });
 
 
 // send reader request with query, verify promise fulfilled
 //
-asyncTest('proxy request ok', 3, function() {
+test('proxy request ok', 3, function(assert){
+
+    var done = assert.async();
 
     var e = Rdbhost.reader()
         .query('SELECT %s AS a')
@@ -303,16 +328,16 @@ asyncTest('proxy request ok', 3, function() {
     p.then(function(d) {
             ok(false, 'then called');
             clearTimeout(st);
-            start();
+            done();
         })
         .catch(function(e) {
             ok(true, 'then error called');
             ok(e.message.substr(0, 5) === 'rdb21', e.message);
             clearTimeout(st);
-            start();
+            done();
         });
 
-    var st = setTimeout(function() { start(); }, 5000);
+    var st = setTimeout(function() { done(); }, 5000);
 });
 
 
@@ -320,10 +345,12 @@ asyncTest('proxy request ok', 3, function() {
 
 module('formData (fetch) tests', {
 
-  setup: function () {
+  beforeEach: function () {
+      domain = private.getItem('domain');
+      acct_number = parseInt(private.getItem('acct_number'), 10);
       Rdbhost.connect(domain, acct_number);
   },
-  teardown: function() {
+  afterEach: function() {
       Rdbhost.disconnect(1000, '');
   }
 });
@@ -331,7 +358,9 @@ module('formData (fetch) tests', {
 
 // send reader request as formData
 //
-asyncTest('formData reader request ok', 4, function() {
+test('formData reader request ok', 4, function(assert){
+
+    var done = assert.async();
 
     var fData = new FormData();
     fData.append('arg000', '1');
@@ -347,21 +376,23 @@ asyncTest('formData reader request ok', 4, function() {
             ok(true, 'then called');
             ok(d.result_sets[0].rows[0].a === '1', d.status);
             clearTimeout(st);
-            start();
+            done();
         })
         .catch(function(e) {
             ok(false, 'then error called '+e.message);
             clearTimeout(st);
-            start();
+            done();
         });
 
-    var st = setTimeout(function() { start(); }, 5000);
+    var st = setTimeout(function() { done(); }, 5000);
 });
 
 
 // use of listen and repeat together throws exception
 //
-asyncTest('listen/repeat conflict trapped', 4, function() {
+test('listen/repeat conflict trapped', 4, function(assert){
+
+    var done = assert.async();
 
     var fData = new FormData();
     fData.append('arg000', '1');
@@ -379,16 +410,16 @@ asyncTest('listen/repeat conflict trapped', 4, function() {
     p.then(function(d) {
             ok(false, 'then called');
             clearTimeout(st);
-            start();
+            done();
         })
         .catch(function(e) {
             ok(true, 'then error called');
             ok(e.message.indexOf('listen and repeat cannot') >= 0, 'correct error message');
             clearTimeout(st);
-            start();
+            done();
         });
 
-    var st = setTimeout(function() { start(); }, 5000);
+    var st = setTimeout(function() { done(); }, 5000);
 });
 
 

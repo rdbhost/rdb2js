@@ -1,11 +1,11 @@
 
-
-PASSWORD = undefined;
+var domain, acct_number, demo_email,
+    PASSWORD = undefined;
 
 function get_password() {
 
     if ( ! PASSWORD )
-        PASSWORD = 'horosh00'; //prompt('password');
+        PASSWORD = private.getItem('demo_pass');
     return PASSWORD;
 }
 
@@ -14,8 +14,10 @@ QUnit.module('Authorization tests', {
     beforeEach: function (assert) {
         console.log('beforeEach');
         var done = assert.async();
+        domain = private.getItem('domain');
+        acct_number = parseInt(private.getItem('acct_number'), 10);
+        demo_email = private.getItem('demo_email');
         Rdbhost.connect(domain, acct_number);
-        get_password();
         done();
     },
     afterEach: function(assert) {
@@ -94,7 +96,7 @@ QUnit.test('super request confirm', function(assert) {
         ok(frm.textContent.indexOf('SELECT 1 AS b') >= 0, 'sql found');
 
         eml.value = demo_email;
-        pw.value = get_password();
+        pw.value =  private.getItem('demo_pass');
         sub.click();
     }, 500);
 
@@ -133,7 +135,7 @@ QUnit.test('super request http confirm', function(assert) {
             sub = frm.querySelector("input[type='submit']");
 
         eml.value = demo_email;
-        pw.value = get_password();
+        pw.value =  private.getItem('demo_pass');
         sub.click();
     }, 500);
 
@@ -183,7 +185,7 @@ QUnit.module('modal-force tests', {
 
         console.log('beforeEach 1');
         Rdbhost.connect(domain, acct_number);
-        get_password();
+        // get_password();
 
         Rdbhost.clickrecd = [];
         Rdbhost.clicktried = [];

@@ -2,20 +2,15 @@
 
 PASSWORD = undefined;
 
-function get_password() {
-
-    if ( ! PASSWORD )
-        PASSWORD = 'horosh00'; //prompt('password');
-    return PASSWORD;
-}
-
 
 module('CorsTest tests', {
 
-    setup: function () {
-        Rdbhost.connect(domain, bad_acct_number);
+    beforeEach: function () {
+        var domain = private.getItem('domain'),
+            acct_number = private.getItem('acct_number');
+        Rdbhost.connect(domain, 1);
     },
-    teardown: function() {
+    afterEach: function() {
         Rdbhost.disconnect(1000, '');
     }
 });
@@ -24,7 +19,9 @@ module('CorsTest tests', {
 
 // send preauth request with query, verify promise fulfilled with error
 //
-asyncTest('reader wrong-account request', 4, function() {
+test('reader wrong-account request', 4, function(assert) {
+
+    var done = assert.async();
 
     var e = Rdbhost.reader()
         .form_data(new FormData())
@@ -35,7 +32,7 @@ asyncTest('reader wrong-account request', 4, function() {
     p.then(function(d) {
             ok(false, 'then called');
             clearTimeout(st);
-            start();
+            done();
         })
         .catch(function(e) {
             ok(true, 'then error called');
@@ -43,7 +40,7 @@ asyncTest('reader wrong-account request', 4, function() {
             clearTimeout(st);
             setTimeout(function() {
 
-                start();
+                done();
             }, 100);
         });
 
@@ -52,26 +49,29 @@ asyncTest('reader wrong-account request', 4, function() {
     });
 
     var st = setTimeout(function() {
-        start();
+        done();
     }, 50000);
 });
 
 
 module('Alternate Template Location tests', {
 
-    setup: function () {
+    beforeEach: function (assert) {
+        var domain = private.getItem('domain'),
+            acct_number = parseInt(private.getItem('acct_number'), 10);
+
         if (!window.location.origin) {
             window.location.origin = window.location.protocol + "//" + window.location.hostname +
                 (window.location.port ? ':' + window.location.port: '');
         }
         var path = window.location.pathname.replace('/test_runner_misc.html', '/tpl/');
         Rdbhost.connect(domain, acct_number, window.location.origin + path);
-        get_password();
+        // get_password();
     },
-    teardown: function() {
-        QUnit.stop();
+    afterEach: function(assert) {
+        var done = assert.async();
         Rdbhost.once('connection-closed:super', function() {
-            QUnit.start()
+            done();
         });
         Rdbhost.disconnect(1000, '');
     }
@@ -80,7 +80,9 @@ module('Alternate Template Location tests', {
 
 // send super request, confirm with authorization dialog from alt location
 //
-asyncTest('super request alt path', 4, function() {
+test('super request alt path', 4, function(assert) {
+
+    var done = assert.async();
 
     var e = Rdbhost.super()
         .query('SELECT 1 AS a;')
@@ -91,13 +93,13 @@ asyncTest('super request alt path', 4, function() {
     p.then(function(d) {
             ok(false, 'then called');
             clearTimeout(st);
-            start();
+            done();
         })
         .catch(function(e) {
             ok(true, 'then error called');
-            ok(e.message.substr(0, 11) === 'authorizati', 'cancellation ');
+            ok(e.message.substr(0, 11) === 'authorizati', 'cancellation '+ e.message);
             clearTimeout(st);
-            start();
+            done();
         });
 
     setTimeout(function() {
@@ -107,7 +109,7 @@ asyncTest('super request alt path', 4, function() {
         cncl.click();
     }, 500);
 
-    var st = setTimeout(function() { start(); }, 5000);
+    var st = setTimeout(function() { done(); }, 5000);
 });
 
 

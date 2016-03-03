@@ -1,5 +1,5 @@
 
-
+var domain;
 PASSWORD = undefined;
 SUPER_AUTH = undefined;
 
@@ -31,20 +31,15 @@ function get_auth(init, acctnum, email, passwd) {
 var get_super_auth = get_auth.bind(null, 'super');
 
 
-function get_password() {
-
-    if ( ! PASSWORD )
-        PASSWORD = 'horosh00'; //prompt('password');
-    return PASSWORD;
-}
-
 
 module('SQL Include tests', {
 
-    setup: function () {
+    beforeEach: function () {
+        domain = private.getItem('domain');
+        acct_number = parseInt(private.getItem('acct_number'), 10);
         Rdbhost.connect(domain, acct_number);
     },
-    teardown: function() {
+    afterEach: function() {
         Rdbhost.disconnect(1000, '');
     }
 });
@@ -52,7 +47,9 @@ module('SQL Include tests', {
 
 // send reader request with query, verify promise fulfilled
 //
-asyncTest('sql include found', function() {
+test('sql include found', function(assert) {
+
+    var done = assert.async();
 
     setTimeout(function() {
         var frm = document.getElementById('preauth-auth');
@@ -63,8 +60,8 @@ asyncTest('sql include found', function() {
             pw = frm.querySelector("input[name='password']"),
             sub = frm.querySelector("input[type='submit']");
 
-        eml.value = demo_email;
-        pw.value = get_password();
+        eml.value = private.getItem('demo_email');
+        pw.value = private.getItem('demo_pass');
         sub.click();
     }, 500);
 
@@ -72,15 +69,15 @@ asyncTest('sql include found', function() {
     p.then(function(d) {
             ok(d.status[1] === 'OK', 'status ok');
             clearTimeout(st);
-            start();
+            done();
         })
         .catch(function(e) {
             ok(false, e.message);
             clearTimeout(st);
-            start();
+            done();
         });
 
-    var st = setTimeout(function() { start(); }, 1000);
+    var st = setTimeout(function() { done(); }, 1000);
 });
 
 
