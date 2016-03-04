@@ -489,6 +489,59 @@ test('two objects to params conflict trapped', function() {
 });
 
 
+
+module('CorsTest tests', {
+
+    beforeEach: function () {
+        var domain = private.getItem('domain'),
+            acct_number = private.getItem('acct_number');
+        Rdbhost.connect(domain, 1);
+    },
+    afterEach: function() {
+        Rdbhost.disconnect(1000, '');
+    }
+});
+
+// /acct/corstest
+
+// send preauth request with query, verify promise fulfilled with error
+//
+test('reader wrong-account request', 4, function(assert) {
+
+    var done = assert.async();
+
+    var e = Rdbhost.reader()
+        .form_data(new FormData())
+        .query('SELECT 1 AS a; /* testing-delete */');
+
+    var p = e.go();
+    ok(p.constructor.toString().indexOf('Promise') >= 0, p);
+    p.then(function(d) {
+            ok(false, 'then called');
+            clearTimeout(st);
+            done();
+        })
+        .catch(function(e) {
+            ok(true, 'then error called');
+            ok(e.message.toLowerCase().indexOf('failed')>=0 || e.message.toLowerCase().indexOf('error')>=0, e.message);
+            clearTimeout(st);
+            setTimeout(function() {
+
+                done();
+            }, 100);
+        });
+
+    Rdbhost.once('connection-open-failed', function(evt) {
+        ok(true, 'connection-open-failed event emitted');
+    });
+
+    var st = setTimeout(function() {
+        done();
+    }, 50000);
+});
+
+
+
 /*
 *
 */

@@ -1,6 +1,32 @@
 
-PASSWORD = undefined;
+var domain, demo_email, demo_pass, super_authcode, demo_stripe_key, demo_stripe_email;
 
+function get_auth(init, acctnum, email, passwd) {
+
+    var url = 'https://dev.rdbhost.com/acct/login/00000000' + acctnum,
+        formData = new FormData();
+
+    formData.append('arg:email', email);
+    formData.append('arg:password', passwd);
+
+    var p = fetch(url, {method: 'post', body: formData} );
+    return p.then(function(resp) {
+        return resp.json().then(function(d) {
+
+            if ( d.error )
+                throw new Error(d.error[1]);
+
+            for ( var i in d.records.rows ) {
+                var row = d.records.rows[i];
+                if ( row.role.substr(0,1) === init.substr(0,1) )
+                    return row;
+
+            }
+            throw new Error('super not found in login records');
+        })
+    });
+}
+var get_super_auth = get_auth.bind(null, 'super');
 
 var SETUP_OK = false;
 
@@ -42,31 +68,39 @@ var dropApiTable = 'DROP TABLE IF EXISTS auth.apikeys;',
 module('all tables ok', {
 
     beforeEach: function (assert) {
+
         SETUP_OK = true;
         var done = assert.async();
 
-        var domain = private.getItem('domain'),
-            acct_number = private.getItem('acct_number');
-        Rdbhost.connect(domain, acct_number);
-        //get_password();
+        domain = private.getItem('domain');
+        acct_number = parseInt(private.getItem('acct_number'), 10);
+        demo_email = private.getItem('demo_email');
+        demo_pass = private.getItem('demo_pass');
 
-        var demo_stripe_key = private.getItem('demo_stripe_key'),
-            demo_stripe_email = private.getItem('demo_stripe_email');
+        demo_stripe_key = private.getItem('demo_stripe_key');
+        demo_stripe_email = private.getItem('demo_stripe_email');
+
+        Rdbhost.connect(domain, acct_number);
 
         var q = [dropApiTable, createApiKeyTable, addApiKey, dropChargesTable, createChargesTable].join('\n');
 
-        var p = Rdbhost.super(super_authcode)
-            .query(q)
-            .params({'apikey': demo_stripe_key, 'account_email': demo_stripe_email})
-            .go();
-        p.then(function() {
-                Rdbhost.disconnect(1000, '');
-                done();
-            },
-            function(e) {
-                Rdbhost.disconnect(1000, '');
-                done();
-            });
+        var p = get_super_auth(acct_number, demo_email, demo_pass);
+        p.then(function(d) {
+            super_authcode = d.authcode;
+
+            var p = Rdbhost.super(super_authcode)
+                .query(q)
+                .params({'apikey': demo_stripe_key, 'account_email': demo_stripe_email})
+                .go();
+            p.then(function () {
+                    Rdbhost.disconnect(1000, '');
+                    done();
+                },
+                function (e) {
+                    Rdbhost.disconnect(1000, '');
+                    done();
+                });
+        });
     },
     afterEach: function(assert) {
         SETUP_OK = false;
@@ -85,7 +119,7 @@ module('all tables ok', {
 });
 
 
-QUnit.test('test setup', function(assert) {
+test('test setup', function(assert) {
 
     var done = assert.async();
 
@@ -114,7 +148,7 @@ QUnit.test('test setup', function(assert) {
 
 // routine operation
 //
-QUnit.test('charge tests - routine fail', function(assert) {
+test('charge tests - routine fail', function(assert) {
 
     var done = assert.async();
 
@@ -147,7 +181,7 @@ QUnit.test('charge tests - routine fail', function(assert) {
             sub = frm.querySelector("input[type='submit']");
 
         eml.value = demo_email;
-        pw.value = get_password();
+        pw.value = private.getItem('demo_pass');
         sub.click();
 
     }, 800);
@@ -160,7 +194,7 @@ QUnit.test('charge tests - routine fail', function(assert) {
 
 // routine operation
 //
-QUnit.test('charge tests - routine success', function(assert) {
+test('charge tests - routine success', function(assert) {
 
     var done = assert.async();
 
@@ -193,7 +227,7 @@ QUnit.test('charge tests - routine success', function(assert) {
             sub = frm.querySelector("input[type='submit']");
 
         eml.value = demo_email;
-        pw.value = get_password();
+        pw.value = private.getItem('demo_pass');
         sub.click();
 
     }, 800);
@@ -210,7 +244,7 @@ module('charge table missing', {
         SETUP_OK = true;
         var done = assert.async();
         Rdbhost.connect(domain, acct_number);
-        get_password();
+        //get_password();
 
         var q = [dropApiTable, createApiKeyTable, addApiKey, dropChargesTable].join('\n');
 
@@ -244,7 +278,7 @@ module('charge table missing', {
 });
 
 
-QUnit.test('test setup', function(assert) {
+test('test setup', function(assert) {
 
     var done = assert.async();
 
@@ -272,7 +306,7 @@ QUnit.test('test setup', function(assert) {
 
 // routine operation
 //
-QUnit.test('charge tests - routine', function(assert) {
+test('charge tests - routine', function(assert) {
 
     var done = assert.async();
 
@@ -303,7 +337,7 @@ QUnit.test('charge tests - routine', function(assert) {
             sub = frm.querySelector("input[type='submit']");
 
         eml.value = demo_email;
-        pw.value = get_password();
+        pw.value = private.getItem('demo_pass');
         sub.click();
 
     }, 800);
@@ -320,7 +354,6 @@ module('apikeys table missing', {
         SETUP_OK = true;
         var done = assert.async();
         Rdbhost.connect(domain, acct_number);
-        get_password();
 
         var q = [dropApiTable, dropChargesTable, createChargesTable].join('\n');
 
@@ -354,7 +387,7 @@ module('apikeys table missing', {
 });
 
 
-QUnit.test('test setup', function(assert) {
+test('test setup', function(assert) {
 
     var done = assert.async();
 
@@ -382,7 +415,7 @@ QUnit.test('test setup', function(assert) {
 
 // routine operation
 //
-QUnit.test('charge tests - routine', function(assert) {
+test('charge tests - routine', function(assert) {
 
     var done = assert.async();
 
@@ -412,7 +445,7 @@ QUnit.test('charge tests - routine', function(assert) {
             sub = frm.querySelector("input[type='submit']");
 
         eml.value = demo_email;
-        pw.value = get_password();
+        pw.value = private.getItem('demo_pass');
         sub.click();
 
         setTimeout(function() {
