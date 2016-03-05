@@ -66,7 +66,7 @@ test('request fail', 2, function() {
 
     var e = new Rdbhost.preauth();
     ok(e, 'connection created');
-    try { e.go(); }
+    try { e.get_data(); }
     catch (e) {
         ok(e.message === 'no query was provided', e.message);
     }
@@ -85,7 +85,7 @@ test('reader request ok', 5, function(assert){
     Rdbhost.once('connection-opened:reader', function f() {
 
         ok('event', 'opened event received');
-        var p = e.go();
+        var p = e.get_data();
         ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is Promise');
         p.then(function(d) {
                 ok(true, 'then called');
@@ -114,7 +114,7 @@ test('reader request ok 2', 3, function(assert){
     var e = Rdbhost.reader()
                    .query('SELECT 1 AS a');
 
-    var p = e.go();
+    var p = e.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is Promise');
     p.then(function(d) {
             ok(true, 'then called');
@@ -141,7 +141,7 @@ test('reader request ok namedParams', 3, function(assert){
         .query('SELECT %(b)s AS a')
         .params({'b': 1});
 
-    var p = e.go();
+    var p = e.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is Promise');
     p.then(function(d) {
             ok(true, 'then called');
@@ -168,7 +168,7 @@ test('reader request ok args', 3, function(assert){
         .query('SELECT %s AS a')
         .params([1]);
 
-    var p = e.go();
+    var p = e.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is Promise');
     p.then(function(d) {
             ok(true, 'then called');
@@ -196,13 +196,13 @@ test('repeat request ok', 4, function(assert){
                    .params([1,2])
                    .repeat(2);
 
-    var p = e.go();
+    var p = e.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is Promise');
     p.then(function(d) {
           ok(true, 'then called');
           ok(d.result_sets.length === 2, d.result_sets.length);
 
-          var p1 = e.clone().repeat().go();
+          var p1 = e.clone().repeat().get_data();
           p1.then(function(d1) {
               ok(d1.result_sets.length == 1, 'result_sets_length === 1');
               clearTimeout(st);
@@ -231,7 +231,7 @@ test('cloned request ok', 8, function(assert){
 
     var r2 = r1.clone().params([5]);
 
-    var p1 = r1.go();
+    var p1 = r1.get_data();
     ok(p1.constructor.toString().indexOf('Promise') >= 0, 'promise is Promise');
     var p1a = p1.then(function(d) {
             ok(true, 'then called');
@@ -242,7 +242,7 @@ test('cloned request ok', 8, function(assert){
             ok(false, 'then error called '+ e.message);
         });
 
-    var p2 = r2.go();
+    var p2 = r2.get_data();
     ok(p2.constructor.toString().indexOf('Promise') >= 0, 'promise is Promise');
     var p2a = p2.then(function(d) {
             ok(true, 'then called');
@@ -278,7 +278,7 @@ test('cloned request ok 2', 7, function(assert){
 
     var r2 = r1.clone().query('SLCT 1;');
 
-    var p1 = r1.go();
+    var p1 = r1.get_data();
     ok(p1.constructor.toString().indexOf('Promise') >= 0, 'promise is Promise');
     var p1a = p1.then(function(d) {
             ok(true, 'then called');
@@ -289,7 +289,7 @@ test('cloned request ok 2', 7, function(assert){
             ok(false, 'then error called '+e.message);
         });
 
-    var p2 = r2.go();
+    var p2 = r2.get_data();
     ok(p2.constructor.toString().indexOf('Promise') >= 0, 'promise is Promise');
     var p2a = p2.then(function(d) {
             ok(false, 'then called');
@@ -323,7 +323,7 @@ test('proxy request ok', 3, function(assert){
         .params([1,2])
         .proxy('email');
 
-    var p = e.go();
+    var p = e.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is Promise');
     p.then(function(d) {
             ok(false, 'then called');
@@ -370,7 +370,7 @@ test('formData reader request ok', 4, function(assert){
         .form_data(fData);
     ok(e, 'connection created');
 
-    var p = e.go();
+    var p = e.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is Promise');
     p.then(function(d) {
             ok(true, 'then called');
@@ -405,7 +405,7 @@ test('listen/repeat conflict trapped', 4, function(assert){
 
     ok(e, 'connection created');
 
-    var p = e.go();
+    var p = e.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is Promise');
     p.then(function(d) {
             ok(false, 'then called');
@@ -514,7 +514,7 @@ test('reader wrong-account request', 4, function(assert) {
         .form_data(new FormData())
         .query('SELECT 1 AS a; /* testing-delete */');
 
-    var p = e.go();
+    var p = e.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(false, 'then called');

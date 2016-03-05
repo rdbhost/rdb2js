@@ -34,7 +34,7 @@ QUnit.test('super request cancel', function(assert) {
     var e = Rdbhost.super()
                    .query('SELECT 1 AS a;');
 
-    var p = e.go();
+    var p = e.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(false, 'then called');
@@ -68,7 +68,7 @@ QUnit.test('super request confirm', function(assert) {
     var e = Rdbhost.super()
         .query('SELECT 1 AS b');
 
-    var p = e.go();
+    var p = e.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(true, 'then called');
@@ -109,7 +109,7 @@ QUnit.test('super request http confirm', function(assert) {
         .query('SELECT 1 AS c;')
         .form_data(new FormData());
 
-    var p = e.go();
+    var p = e.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(true, 'then called');
@@ -150,7 +150,7 @@ QUnit.test('super request http cancel', function(assert) {
         .query('SELECT 1 AS d;')
         .form_data(new FormData());
 
-    var p = e.go();
+    var p = e.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(false, 'then called');
@@ -230,7 +230,7 @@ QUnit.test('super request modal', function(assert) {
     var e = Rdbhost.super()
         .query('SELECT 1 AS e');
 
-    var p = e.go();
+    var p = e.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(false, 'then called');
@@ -295,12 +295,12 @@ test('super request http cancel-confirm', 4, function(assert) {
     var e = Rdbhost.super()
         .query('SELECT 1 AS a');
 
-    var p = e.go();
+    var p = e.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(true, 'then called');
 
-            var p1 = Rdbhost.super().query('SELECT 2 AS b;').form_data(fd).go();
+            var p1 = Rdbhost.super().query('SELECT 2 AS b;').form_data(fd).get_data();
             ok(p1.constructor.toString().indexOf('Promise') >= 0, p1);
             p1.then(function(d) {
                     ok(false, '2nd request confirm not canceled');
@@ -349,12 +349,12 @@ test('super request http confirm-YES', 5, function(assert) {
     var e = Rdbhost.super()
         .query('SELECT 1 AS a');
 
-    var p = e.go();
+    var p = e.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
         ok(true, 'then called');
 
-        var p1 = Rdbhost.super().query('SELECT 2 AS b;').form_data(fd).go();
+        var p1 = Rdbhost.super().query('SELECT 2 AS b;').form_data(fd).get_data();
         ok(p1.constructor.toString().indexOf('Promise') >= 0, p1);
         p1.then(function(d) {
                 ok(true, '2nd request confirm not canceled');
@@ -401,12 +401,12 @@ test('super request ws cancel-confirm', 4, function(assert) {
     var e = Rdbhost.super()
         .query('SELECT 1 AS a');
 
-    var p = e.go();
+    var p = e.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
         ok(true, 'then called');
 
-        var p1 = Rdbhost.super().query('SELECT 2 AS b;').go();
+        var p1 = Rdbhost.super().query('SELECT 2 AS b;').get_data();
         ok(p1.constructor.toString().indexOf('Promise') >= 0, p1);
         p1.then(function(d) {
                 ok(false, '2nd request confirm not canceled');
@@ -451,12 +451,12 @@ test('super request ws confirm-YES', 5, function(assert) {
     var e = Rdbhost.super()
         .query('SELECT 1 AS a');
 
-    var p = e.go();
+    var p = e.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
         ok(true, 'then called');
 
-        var p1 = Rdbhost.super().query('SELECT 2 AS b;').go();
+        var p1 = Rdbhost.super().query('SELECT 2 AS b;').get_data();
         ok(p1.constructor.toString().indexOf('Promise') >= 0, p1);
         p1.then(function(d) {
                 ok(true, '2nd request confirm not canceled');
@@ -528,7 +528,7 @@ test('super request alt path', 4, function(assert) {
         .query('SELECT 1 AS a;')
         .form_data(new FormData());
 
-    var p = e.go();
+    var p = e.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(false, 'then called');

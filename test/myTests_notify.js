@@ -37,7 +37,7 @@ test('listen request ok', 4, function(assert){
         .params([1])
         .listen('abc');
 
-    var p = e.go();
+    var p = e.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is object');
     p.then(function(d) {
             ok(true, 'then called');
@@ -75,7 +75,7 @@ test('listen request receives ok', 7, function(assert){
         .query("NOTIFY \"abc\", 'test message on channel abc';")
         .listen('abc');
 
-    var p = r.go();
+    var p = r.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is object');
     p.then(function(d) {
             ok(true, 'then called');
@@ -141,7 +141,7 @@ test('listen request invokes reloader on image', 8, function(assert){
         }, 50)
     }
 
-    var p = r.go();
+    var p = r.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is object');
     p.then(function(d) {
             ok(true, 'then called');
@@ -210,7 +210,7 @@ test('listen request ignored from wrong role', 4, function(assert){
         .query("NOTIFY \"rdbhost_ftp_channel:reader\", 'SAVE FILE /dummy.gif';")
         .listen('rdbhost_ftp_channel:reader');
 
-    var p = r.go();
+    var p = r.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is object');
     p.then(function(d) {
             ok(true, 'then called');
@@ -270,7 +270,7 @@ test('listen reloader filters on paths', 7, function(assert){
         }, 50)
     }
 
-    var p = r.go();
+    var p = r.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is object');
     p.then(function(d) {
             ok(true, 'then called');
@@ -314,7 +314,7 @@ test('listen request receives w cloning', 12, function(assert){
     var r2 = r1.clone()
         .query("NOTIFY \"abc\", 'another test msg on ';");
 
-    var p1 = r1.go();
+    var p1 = r1.get_data();
     ok(p1.constructor.toString().indexOf('Promise') >= 0, 'promise is object');
     p1.then(function(d) {
             // ok(true, 'then called');
@@ -332,7 +332,7 @@ test('listen request receives w cloning', 12, function(assert){
             done();
         });
 
-    var p2 = r2.go();
+    var p2 = r2.get_data();
     ok(p2.constructor.toString().indexOf('Promise') >= 0, 'pomise is object');
     p2.then(function(d) {
             // ok(true, 'then called');
@@ -380,7 +380,7 @@ asyncTest('reader wrong-account request', 4, function() {
         .form_data(new FormData())
         .query('SELECT 1 AS a; /!* testing-delete *!/');
 
-    var p = e.go();
+    var p = e.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(false, 'then called');

@@ -91,7 +91,7 @@ module('all tables ok', {
             var p = Rdbhost.super(super_authcode)
                 .query(q)
                 .params({'apikey': demo_stripe_key, 'account_email': demo_stripe_email})
-                .go();
+                .get_data();
             p.then(function () {
                     Rdbhost.disconnect(1000, '');
                     done();
@@ -108,7 +108,7 @@ module('all tables ok', {
         Rdbhost.once('connection-closed:super', function() {
             done();
         });
-        var p = Rdbhost.super(super_authcode).query(dropApiTable).go();
+        var p = Rdbhost.super(super_authcode).query(dropApiTable).get_data();
         p.then(function() {
                 Rdbhost.disconnect(1000, '');
             },
@@ -125,7 +125,7 @@ test('test setup', function(assert) {
 
     var s = Rdbhost.super(super_authcode)
         .query('SELECT count(*) FROM auth.apikeys;')
-        .go();
+        .get_data();
 
     s.then(function(d) {
             ok(true, 'auth.apikeys found');
@@ -251,7 +251,7 @@ module('charge table missing', {
         var p = Rdbhost.super(super_authcode)
             .query(q)
             .params({'apikey': demo_stripe_key, 'account_email': demo_stripe_email})
-            .go();
+            .get_data();
         p.then(function() {
                 Rdbhost.disconnect(1000, '');
                 done();
@@ -267,7 +267,7 @@ module('charge table missing', {
         Rdbhost.once('connection-closed:super', function() {
             done();
         });
-        var p = Rdbhost.super(super_authcode).query(dropApiTable).go();
+        var p = Rdbhost.super(super_authcode).query(dropApiTable).get_data();
         p.then(function() {
                 Rdbhost.disconnect(1000, '');
             },
@@ -284,7 +284,7 @@ test('test setup', function(assert) {
 
     var s = Rdbhost.super(super_authcode)
         .query('SELECT * FROM charges;')
-        .go();
+        .get_data();
 
     s.then(function(d) {
             ok(false, 'charges found');
@@ -360,7 +360,7 @@ module('apikeys table missing', {
         var p = Rdbhost.super(super_authcode)
             .query(q)
             .params({'apikey': demo_stripe_key, 'account_email': demo_stripe_email})
-            .go();
+            .get_data();
         p.then(function() {
                 Rdbhost.disconnect(1000, '');
                 done();
@@ -376,7 +376,7 @@ module('apikeys table missing', {
         Rdbhost.once('connection-closed:super', function() {
             done();
         });
-        var p = Rdbhost.super(super_authcode).query(dropApiTable).go();
+        var p = Rdbhost.super(super_authcode).query(dropApiTable).get_data();
         p.then(function() {
                 Rdbhost.disconnect(1000, '');
             },
@@ -393,7 +393,7 @@ test('test setup', function(assert) {
 
     var s = Rdbhost.super(super_authcode)
         .query('SELECT * FROM auth.apikeys;')
-        .go();
+        .get_data();
 
     s.then(function(d) {
             ok(false, 'charges found');

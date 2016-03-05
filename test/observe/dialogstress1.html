@@ -58,7 +58,7 @@
         Rdbhost.connect(private.getItem('domain'), parseInt(private.getItem('acct_number'), 10), path);
         var preauth = Rdbhost.preauth();
 
-        var p = preauth.query('SELECT 123; \n\n SELECT \'abc\'; UPDATE whatever SET a=1;\n\nINSERT INTO wherever (b) VALUES(2);').go();
+        var p = preauth.query('SELECT 123; \n\n SELECT \'abc\'; UPDATE whatever SET a=1;\n\nINSERT INTO wherever (b) VALUES(2);').get_data();
         p.catch(function(e) {
           // alert(e);
         });
@@ -76,7 +76,7 @@
         Rdbhost.connect(private.getItem('domain'), parseInt(private.getItem('acct_number'), 10), path);
         var auth = Rdbhost.preauth();
 
-        var p = auth.query('SELECT 123; \n\n SELECT \'abc\'; UPDATE whatever SET a=1;\n\nINSERT INTO wherever (b) VALUES(2);').go();
+        var p = auth.query('SELECT 123; \n\n SELECT \'abc\'; UPDATE whatever SET a=1;\n\nINSERT INTO wherever (b) VALUES(2);').get_data();
         p.catch(function(e) {
           // alert(e);
         });
@@ -94,7 +94,7 @@
         Rdbhost.connect(private.getItem('domain'), parseInt(private.getItem('acct_number'), 10), path);
         var spr = Rdbhost.super();
 
-        var p = spr.query('SELECT 123; \n\n SELECT \'abc\'; UPDATE whatever SET a=1;\n\nINSERT INTO wherever (b) VALUES(2);').go();
+        var p = spr.query('SELECT 123; \n\n SELECT \'abc\'; UPDATE whatever SET a=1;\n\nINSERT INTO wherever (b) VALUES(2);').get_data();
         p.catch(function(e) {
           // alert(e);
         });

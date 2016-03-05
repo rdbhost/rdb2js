@@ -56,7 +56,7 @@ module('Authorization tests', {
             SUPER_AUTH = d.authcode;
             var p1 = Rdbhost.super(SUPER_AUTH)
                 .query("DELETE FROM lookup.preauth_queries WHERE query LIKE '%%/* testing-delete */%%';")
-                .go();
+                .get_data();
             p1.then(function(d) {
                     QUnit.start();
                 }, function(e) {
@@ -82,7 +82,7 @@ asyncTest('preauth request cancel', 3, function() {
     var e = Rdbhost.preauth()
         .query('SELECT 1 AS a; /* testing-delete */');
 
-    var p = e.go();
+    var p = e.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(false, 'then called');
@@ -113,7 +113,7 @@ asyncTest('preauth request confirm', 3, function() {
     var e = Rdbhost.preauth()
         .query('SELECT 1 AS a; /* testing-delete */');
 
-    var p = e.go();
+    var p = e.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(true, 'then called');
