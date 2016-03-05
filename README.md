@@ -90,7 +90,7 @@ Most of these methods return the request object `this`, allowing methods to be c
   be called once, but can be cloned and each clone called once.   
   returns new request
 
-######go()
+######get_data()
   submits the request to the server, and returns a Promise for the results.   
   returns Promise
 
@@ -109,7 +109,7 @@ In either case, the `authcode` is cached in the client once retrieved.
 
     var prom = Rdbhost.reader()
                .query('SELECT name, address FROM contacts;')
-               .go();
+               .get_data();
     prom.then(function(data) {
             // do something with data
          })
@@ -135,6 +135,9 @@ Some named events are:
                    You can listen for a specific error, such as 'database-error:55b00', or
                    for a class of errors, such as 'database-error:55'.
                    
+  'database-user-error' is emitted whenever a query has a database error, not handled by
+                    rdbhost code.  The event is emitted multiple times per error, as above.
+
   'notify-received' is emitted when a NOTIFY payload is received over the Websocket connection.
                    The two parameters are channel and payload.
                    
