@@ -11,32 +11,6 @@ var demo_pass, demo_email, domain, acct_number;
 // PASSWORD = undefined;
 SUPER_AUTH = undefined;
 
-function get_auth(init, acctnum, email, passwd) {
-
-    var url = 'https://dev.rdbhost.com/acct/login/00000000' + acctnum,
-        formData = new FormData();
-
-    formData.append('arg:email', email);
-    formData.append('arg:password', passwd);
-
-    var p = fetch(url, {method: 'post', body: formData} );
-    return p.then(function(resp) {
-        return resp.json().then(function(d) {
-
-            if ( d.error )
-                throw new Error(d.error[1]);
-
-            for ( var i in d.records.rows ) {
-                var row = d.records.rows[i];
-                if ( row.role.substr(0,1) === init.substr(0,1) )
-                    return row;
-
-            }
-            throw new Error('super not found in login records');
-        })
-    });
-}
-var get_super_auth = get_auth.bind(null, 'super');
 
 
 module('Authorization tests', {
