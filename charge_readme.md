@@ -23,7 +23,7 @@ test your app using the rdbhost-charge.js code.   Go to the Stripe.com website a
 the account authorization data available.
 
 
-To run a charge, you use the .query() and the .charge() methods.   The sql you provide to .query() will provide
+To run a charge, you use the query and the charge methods.   The sql you provide to .query() will provide
 the 'amount' and the 'idx' in fields of those names.   The charge method takes parameters for the credit card data.
 
 Look at an example:
@@ -32,6 +32,15 @@ Look at an example:
               .query('SELECT .....')
               .charge(cc_num, cc_exp_mon, cc_exp_yr, cc_cvc);
               
+    spr.then(function(d) {
+       alert('charge complete successfully');
+    })
               
+              
+The server runs charges for each row returned by the query.   
+
+The charge method returns a promise.  The promise resolves with a list of rows that indcate SUCCESS or error 
+for each row/charge attempt.
+
 
 
