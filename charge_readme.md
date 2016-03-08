@@ -24,7 +24,7 @@ the account authorization data available.
 
 
 To run a charge, you use the .query() and the .charge() methods.   The sql you provide to .query() will provide
-the 'amount' and the 'idx' in fields of those names.   The charge method takes paramaters for the credit card data.
+the 'amount' and the 'idx' in fields of those names.   The charge method takes parameters for the credit card data.
 
 Look at an example:
 
