@@ -71,7 +71,7 @@ errcall parameters to specify SQL to handle each record.
 ##Refunds
 
 To run a refund, you use the query and the refund methods.   The sql you provide to .query() will 
-provide the 'amount', the 'idx', and the 'id' of the charge in fields of those names.   The 
+provide the 'amount' and the 'id' of the charge in fields of those names.   The 
 refund method takes parameters for the credit card data.  The idx value is nominally unique, 
 and is returned in the results.
 
