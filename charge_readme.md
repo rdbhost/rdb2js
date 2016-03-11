@@ -59,7 +59,7 @@ table has fields:
   idx  |  unique label for charge.  could be user number or order number.  | VARCHAR 
   id |  charge id created by Stripe.Com | VARCHAR
   paid |  was charge paid? | BOOLEAN
-  refunded | was charge refunded | BOOLEAN
+  refunded | was charge refunded? | BOOLEAN
   amount  | amount of transaction as integer (cents) | NUMERIC
   last4 | last 4 digits of credit card | VARCHAR
 
@@ -90,15 +90,18 @@ Look at an example:
     //  to card the value of items removed.
    
     var spr = Rdbhost.preauth()
-              .query("SELECT c.idx AS idx, c.id AS id,
-                            c.amount - (SELECT SUM(price) FROM cart WHERE ordernum=c.idx) AS amount)
+              .query("SELECT c.idx AS idx, c.id AS id, \
+                            c.amount - (SELECT SUM(price) FROM cart WHERE ordernum=c.idx) AS amount) \
                         FROM charges c WHERE idx = %(order)s; ")
               .params({'order': order_num})
               .refund();
               
     spr.then(function(d) {
-       alert('charge complete successfully');
-    })
+          alert('refund complete successfully');
+      })
+      .catch(function(e) {
+          alert('error '+e.message);
+      })
               
               
 
