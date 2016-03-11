@@ -25,13 +25,13 @@ Have the account authorization data available.
 ##Charges
 
 To run a charge, you use the query and the charge methods.   The sql you provide to .query() will 
-provide the 'amount' and the 'idx' in fields of those names.   The charge method takes parameters 
+provide the 'amount', 'description' and the 'idx' in fields of those names.   The charge method takes parameters 
 for the credit card data.  The idx value is nominally unique, and is returned in the results.
 
 Look at an example:
 
     var spr = Rdbhost.preauth()
-              .query("SELECT MIN(ordernum) AS idx, SUM(price) AS amount \
+              .query("SELECT MIN(ordernum) AS idx, SUM(price) AS amount, 'purchase' AS description \
                             FROM cart WHERE ordernum = %(order)s; ")
               .params({'order': order_num})
               .charge(cc_num, cc_exp_mon, cc_exp_yr, cc_cvc);
