@@ -40,73 +40,17 @@
                 $L = $L.script('../../vendor/fetch/fetch.js').wait();
             }
         );
-    $L = $L.script('../../test/private.js').wait()
+    $L = $L.script('stress.js')
+        //        .script('../../test/private.js').wait()
         .script('../../lib/js/rdbhost_livereload.js');
 
     $L = $L.wait(function() {
+      stress_functions();
+
       Rdbhost.connect('dev.rdbhost.com', 14);
       var preauth = Rdbhost.preauth();
       Rdbhost.activate_reloader(preauth);
     });
-
-    $L.wait(function() {
-
-      document.getElementById('preauth').addEventListener('click', function(evt) {
-
-        // ## edit the localhost line to show path to templates.  must end in '/'
-        var path = window.location.toString();
-        path = path.replace(/\/test\/observe\/\w+.html/g,'/lib/partials/');
-
-        Rdbhost.connect('dev.rdbhost.com', 14, path);
-        var preauth = Rdbhost.preauth();
-
-        var p = preauth.query('SELECT 123; \n\n SELECT \'abc\'; UPDATE whatever SET a=1;\n\nINSERT INTO wherever (b) VALUES(2);').get_data();
-        p.catch(function(e) {
-          // alert(e);
-        });
-
-        evt.stopImmediatePropagation();
-        evt.preventDefault();
-      });
-
-      document.getElementById('auth').addEventListener('click', function(evt) {
-
-        // ## edit the localhost line to show path to templates.  must end in '/'
-        var path = window.location.toString();
-        path = path.replace(/\/test\/observe\/\w+.html/g,'/lib/partials/');
-
-        Rdbhost.connect('dev.rdbhost.com', 14, path);
-        var auth = Rdbhost.auth();
-
-        var p = auth.query('SELECT 123; \n\n SELECT \'abc\';').get_data();
-        p.catch(function(e) {
-          1 == 2;
-          // alert(e);
-        });
-
-        evt.stopImmediatePropagation();
-        evt.preventDefault();
-      });
-
-      document.getElementById('super').addEventListener('click', function(evt) {
-
-        // ## edit the localhost line to show path to templates.  must end in '/'
-        var path = window.location.toString();
-        path = path.replace(/\/test\/observe\/\w+.html/g,'/lib/partials/');
-
-        Rdbhost.connect('dev.rdbhost.com', 14, path);
-        var spr = Rdbhost.super();
-
-        var p = spr.query('SELECT 123; UPDATE whatever SET a=10;\n\nINSERT INTO wherever (b) VALUES(2);').get_data();
-        p.catch(function(e) {
-          // alert(e);
-        });
-
-        evt.stopImmediatePropagation();
-        evt.preventDefault();
-      })
-
-    })
 
   </script>
 
@@ -119,6 +63,9 @@
     <li><a href="" id="preauth">preauth</a></li>
     <li><a href="" id="super">super</a></li>
     <li><a href="" id="auth">auth</a></li>
+
+    <li><a href="" id="confirm">confirm</a></li>
+    <li><a href="" id="credit">credit</a></li>
   </ol>
 </div>
 </body>
