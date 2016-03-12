@@ -42,7 +42,7 @@
         .script('../../lib/js/rdbhost_livereload.js');
 
     $L = $L.wait(function() {
-      Rdbhost.connect(private.getItem('domain'), parseInt(private.getItem('acct_number'), 10));
+      Rdbhost.connect('dev.rdbhost.com', 14);
       var preauth = Rdbhost.preauth();
       Rdbhost.activate_reloader(preauth);
     });
@@ -55,7 +55,7 @@
         var path = window.location.toString();
         path = path.replace(/\/test\/observe\/\w+.html/g,'/lib/partials/');
 
-        Rdbhost.connect(private.getItem('domain'), parseInt(private.getItem('acct_number'), 10), path);
+        Rdbhost.connect('dev.rdbhost.com', 14, path);
         var preauth = Rdbhost.preauth();
 
         var p = preauth.query('SELECT 123; \n\n SELECT \'abc\'; UPDATE whatever SET a=1;\n\nINSERT INTO wherever (b) VALUES(2);').get_data();
@@ -73,11 +73,12 @@
         var path = window.location.toString();
         path = path.replace(/\/test\/observe\/\w+.html/g,'/lib/partials/');
 
-        Rdbhost.connect(private.getItem('domain'), parseInt(private.getItem('acct_number'), 10), path);
-        var auth = Rdbhost.preauth();
+        Rdbhost.connect('dev.rdbhost.com', 14, path);
+        var auth = Rdbhost.auth();
 
-        var p = auth.query('SELECT 123; \n\n SELECT \'abc\'; UPDATE whatever SET a=1;\n\nINSERT INTO wherever (b) VALUES(2);').get_data();
+        var p = auth.query('SELECT 123; \n\n SELECT \'abc\';').get_data();
         p.catch(function(e) {
+          1 == 2;
           // alert(e);
         });
 
@@ -91,7 +92,7 @@
         var path = window.location.toString();
         path = path.replace(/\/test\/observe\/\w+.html/g,'/lib/partials/');
 
-        Rdbhost.connect(private.getItem('domain'), parseInt(private.getItem('acct_number'), 10), path);
+        Rdbhost.connect('dev.rdbhost.com', 14, path);
         var spr = Rdbhost.super();
 
         var p = spr.query('SELECT 123; \n\n SELECT \'abc\'; UPDATE whatever SET a=1;\n\nINSERT INTO wherever (b) VALUES(2);').get_data();
