@@ -52,7 +52,7 @@ test('sql include found', function(assert) {
     var done = assert.async();
 
     setTimeout(function() {
-        var frm = document.getElementById('preauth-auth');
+        var frm = document.getElementById('partial-preauth-auth');
         if ( !frm )
             return;
 
@@ -80,6 +80,50 @@ test('sql include found', function(assert) {
     var st = setTimeout(function() { done(); }, 1000);
 });
 
+
+
+
+module('Dynamic Loader Tests', {
+
+
+    beforeEach: function () {
+        Rdbhost.use_labjs_loader($LAB);
+    }
+});
+
+
+// send reader request with query, verify promise fulfilled
+//
+test('test dynamic loading', function(assert) {
+
+    var done = assert.async();
+
+    setTimeout(function () {
+
+        try {
+            var ait = addSeven(1);
+            ok(false, 'function shouldnt have been defined');
+        }
+        catch (e) {
+            ok(true, 'function not defined yet.');
+            ok(e.message.indexOf('ven is not defin') >= 0, 'correct exception thrown');
+        }
+
+        Rdbhost.loader('dynamic/dynamic_load.js', function() {
+            var eight = addSeven(1);
+            ok(eight === 8, 'add7 function worked');
+            clearTimeout(st);
+            done();
+        });
+
+        var st = setTimeout(function() {
+            ok(false, 'timed out');
+            done();
+        }, 2000);
+
+    }, 1000)
+
+});
 
 
 
