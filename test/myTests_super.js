@@ -274,7 +274,7 @@ module('Confirm tests', {
         demo_pass = private.getItem('demo_pass');
         acct_number = parseInt(private.getItem('acct_number'), 10);
         Rdbhost.connect(domain, acct_number);
-        Rdbhost.paranoidConfirm = true;
+        Rdbhost.paranoid_confirm = true;
     },
     afterEach: function(assert) {
         var done = assert.async();

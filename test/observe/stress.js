@@ -68,7 +68,7 @@ function stress_functions() {
 
     document.getElementById('confirm').addEventListener('click', function(evt) {
 
-        Rdbhost.paranoidConfirm = true;
+        Rdbhost.paranoid_confirm = true;
 
         Rdbhost.connect('dev.rdbhost.com', 14, partials_path());
         var spr = Rdbhost.super('fake-authcode');
@@ -78,7 +78,7 @@ function stress_functions() {
                 alert(e);
             })
             .then(function() {
-                Rdbhost.paranoidConfirm = false;
+                Rdbhost.paranoid_confirm = false;
             });
 
         evt.stopImmediatePropagation();
