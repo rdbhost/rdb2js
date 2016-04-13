@@ -9,6 +9,7 @@ module('Dynamic Loader Tests', {
 
 
     beforeEach: function () {
+        Rdbhost.connect('dev.rdbhost.com', 14);
         Rdbhost.use_labjs_loader($LAB);
     }
 });
@@ -26,7 +27,7 @@ test('test authenticate login', function(assert) {
         url.href = "/";
         url.pathname = '/rdb2js/test/test_runner_authenticate.html';
         url.search = '?dun=1';
-        Rdbhost.fedauth_login('Oauthtest', 1, url.href);
+        Rdbhost.fedauth_login('Oauthtest', url.href);
     }
     else {
 
@@ -36,18 +37,25 @@ test('test authenticate login', function(assert) {
         p.then(function(d) {
 
                 ok(true, 'then function called');
-                ok(false, 'tests not provided.');
+                ok(d.identifier == '012345', 'identifier ok '+d.identifier);
+                ok(d.issuer == 'Oauthtest', 'issuer ok '+d.issuer);
+                ok(d.status == 'loggedin', 'status ok '+d.status);
                 done();
                 clearTimeout(t);
             })
             .catch(function(e) {
-                ok(false, 'error in confirm_fedauth_login '+e.toString());
+                ok(false, 'error in confirm_fedauth_login ' + e.toString());
                 done();
                 clearTimeout(t);
             });
     }
 });
 
+
+
+// todo - add test to verify interactive Provider additions
+
+// todo - start with beforeEach and afterEach in module to remove and replace Openauthtest entry
 
 
 /*
