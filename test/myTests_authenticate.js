@@ -5,7 +5,7 @@ SUPER_AUTH = undefined;
 
 
 
-module('Dynamic Loader Tests', {
+module('Fedauth login Test', {
 
 
     beforeEach: function () {
@@ -40,22 +40,17 @@ test('test authenticate login', function(assert) {
                 ok(d.identifier == '012345', 'identifier ok '+d.identifier);
                 ok(d.issuer == 'Oauthtest', 'issuer ok '+d.issuer);
                 ok(d.status == 'loggedin', 'status ok '+d.status);
-                done();
                 clearTimeout(t);
+                done();
             })
             .catch(function(e) {
                 ok(false, 'error in confirm_fedauth_login ' + e.toString());
-                done();
                 clearTimeout(t);
+                done();
             });
     }
 });
 
-
-
-// todo - add test to verify interactive Provider additions
-
-// todo - start with beforeEach and afterEach in module to remove and replace Openauthtest entry
 
 
 /*

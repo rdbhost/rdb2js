@@ -1,0 +1,43 @@
+<div id="partial-fedauth">
+  <style scoped type="text/css">
+    #partial-fedauth {
+      position: fixed;
+      width: 500px;
+      height: 500px;
+      left: 100px;
+      top: 100px;
+      background-color: white;
+      border: thick solid firebrick;
+    }
+  </style>
+
+  <form>
+
+    <span class="cancel">x</span>
+
+    Federated Identity Configuration Form.
+
+    <span class="error"></span>
+
+    <span id="provider">Twitter</span>
+    <input type="hidden" name="provider" value="Twitter" /><br>
+    <input type="hidden" name="version" value="1" /><br>
+
+    Client Key: <input type="text" name="client_key" size="50" /><br>
+    Client Secret: <input type="text" name="client_secret" size="50" /><br>
+
+    Redirect: <input type="text" name="redirect" size="50" /><br>
+    Request Token Endpoint: <input type="text" name="req_token_url" size="50" /><br>
+    Authorization Base Endpoint: <input type="text" name="auth_base_url" size="50" /><br>
+    Access Token Endpoint: <input type="text" name="access_token_url" size="50" /><br>
+
+    Profile Url: <input type="text" name="profile_url" size="50" /><br>
+    Profile Email Key: <input type="text" name="email_key" size="50" value="email" /><br>
+    Profile Identifier Key: <input type="text" name="identifier_key" size="50" value="id" /><br>
+
+    Submit: <input type="submit" />
+
+  </form>
+
+
+</div>
