@@ -4,6 +4,19 @@ PASSWORD = undefined;
 SUPER_AUTH = undefined;
 
 
+function submit_superauth_form() {
+
+    var frm = document.getElementById('partial-super-auth'),
+        eml = frm.querySelector("input[name='email']"),
+        pw = frm.querySelector("input[name='password']"),
+        sub = frm.querySelector("input[type='submit']");
+
+    eml.value = demo_email;
+    pw.value = demo_pass;
+    sub.click();
+}
+
+
 
 // todo - add test to verify interactive Provider additions
 
@@ -12,6 +25,12 @@ module('Fedauth providers prepare Test', {
 
 
     beforeEach: function (assert) {
+
+        domain = private.getItem('domain');
+        acct_number = parseInt(private.getItem('acct_number'), 2);
+        demo_email = private.getItem('demo_email');
+        demo_pass = private.getItem('demo_pass');
+        
         Rdbhost.connect('dev.rdbhost.com', 14);
 
         var done = assert.async();
@@ -20,6 +39,14 @@ module('Fedauth providers prepare Test', {
                   .get_data();
         supr.then(done, done);
         Rdbhost.use_labjs_loader($LAB);
+
+        Rdbhost.on('form-displayed', function() {
+            setTimeout(function() {
+
+                submit_superauth_form();
+            }, 100)
+        })
+
     },
 
     afterEach: function (assert) {
@@ -49,16 +76,18 @@ test('test authenticate setup', function(assert) {
 
     var url = document.createElement('a');
     url.href = "/";
-    url.pathname = '/rdb2js/test/test_runner_authenticate.html';
+    url.pathname = '/rdb2js/test/test_runner_authenticate1.html';
     url.search = '?dun=1';
 
     var p = Rdbhost.fedauth_login('Oauthtest', url.href);
-    p.then(function() {
-            done();
-        })
-        .catch(function() {
-            done();
-        })
+    p.then(done, done);
+
+    Rdbhost.on('form-displayed', function() {
+        setTimeout(function() {
+
+            
+        }, 100)
+    })
 });
 
 
