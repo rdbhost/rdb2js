@@ -330,7 +330,7 @@ test('super request http cancel-confirm', 4, function(assert) {
     }, 1000);
 
     setTimeout(function() {
-        var frm = document.getElementById('partial-super-confirm'),
+        var frm = document.getElementById('partial-confirm'),
             cncl = frm.querySelector('.cancel');
         cncl.click();
     }, 1500);
@@ -382,7 +382,7 @@ test('super request http confirm-YES', 5, function(assert) {
     }, 500);
 
     setTimeout(function() {
-        var frm = document.getElementById('partial-super-confirm'),
+        var frm = document.getElementById('partial-confirm'),
             sub = frm.querySelector("input[type='submit']");
         sub.click();
     }, 1000);
@@ -433,7 +433,7 @@ test('super request ws cancel-confirm', 4, function(assert) {
     }, 500);
 
     setTimeout(function() {
-        var frm = document.getElementById('partial-super-confirm'),
+        var frm = document.getElementById('partial-confirm'),
             cncl = frm.querySelector('.cancel');
         cncl.click();
     }, 1000);
@@ -484,7 +484,7 @@ test('super request ws confirm-YES', 5, function(assert) {
     }, 500);
 
     setTimeout(function() {
-        var frm = document.getElementById('partial-super-confirm'),
+        var frm = document.getElementById('partial-confirm'),
             sub = frm.querySelector("input[type='submit']");
         sub.click();
     }, 1000);
@@ -533,6 +533,7 @@ test('super request alt path', 4, function(assert) {
     p.then(function(d) {
             ok(false, 'then called');
             clearTimeout(st);
+            done();
             done();
         })
         .catch(function(e) {
