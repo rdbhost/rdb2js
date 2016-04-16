@@ -1,113 +1,160 @@
 <div id="partial-confirm">
-<style>#partial-preauth-auth, #partial-super-auth, #partial-confirm {
-position: fixed;
-width: 90%;
-margin-top: 0;
-margin-left: 0;
-left: 5%;
-top: 5%;
-background-color: #DBD1B8;
-border: 1px solid #6C0014;
-border-radius: 8px;
-box-sizing: border-box;
-color: #222;
--webkit-box-shadow: 0px 0px 100px 10px #ababab;
--moz-box-shadow: 0px 0px 100px 10px #ababab;
-box-shadow: 0px 0px 100px 10px #ababab; }
-@media (min-width: 520px) {
-#partial-preauth-auth, #partial-super-auth, #partial-confirm {
-  width: 400px;
-  margin-top: -200px;
-  margin-left: -200px;
-  left: 50%;
-  top: 50%; } }
-#partial-preauth-auth form, #partial-super-auth form, #partial-confirm form {
-padding: 20px;
-font: 14px/1.5 tahoma, arial;
-text-align: center; }
-#partial-preauth-auth form .cancel, #partial-super-auth form .cancel, #partial-confirm form .cancel {
-  margin-top: -10px;
-  font-size: 18px;
-  position: absolute;
-  right: 20px;
-  cursor: pointer;
-  color: #ffffff;
-  z-index: 2; }
-  #partial-preauth-auth form .cancel:hover, #partial-super-auth form .cancel:hover, #partial-confirm form .cancel:hover {
-	color: #f2f2f2; }
-#partial-preauth-auth form .logo-container, #partial-super-auth form .logo-container, #partial-confirm form .logo-container {
-  background: #6C0014;
-  padding: 10px 0;
-  margin: -20px -20px 0 -20px;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px; }
-  #partial-preauth-auth form .logo-container img, #partial-super-auth form .logo-container img, #partial-confirm form .logo-container img {
-	margin: 0 auto; }
-#partial-preauth-auth form #notices, #partial-super-auth form #notices, #partial-confirm form #notices {
-  margin-bottom: 20px; }
-  #partial-preauth-auth form #notices .error, #partial-super-auth form #notices .error, #partial-confirm form #notices .error {
-	display: block;
-	color: #6C0014;
-	font-weight: bold; }
-#partial-preauth-auth form h3, #partial-super-auth form h3, #partial-confirm form h3 {
-  color: #6C0014;
-  font-size: 20px; }
-#partial-preauth-auth form .input-block, #partial-super-auth form .input-block, #partial-confirm form .input-block {
-  margin-bottom: 10px;
-  font-size: 14px; }
-  #partial-preauth-auth form .input-block label, #partial-super-auth form .input-block label, #partial-confirm form .input-block label {
-	display: block;
-	text-align: left; }
-  #partial-preauth-auth form .input-block .input, #partial-super-auth form .input-block .input, #partial-confirm form .input-block .input {
-	margin: 0;
-	box-sizing: border-box;
-	outline: none;
-	vertical-align: top;
-	display: block;
-	width: 100%;
-	padding: 10px;
-	background-color: #ffffff;
-	border: 1px solid #6C0014;
-	border-radius: 8px;
-	color: #222;
-	font-size: inherit;
-	-webkit-box-shadow: 0 0 0 50px #ffffff inset;
-	/* Change the color to your own background color */
-	-webkit-text-fill-color: #222; }
-#partial-preauth-auth form input[type="submit"], #partial-super-auth form input[type="submit"], #partial-confirm form input[type="submit"] {
-  margin: 0;
-  width: 100%;
-  padding: 5px;
-  background: #6C0014;
-  color: #DBD1B8;
-  border: 1px solid #6C0014;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 20px;
-  text-transform: uppercase;
-  font-weight: bolder;
-  -webkit-transition: background-color 0.2s linear;
-  -moz-transition: background-color 0.2s linear;
-  -o-transition: background-color 0.2s linear;
-  -ms-transition: background-color 0.2s linear;
-  transition: background-color 0.2s linear; }
-  #partial-preauth-auth form input[type="submit"]:hover, #partial-super-auth form input[type="submit"]:hover, #partial-confirm form input[type="submit"]:hover {
-	background: #DBD1B8;
-	color: #6C0014; }
-#partial-preauth-auth form pre, #partial-super-auth form pre, #partial-confirm form pre {
-  max-height: 100px;
-  overflow: hidden;
-  padding: 10px;
-  background: #e4dcc9;
-  border-radius: 8px;
-  text-align: left;
-  display: block;
-  margin-top: 20px;
-  font-family: "Courier 10 Pitch", Courier, monospace;
-  font-size: 95%;
-  line-height: 110%;
-  white-space: inherit; }
-</style>
+
+	<style>
+		#partial-confirm {
+			position: fixed;
+			width: 90%;
+			margin-top: 0;
+			margin-left: 0;
+			left: 5%;
+			top: 5%;
+			background-color: #DBD1B8;
+			border: 1px solid #6C0014;
+			border-radius: 8px;
+			box-sizing: border-box;
+			color: #222;
+			-webkit-box-shadow: 0px 0px 100px 10px #ababab;
+			-moz-box-shadow: 0px 0px 100px 10px #ababab;
+			box-shadow: 0px 0px 100px 10px #ababab;
+		}
+
+		@media (min-width: 520px) {
+			#partial-confirm {
+				width: 400px;
+				margin-top: -200px;
+				margin-left: -200px;
+				left: 50%;
+				top: 50%;
+			}
+		}
+
+		#partial-confirm form {
+			padding: 20px;
+			font: 14px/1.5 tahoma, arial;
+			text-align: center;
+			overflow: scroll;
+			max-height: 50vh;
+		}
+
+		#partial-confirm form .cancel {
+			margin-top: -10px;
+			font-size: 18px;
+			position: absolute;
+			right: 20px;
+			cursor: pointer;
+			color: #ffffff;
+			z-index: 2;
+		}
+
+		#partial-confirm form .cancel:hover {
+			color: #f2f2f2;
+		}
+
+		#partial-confirm form .logo-container {
+			background: #6C0014;
+			padding: 10px 0;
+			margin: -20px -20px 0 -20px;
+			border-top-left-radius: 8px;
+			border-top-right-radius: 8px;
+		}
+
+		#partial-confirm form .logo-container img {
+			margin: 0 auto;
+		}
+
+		#partial-confirm form #notices {
+			margin-bottom: 20px;
+		}
+
+		#partial-confirm form #notices .error {
+			display: block;
+			color: #6C0014;
+			font-weight: bold;
+		}
+
+		#partial-confirm form h3 {
+			color: #6C0014;
+			font-size: 20px;
+		}
+
+		#partial-confirm form h4 {
+			color: #6C0014;
+			font-size: 16px;
+			text-align: left;
+			margin-bottom: 10px;
+		}
+
+		#partial-confirm form hr {
+			margin: 30px 0 25px 0;
+		}
+
+		#partial-confirm form .input-block {
+			margin-bottom: 10px;
+			font-size: 14px;
+		}
+
+		#partial-confirm form .input-block label {
+			display: block;
+			text-align: left;
+		}
+
+		#partial-confirm form .input-block .input {
+			margin: 0;
+			box-sizing: border-box;
+			outline: none;
+			vertical-align: top;
+			display: block;
+			width: 100%;
+			padding: 10px;
+			background-color: #ffffff;
+			border: 1px solid #6C0014;
+			border-radius: 8px;
+			color: #222;
+			font-size: inherit;
+			-webkit-box-shadow: 0 0 0 50px #ffffff inset;
+			/* Change the color to your own background color */
+			-webkit-text-fill-color: #222;
+		}
+
+		#partial-confirm form input[type="submit"] {
+			margin: 0;
+			width: 100%;
+			padding: 5px;
+			background: #6C0014;
+			color: #DBD1B8;
+			border: 1px solid #6C0014;
+			border-radius: 8px;
+			cursor: pointer;
+			font-size: 20px;
+			text-transform: uppercase;
+			font-weight: bolder;
+			-webkit-transition: background-color 0.2s linear;
+			-moz-transition: background-color 0.2s linear;
+			-o-transition: background-color 0.2s linear;
+			-ms-transition: background-color 0.2s linear;
+			transition: background-color 0.2s linear;
+		}
+
+		#partial-confirm form input[type="submit"]:hover {
+			background: #DBD1B8;
+			color: #6C0014;
+		}
+
+		#partial-confirm form pre {
+			max-height: 100px;
+			overflow: hidden;
+			padding: 10px;
+			background: #e4dcc9;
+			border-radius: 8px;
+			text-align: left;
+			display: block;
+			margin-top: 20px;
+			font-family: "Courier 10 Pitch", Courier, monospace;
+			font-size: 95%;
+			line-height: 110%;
+			white-space: inherit;
+		}
+	</style>
 
 	<form>
 
