@@ -40,7 +40,7 @@ module('Fedauth providers prepare Test', {
         supr.then(done, done);
         Rdbhost.use_labjs_loader($LAB);
 
-        Rdbhost.on('form-displayed', function() {
+        Rdbhost.once('form-displayed', function() {
             setTimeout(function() {
 
                 submit_superauth_form();
@@ -71,23 +71,55 @@ module('Fedauth providers prepare Test', {
 
 test('test authenticate setup', function(assert) {
 
-    ok(true, 'null op');
     done = assert.async();
 
-    var url = document.createElement('a');
-    url.href = "/";
-    url.pathname = '/rdb2js/test/test_runner_authenticate1.html';
-    url.search = '?dun=1';
+    if (window.location.search.indexOf('dun') < 0) {
 
-    var p = Rdbhost.fedauth_login('Oauthtest', url.href);
-    p.then(done, done);
+        var url = document.createElement('a');
+        url.href = "/";
+        url.pathname = '/rdb2js/test/test_runner_authenticate1.html';
+        url.search = '?dun=1';
 
-    Rdbhost.on('form-displayed', function() {
-        setTimeout(function() {
+        var p = Rdbhost.fedauth_login('Oauthtest', url.href);
+        // p.then(done, done);
 
-            
-        }, 100)
-    })
+        Rdbhost.once('form-displayed', function () {
+            setTimeout(function () {
+
+                var frm = document.getElementById('partial-fedauth'),
+                    key = frm.querySelector("input[name='client_key']"),
+                    secret = frm.querySelector("input[name='client_secret']"),
+                    sub1 = frm.querySelector("input[type='submit']");
+
+                key.value = 'key';
+                secret.value = 'secret';
+
+                sub1.click();
+
+            }, 100)
+        })
+    }
+    else {
+
+        var t = setTimeout(function() { done() }, 1000);
+
+        var p1 = Rdbhost.confirm_fedauth_login();
+        p1.then(function(d) {
+
+                ok(true, 'then function called');
+                ok(d.identifier == '012345', 'identifier ok '+d.identifier);
+                ok(d.issuer == 'Oauthtest', 'issuer ok '+d.issuer);
+                ok(d.status == 'loggedin', 'status ok '+d.status);
+                clearTimeout(t);
+                done();
+            })
+            .catch(function(e) {
+                ok(false, 'error in confirm_fedauth_login ' + e.toString());
+                clearTimeout(t);
+                done();
+            });
+    }
+
 });
 
 
