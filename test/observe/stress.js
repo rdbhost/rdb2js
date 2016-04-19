@@ -83,6 +83,16 @@ function stress_functions() {
 
         evt.stopImmediatePropagation();
         evt.preventDefault();
+    });
+
+    document.getElementById('fedauth').addEventListener('click', function(evt) {
+
+        Rdbhost.connect('dev.rdbhost.com', 14, partials_path());
+
+        Rdbhost.show_form('fedauth', function() {}, function() {}, {});
+
+        evt.stopImmediatePropagation();
+        evt.preventDefault();
     })
 
 }
