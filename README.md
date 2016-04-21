@@ -9,11 +9,11 @@ The library can be loaded with a script tag, like:
 
     <script src="https://www.rdbhost.com/vendor/rdbhost/2.0/lib/rdbhost-bundle.js"></script>
 
-but other libraries, including polyfills, will often need to be loaded as well. 
+but other libraries, including polyfills, will often need to be loaded as well.
 
 I recommend you use Lab.Js to load all modules, with a code block like:
 
-    <script type="text/javascript" 
+    <script type="text/javascript"
             src="https://www.rdbhost.com/vendor/labjs/LAB.js"></script>
     <script>
       var $L = $LAB
@@ -29,18 +29,18 @@ I recommend you use Lab.Js to load all modules, with a code block like:
     </script>
 
 
-This loads the rdbhost library and conditionally the necessary polyfills.  `hasPromises` and `hasFetch` 
+This loads the rdbhost library and conditionally the necessary polyfills.  `hasPromises` and `hasFetch`
 detect whether `Promise` and `fetch` are available already.  Lab.js loads the libraries asynchronously
 and in parallel, for fastest load time.
 
 
 ## Request Objects ##
 
-Sending a query to the server involves a request object.  The request constructors are on the `Rdbhost` 
+Sending a query to the server involves a request object.  The request constructors are on the `Rdbhost`
 object, and are called `super`, `reader`, `preauth`, and `auth` after the respective roles.
 
     var req = Rdbhost.reader();
-    
+
 The `super` and `auth` constructors take an optional authcode parameter.
 
 
@@ -53,8 +53,8 @@ Most of these methods return the request object `this`, allowing methods to be c
   returns `this`
 
 ######listen(channel)
-   wraps the query sql in additional sql that catches any NOTIFYs that get emitted 
-   by the query.  It also registers this client to recieve all NOTIFYs payloads on the given _channel_. 
+   wraps the query sql in additional sql that catches any NOTIFYs that get emitted
+   by the query.  It also registers this client to recieve all NOTIFYs payloads on the given _channel_.
    Once this client is registered, it will receive all NOTIFY payloads on that channel from any connection by
    any client.  
   returns `this`
@@ -62,7 +62,7 @@ Most of these methods return the request object `this`, allowing methods to be c
 ######params(args, namedParams)
 
   provides args (a list of values) or namedParams (a dictionary of names and
-  values) to the request.  Can take either type of parameter, or one of each.  Can be called without 
+  values) to the request.  Can take either type of parameter, or one of each.  Can be called without
   parameters to clear any data from request.  
   returns `this`
 
@@ -94,12 +94,12 @@ Most of these methods return the request object `this`, allowing methods to be c
   submits the request to the server, and returns a Promise for the results.   
   returns Promise
 
-If a `super` request was made without providing the authcode, then the request processing will 
+If a `super` request was made without providing the authcode, then the request processing will
 ask the user for the login email and password, connect to the server for the `authcode`,
 and continue with the request query.
 
 If a `preauth` request gets an error from the server, then it presents the user a form for
-login email and password, and connects to the server to get the `authcode`, and again to add the 
+login email and password, and connects to the server to get the `authcode`, and again to add the
 preauth query to the whitelist and execute it.
 
 In either case, the `authcode` is cached in the client once retrieved.
@@ -116,9 +116,9 @@ In either case, the `authcode` is cached in the client once retrieved.
          .catch(function(error) {
             // error will be a JavaScript Error
          });
-    
-    
-    
+
+
+
 ## Event Emitter ##
 
 The Rdbhost object is an event emitter, with `on`, `off`, `once` and `emit` methods.
@@ -127,27 +127,27 @@ Some named events are:
 
   'connection-opened', 'connection-closed' indicate that a Websocket has been opened or closed.  
                    the event is provided two parameters, the role ...
-  
+
   'connection-error' indicates an error in the Websocket connection
-  
+
   'database-error' is emitted whenever a query has a database error.  The event is emitted
                    with the complete errorcode, and also with a two-digit errorcode prefix.
                    You can listen for a specific error, such as 'database-error:55b00', or
                    for a class of errors, such as 'database-error:55'.
-                   
+
   'database-user-error' is emitted whenever a query has a database error, not handled by
                     rdbhost code.  The event is emitted multiple times per error, as above.
 
   'notify-received' is emitted when a NOTIFY payload is received over the Websocket connection.
                    The two parameters are channel and payload.
-                   
+
   'reload-request' indicates the servers SFTP server has saved (or updated) a file in
                    this account.  The rdbhost-livereload library uses this event to
                    conditionally reload files.
-                   
+
   'form-cleared' indicates that a confirmation html form has been cleared from view.
-  
-  
+
+
 Example:
 
     Rdbhost.on('notify-received', function(channel, payload) {
@@ -159,4 +159,3 @@ Example:
           console.log('user is leaving');
       }
     });
-  
