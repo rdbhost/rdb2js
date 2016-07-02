@@ -16,16 +16,50 @@
 			-webkit-box-shadow: 0px 0px 100px 10px #ababab;
 			-moz-box-shadow: 0px 0px 100px 10px #ababab;
 			box-shadow: 0px 0px 100px 10px #ababab;
+			overflow-y: scroll;
+			max-height: 80%;
 		}
 
 		@media (min-width: 520px) {
 			#partial-fedauth {
-				width: 400px;
-				margin-top: -200px;
-				margin-left: -200px;
+				max-width: 800px;
+				width: 80%;
 				left: 50%;
-				top: 40%;
+  				transform: translateX(-50%);
 			}
+
+			.column {
+				width: 48%;
+				float: left;
+			}
+
+			.column.-left {
+				padding-right: 2%;
+			}
+
+			.column.-right {
+				padding-left: 2%;
+			}
+
+			#partial-fedauth form h4 {
+				margin-top: 0;
+			}
+
+			.submit_query {
+				margin-top: 30px;
+			}
+
+			.submit_query input {
+				height: 39px;
+			}
+		}
+
+		.row:after {
+			content: " ";
+			visibility: hidden;
+			display: block;
+			height: 0;
+			clear: both;
 		}
 
 		#partial-fedauth form::-webkit-scrollbar {
@@ -37,7 +71,7 @@
 		    border-radius: 8px;
 		}
 
-		 #partial-fedauth form::-webkit-scrollbar-thumb {
+		#partial-fedauth form::-webkit-scrollbar-thumb {
 		    border-radius: 8px;
 		    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
 		}
@@ -46,8 +80,6 @@
 			padding: 20px;
 			font: 14px/1.5 tahoma, arial;
 			text-align: center;
-			overflow-y: auto;
-			max-height: 50vh;
 		}
 
 		#partial-fedauth form .cancel {
@@ -120,17 +152,19 @@
 			display: block;
 			width: 100%;
 			padding: 10px;
-			background-color: #ffffff;
 			border: 1px solid #6C0014;
 			border-radius: 8px;
 			color: #222;
 			font-size: inherit;
-			-webkit-box-shadow: 0 0 0 50px #ffffff inset;
+
 			/* Change the color to your own background color */
 			-webkit-text-fill-color: #222;
+
+			background: #E0E0E0;
+			-webkit-box-shadow: 0 0 0 50px #E0E0E0 inset;
 		}
 
-		#partial-fedauth form input[type="submit"] {
+		#partial-fedauth form input[type="submit"], #partial-fedauth form button {
 			margin: 0;
 			width: 100%;
 			padding: 5px;
@@ -149,7 +183,7 @@
 			transition: background-color 0.2s linear;
 		}
 
-	  	#partial-fedauth form input[type="submit"]:hover {
+	  	#partial-fedauth form input[type="submit"]:hover, , #partial-fedauth form button:hover {
 			background: #DBD1B8;
 			color: #6C0014;
 		}
@@ -168,6 +202,16 @@
 			line-height: 110%;
 			white-space: inherit;
 		}
+
+		.special-container {
+			font-weight: bold;
+		}
+
+		#partial-fedauth form .special-container .input-block .input {
+			background: #fff;
+			-webkit-box-shadow: 0 0 0 50px #ffffff inset;
+			font-weight: bold;
+		}
 	</style>
 
 	<form>
@@ -180,72 +224,83 @@
 
 		<h3>Federated Identity Configuration Form</h3>
 
+		<h4 id="provider">Twitter</h4>
+		<input type="hidden" name="provider" value="Twitter" />
+		<input type="hidden" name="version" value="1" />
+
 		<div id="notices">
 			<span class="notice"></span>
 			<span class="error"></span>
 		</div>
 
-		<h4 id="provider">Twitter</h4>
-		<input type="hidden" name="provider" value="Twitter" />
-		<input type="hidden" name="version" value="1" />
+		<div class="row">
+			<div class="column -left">
 
-		<div class="input-block">
-			<label for="client_key">Client Key:</label>
-			<input type="text" name="client_key" id="client_key" class="input" />
-		</div>
+				<div class="special-container">
+					<div class="input-block">
+						<label for="client_key">Client Key:</label>
+						<input type="text" name="client_key" id="client_key" class="input" />
+					</div>
 
-		<div class="input-block">
-			<label for="client_secret">Client Secret:</label>
-			<input type="text" name="client_secret" id="client_secret" class="input" />
-		</div>
+					<div class="input-block">
+						<label for="client_secret">Client Secret:</label>
+						<input type="text" name="client_secret" id="client_secret" class="input" />
+					</div>
+				</div>
 
-		<hr>
+				<div class="input-block">
+					<label for="post_login_url">Post Login URL:</label>
+					<input type="text" name="post_login_url" id="post_login_url" class="input" />
+				</div>
 
-		<div class="input-block">
-			<label for="redirect">Redirect:</label>
-			<input type="text" name="redirect" id="redirect" class="input" />
-		</div>
+				<div class="input-block">
+					<label for="redirect">Redirect:</label>
+					<input type="text" name="redirect" id="redirect" class="input" />
+				</div>
 
-		<div class="input-block">
-			<label for="mode">Mode:</label>
-			<input type="text" name="mode" id="mode" class="input" />
-		</div>
+				<div class="input-block">
+					<label for="mode">Mode:</label>
+					<input type="text" name="mode" id="mode" class="input" />
+				</div>
 
-		<div class="input-block">
-			<label for="req_token_url">Request Token Endpoint:</label>
-			<input type="text" name="req_token_url" id="req_token_url" class="input" />
-		</div>
+				<div class="input-block">
+					<label for="req_token_url">Request Token Endpoint:</label>
+					<input type="text" name="req_token_url" id="req_token_url" class="input" />
+				</div>
+			</div>
 
-		<div class="input-block">
-			<label for="auth_base_url">Authorization Base Endpoint:</label>
-			<input type="text" name="auth_base_url" id="auth_base_url" class="input" />
-		</div>
+			<div class="column -right">
+				<div class="input-block">
+					<label for="auth_base_url">Authorization Base Endpoint:</label>
+					<input type="text" name="auth_base_url" id="auth_base_url" class="input" />
+				</div>
 
-		<div class="input-block">
-			<label for="access_token_url">Access Token Endpoint:</label>
-			<input type="text" name="access_token_url" id="access_token_url" class="input" />
-		</div>
+				<div class="input-block">
+					<label for="access_token_url">Access Token Endpoint:</label>
+					<input type="text" name="access_token_url" id="access_token_url" class="input" />
+				</div>
 
-		<div class="input-block">
-			<label for="profile_url">Profile Url:</label>
-			<input type="text" name="profile_url" id="profile_url" class="input" />
-		</div>
+				<div class="input-block">
+					<label for="profile_url">Profile Url:</label>
+					<input type="text" name="profile_url" id="profile_url" class="input" />
+				</div>
 
-		<div class="input-block">
-			<label for="email_key">Profile Email Key:</label>
-			<input type="text" name="email_key" id="email_key" class="input" />
-		</div>
+				<div class="input-block">
+					<label for="email_key">Profile Email Key:</label>
+					<input type="text" name="email_key" id="email_key" class="input" />
+				</div>
 
-		<div class="input-block">
-			<label for="identifier_key">Profile Identifier Key:</label>
-			<input type="text" name="identifier_key" id="identifier_key" class="input" />
-		</div>
+				<div class="input-block">
+					<label for="identifier_key">Profile Identifier Key:</label>
+					<input type="text" name="identifier_key" id="identifier_key" class="input" />
+				</div>
 
-		<div class="submit_query">
-			<input type="submit" class="submit-btn" value="Submit Data" />
+				<div class="submit_query">
+					<input type="submit" class="submit-btn" value="Submit Configuration Data" />
+				</div>
+			</div>
 		</div>
 
 	</form>
-
 
 </div>
