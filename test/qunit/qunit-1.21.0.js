@@ -2471,7 +2471,7 @@ QUnit.diff = ( function() {
 	 *     If true, then run a faster, slightly less optimal diff.
 	 * @param {number} deadline Time when the diff should be complete by.
 	 * @return {!Array.<!DiffMatchPatch.Diff>} Array of diff tuples.
-	 * @private
+	 * @privat
 	 */
 	DiffMatchPatch.prototype.diffCompute = function( text1, text2, checklines, deadline ) {
 		var diffs, longtext, shorttext, i, hm,
@@ -2552,7 +2552,7 @@ QUnit.diff = ( function() {
 	 * @return {Array.<string>} Five element Array, containing the prefix of
 	 *     text1, the suffix of text1, the prefix of text2, the suffix of
 	 *     text2 and the common middle.  Or null if there was no match.
-	 * @private
+	 * @privat
 	 */
 	DiffMatchPatch.prototype.diffHalfMatch = function( text1, text2 ) {
 		var longtext, shorttext, dmp,
@@ -2576,7 +2576,7 @@ QUnit.diff = ( function() {
 		 * @return {Array.<string>} Five element Array, containing the prefix of
 		 *     longtext, the suffix of longtext, the prefix of shorttext, the suffix
 		 *     of shorttext and the common middle.  Or null if there was no match.
-		 * @private
+		 * @privat
 		 */
 		function diffHalfMatchI( longtext, shorttext, i ) {
 			var seed, j, bestCommon, prefixLength, suffixLength,
@@ -2650,7 +2650,7 @@ QUnit.diff = ( function() {
 	 * @param {string} text2 New string to be diffed.
 	 * @param {number} deadline Time when the diff should be complete by.
 	 * @return {!Array.<!DiffMatchPatch.Diff>} Array of diff tuples.
-	 * @private
+	 * @privat
 	 */
 	DiffMatchPatch.prototype.diffLineMode = function( text1, text2, deadline ) {
 		var a, diffs, linearray, pointer, countInsert,
@@ -2720,7 +2720,7 @@ QUnit.diff = ( function() {
 	 * @param {string} text2 New string to be diffed.
 	 * @param {number} deadline Time at which to bail if not yet complete.
 	 * @return {!Array.<!DiffMatchPatch.Diff>} Array of diff tuples.
-	 * @private
+	 * @privat
 	 */
 	DiffMatchPatch.prototype.diffBisect = function( text1, text2, deadline ) {
 		var text1Length, text2Length, maxD, vOffset, vLength,
@@ -2846,7 +2846,7 @@ QUnit.diff = ( function() {
 	 * @param {number} y Index of split point in text2.
 	 * @param {number} deadline Time at which to bail if not yet complete.
 	 * @return {!Array.<!DiffMatchPatch.Diff>} Array of diff tuples.
-	 * @private
+	 * @privat
 	 */
 	DiffMatchPatch.prototype.diffBisectSplit = function( text1, text2, x, y, deadline ) {
 		var text1a, text1b, text2a, text2b, diffs, diffsb;
@@ -2999,7 +2999,7 @@ QUnit.diff = ( function() {
 	 * @param {string} text2 Second string.
 	 * @return {number} The number of characters common to the end of the first
 	 *     string and the start of the second string.
-	 * @private
+	 * @privat
 	 */
 	DiffMatchPatch.prototype.diffCommonOverlap = function( text1, text2 ) {
 		var text1Length, text2Length, textLength,
@@ -3052,7 +3052,7 @@ QUnit.diff = ( function() {
 	 *     An object containing the encoded text1, the encoded text2 and
 	 *     the array of unique strings.
 	 *     The zeroth element of the array of unique strings is intentionally blank.
-	 * @private
+	 * @privat
 	 */
 	DiffMatchPatch.prototype.diffLinesToChars = function( text1, text2 ) {
 		var lineArray, lineHash, chars1, chars2;
@@ -3069,7 +3069,7 @@ QUnit.diff = ( function() {
 		 * Modifies linearray and linehash through being a closure.
 		 * @param {string} text String to encode.
 		 * @return {string} Encoded string.
-		 * @private
+		 * @privat
 		 */
 		function diffLinesToCharsMunge( text ) {
 			var chars, lineStart, lineEnd, lineArrayLength, line;
@@ -3115,7 +3115,7 @@ QUnit.diff = ( function() {
 	 * text.
 	 * @param {!Array.<!DiffMatchPatch.Diff>} diffs Array of diff tuples.
 	 * @param {!Array.<string>} lineArray Array of unique strings.
-	 * @private
+	 * @privat
 	 */
 	DiffMatchPatch.prototype.diffCharsToLines = function( diffs, lineArray ) {
 		var x, chars, text, y;

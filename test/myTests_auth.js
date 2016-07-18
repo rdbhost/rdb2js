@@ -45,10 +45,10 @@ module('Authorization tests', {
 
         var done = assert.async();
 
-        domain = private.getItem('domain');
-        acct_number = parseInt(private.getItem('acct_number'), 10);
-        demo_email = private.getItem('demo_email');
-        demo_pass = private.getItem('demo_pass');
+        domain = privat.getItem('domain');
+        acct_number = parseInt(privat.getItem('acct_number'), 10);
+        demo_email = privat.getItem('demo_email');
+        demo_pass = privat.getItem('demo_pass');
         Rdbhost.connect(domain, acct_number);
 
         var p = get_super_auth(acct_number, demo_email, demo_pass);
@@ -156,7 +156,7 @@ test('preauth request confirm', 3, function(assert){
                 sub = frm.querySelector("input[type='submit']");
 
             eml.value = demo_email;
-            pw.value = private.getItem('demo_pass');
+            pw.value = privat.getItem('demo_pass');
             sub.click();
         }, 1000);
 

@@ -8,10 +8,10 @@ QUnit.module('Authorization tests', {
     beforeEach: function (assert) {
         console.log('beforeEach');
         var done = assert.async();
-        domain = private.getItem('domain');
-        acct_number = parseInt(private.getItem('acct_number'), 10);
-        demo_email = private.getItem('demo_email');
-        demo_pass = private.getItem('demo_pass');
+        domain = privat.getItem('domain');
+        acct_number = parseInt(privat.getItem('acct_number'), 10);
+        demo_email = privat.getItem('demo_email');
+        demo_pass = privat.getItem('demo_pass');
         Rdbhost.connect(domain, acct_number);
         done();
     },
@@ -269,10 +269,10 @@ QUnit.test('super request modal', function(assert) {
 module('Confirm tests', {
 
     beforeEach: function () {
-        domain = private.getItem('domain');
-        demo_email = private.getItem('demo_email');
-        demo_pass = private.getItem('demo_pass');
-        acct_number = parseInt(private.getItem('acct_number'), 10);
+        domain = privat.getItem('domain');
+        demo_email = privat.getItem('demo_email');
+        demo_pass = privat.getItem('demo_pass');
+        acct_number = parseInt(privat.getItem('acct_number'), 10);
         Rdbhost.connect(domain, acct_number);
         Rdbhost.paranoid_confirm = true;
     },
@@ -497,8 +497,8 @@ test('super request ws confirm-YES', 5, function(assert) {
 module('Alternate Template Location tests', {
 
     beforeEach: function (assert) {
-        var domain = private.getItem('domain'),
-            acct_number = parseInt(private.getItem('acct_number'), 10);
+        var domain = privat.getItem('domain'),
+            acct_number = parseInt(privat.getItem('acct_number'), 10);
 
         if (!window.location.origin) {
             window.location.origin = window.location.protocol + "//" + window.location.hostname +

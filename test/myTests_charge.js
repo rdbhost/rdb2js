@@ -66,13 +66,13 @@ module('all tables ok', {
         SETUP_OK = true;
         var done = assert.async();
 
-        domain = private.getItem('domain');
-        acct_number = parseInt(private.getItem('acct_number'), 10);
-        demo_email = private.getItem('demo_email');
-        demo_pass = private.getItem('demo_pass');
+        domain = privat.getItem('domain');
+        acct_number = parseInt(privat.getItem('acct_number'), 10);
+        demo_email = privat.getItem('demo_email');
+        demo_pass = privat.getItem('demo_pass');
 
-        demo_stripe_key = private.getItem('demo_stripe_key');
-        demo_stripe_email = private.getItem('demo_stripe_email');
+        demo_stripe_key = privat.getItem('demo_stripe_key');
+        demo_stripe_email = privat.getItem('demo_stripe_email');
 
         Rdbhost.connect(domain, acct_number);
 
@@ -234,13 +234,13 @@ module('charge table missing', {
         SETUP_OK = true;
         var done = assert.async();
 
-        domain = private.getItem('domain');
-        acct_number = parseInt(private.getItem('acct_number'), 10);
-        demo_email = private.getItem('demo_email');
-        demo_pass = private.getItem('demo_pass');
+        domain = privat.getItem('domain');
+        acct_number = parseInt(privat.getItem('acct_number'), 10);
+        demo_email = privat.getItem('demo_email');
+        demo_pass = privat.getItem('demo_pass');
 
-        demo_stripe_key = private.getItem('demo_stripe_key');
-        demo_stripe_email = private.getItem('demo_stripe_email');
+        demo_stripe_key = privat.getItem('demo_stripe_key');
+        demo_stripe_email = privat.getItem('demo_stripe_email');
 
         Rdbhost.connect(domain, acct_number);
 
@@ -348,10 +348,10 @@ module('apikeys table missing', {
         SETUP_OK = true;
         var done = assert.async();
 
-        acct_number = parseInt(private.getItem('acct_number'), 10);
-        demo_email = private.getItem('demo_email');
-        demo_pass = private.getItem('demo_pass');
-        domain = private.getItem('domain');
+        acct_number = parseInt(privat.getItem('acct_number'), 10);
+        demo_email = privat.getItem('demo_email');
+        demo_pass = privat.getItem('demo_pass');
+        domain = privat.getItem('domain');
 
         Rdbhost.connect(domain, acct_number);
 
@@ -473,13 +473,13 @@ module('apikeys table empty', {
         SETUP_OK = true;
         var done = assert.async();
 
-        acct_number = parseInt(private.getItem('acct_number'), 10);
-        demo_email = private.getItem('demo_email');
-        demo_pass = private.getItem('demo_pass');
-        domain = private.getItem('domain');
+        acct_number = parseInt(privat.getItem('acct_number'), 10);
+        demo_email = privat.getItem('demo_email');
+        demo_pass = privat.getItem('demo_pass');
+        domain = privat.getItem('domain');
 
-        demo_stripe_key = private.getItem('demo_stripe_key');
-        demo_stripe_email = private.getItem('demo_stripe_email');
+        demo_stripe_key = privat.getItem('demo_stripe_key');
+        demo_stripe_email = privat.getItem('demo_stripe_email');
 
         Rdbhost.connect(domain, acct_number);
 
@@ -604,13 +604,13 @@ module('refunding', {
         SETUP_OK = true;
         var done = assert.async();
 
-        domain = private.getItem('domain');
-        acct_number = parseInt(private.getItem('acct_number'), 10);
-        demo_email = private.getItem('demo_email');
-        demo_pass = private.getItem('demo_pass');
+        domain = privat.getItem('domain');
+        acct_number = parseInt(privat.getItem('acct_number'), 10);
+        demo_email = privat.getItem('demo_email');
+        demo_pass = privat.getItem('demo_pass');
 
-        demo_stripe_key = private.getItem('demo_stripe_key');
-        demo_stripe_email = private.getItem('demo_stripe_email');
+        demo_stripe_key = privat.getItem('demo_stripe_key');
+        demo_stripe_email = privat.getItem('demo_stripe_email');
 
         Rdbhost.connect(domain, acct_number);
 

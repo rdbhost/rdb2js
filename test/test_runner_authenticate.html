@@ -17,8 +17,8 @@
                 $L = $L.script('../vendor/fetch/fetch.js').wait();
             }
         );
-    $L = // $L.script('../test/private.js').wait()
-        $L.script('../lib/js/rdbhost_livereload.js')
+    $L = $L.script('../test/private.js').wait()
+        .script('../lib/js/rdbhost_livereload.js')
         .script('../lib/js/rdbhost-authenticate.js');
     $L.script('myTests_authenticate.js').wait(function() {
       QUnit.start();

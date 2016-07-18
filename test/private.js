@@ -1,22 +1,22 @@
 
 
 
-var private = sessionStorage;
+var privat = sessionStorage;
 
 
-private.setItem('bad_acct_number', 2);
-private.setItem('bad_email', 'demo@travelbyroad.net');
+privat.setItem('bad_acct_number', 2);
+privat.setItem('bad_email', 'demo@travelbyroad.net');
 
 
-private.setItem('domain', 'dev.rdbhost.com');
-private.setItem('acct_number', 14);
+privat.setItem('domain', 'dev.rdbhost.com');
+privat.setItem('acct_number', 14);
 
-private.setItem('demo_email', 'jsdemos@travelbyroad.net');
-if (!private.getItem('demo_pass'))
-    private.setItem('demo_pass', prompt('enter password for jsdemos'));
+privat.setItem('demo_email', 'jsdemos@travelbyroad.net');
+if (!privat.getItem('demo_pass'))
+    privat.setItem('demo_pass', prompt('enter password for jsdemos'));
 
-private.setItem('demo_stripe_email', 'dkeeney@rdbhost.com');
-private.setItem('demo_stripe_key', 'cPvPkcyWggrVF8IB0R0N2kc34PwL54SC');  // sandbox account
+privat.setItem('demo_stripe_email', 'dkeeney@rdbhost.com');
+privat.setItem('demo_stripe_key', 'cPvPkcyWggrVF8IB0R0N2kc34PwL54SC');  // sandbox account
 
 
 

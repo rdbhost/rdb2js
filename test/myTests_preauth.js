@@ -18,10 +18,10 @@ module('Authorization tests', {
     beforeEach: function () {
         QUnit.stop();
 
-        domain = private.getItem('domain');
-        acct_number = parseInt(private.getItem('acct_number'), 10);
-        demo_email = private.getItem('demo_email');
-        demo_pass = private.getItem('demo_pass');
+        domain = privat.getItem('domain');
+        acct_number = parseInt(privat.getItem('acct_number'), 10);
+        demo_email = privat.getItem('demo_email');
+        demo_pass = privat.getItem('demo_pass');
 
         Rdbhost.connect(domain, acct_number);
         // get_password();
@@ -111,7 +111,7 @@ asyncTest('preauth request confirm', 3, function() {
             sub = frm.querySelector("input[type='submit']");
 
         eml.value = demo_email;
-        pw.value = private.getItem('demo_pass'); //get_password();
+        pw.value = privat.getItem('demo_pass'); //get_password();
         sub.click();
     }, 500);
 

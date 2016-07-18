@@ -7,10 +7,10 @@ module('Notify tests', {
 
     setup: function (assert) {
 
-        domain = private.getItem('domain');
-        acct_number = parseInt(private.getItem('acct_number'), 10);
-        demo_email = private.getItem('demo_email');
-        demo_pass = private.getItem('demo_pass');
+        domain = privat.getItem('domain');
+        acct_number = parseInt(privat.getItem('acct_number'), 10);
+        demo_email = privat.getItem('demo_email');
+        demo_pass = privat.getItem('demo_pass');
 
         Rdbhost.connect(domain, acct_number);
         Rdbhost.activate_reloader(Rdbhost.reader());
@@ -163,7 +163,7 @@ test('listen request invokes reloader on image', 8, function(assert){
             sub = frm.querySelector("input[type='submit']");
 
         eml.value = demo_email;
-        pw.value = private.getItem('demo_pass');
+        pw.value = privat.getItem('demo_pass');
         sub.click();
     }, 500);
 
@@ -231,7 +231,7 @@ test('listen request ignored from wrong role', 4, function(assert){
             sub = frm.querySelector("input[type='submit']");
 
         eml.value = demo_email;
-        pw.value = private.getItem('demo_pass');
+        pw.value = privat.getItem('demo_pass');
         sub.click();
     }, 500);
 

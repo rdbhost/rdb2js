@@ -11,8 +11,8 @@ var domain, acct_number;
 module('Connection tests', {
 
     beforeEach: function () {
-        domain = private.getItem('domain');
-        acct_number = parseInt(private.getItem('acct_number'), 10);
+        domain = privat.getItem('domain');
+        acct_number = parseInt(privat.getItem('acct_number'), 10);
         Rdbhost.connect(domain, acct_number);
     },
     afterEach: function() {
@@ -52,8 +52,8 @@ test('connected event', function(assert){
 module('Request tests', {
 
     beforeEach: function () {
-        domain = private.getItem('domain');
-        acct_number = parseInt(private.getItem('acct_number'), 10);
+        domain = privat.getItem('domain');
+        acct_number = parseInt(privat.getItem('acct_number'), 10);
         Rdbhost.connect(domain, acct_number);
     },
     afterEach: function() {
@@ -346,8 +346,8 @@ test('proxy request ok', 3, function(assert){
 module('formData (fetch) tests', {
 
   beforeEach: function () {
-      domain = private.getItem('domain');
-      acct_number = parseInt(private.getItem('acct_number'), 10);
+      domain = privat.getItem('domain');
+      acct_number = parseInt(privat.getItem('acct_number'), 10);
       Rdbhost.connect(domain, acct_number);
   },
   afterEach: function() {
@@ -493,8 +493,8 @@ test('two objects to params conflict trapped', function() {
 module('CorsTest tests', {
 
     beforeEach: function () {
-        var domain = private.getItem('domain'),
-            acct_number = private.getItem('acct_number');
+        var domain = privat.getItem('domain'),
+            acct_number = privat.getItem('acct_number');
         Rdbhost.connect(domain, 1);
     },
     afterEach: function() {

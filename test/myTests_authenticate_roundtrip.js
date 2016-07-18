@@ -26,10 +26,10 @@ module('Fedauth providers prepare Test', {
 
     beforeEach: function (assert) {
 
-        domain = private.getItem('domain');
-        acct_number = parseInt(private.getItem('acct_number'), 2);
-        demo_email = private.getItem('demo_email');
-        demo_pass = private.getItem('demo_pass');
+        domain = privat.getItem('domain');
+        acct_number = parseInt(privat.getItem('acct_number'), 2);
+        demo_email = privat.getItem('demo_email');
+        demo_pass = privat.getItem('demo_pass');
         
         Rdbhost.connect('dev.rdbhost.com', 14);
 

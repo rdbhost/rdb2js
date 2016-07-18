@@ -35,8 +35,8 @@ var get_super_auth = get_auth.bind(null, 'super');
 module('SQL Include tests', {
 
     beforeEach: function () {
-        domain = private.getItem('domain');
-        acct_number = parseInt(private.getItem('acct_number'), 10);
+        domain = privat.getItem('domain');
+        acct_number = parseInt(privat.getItem('acct_number'), 10);
         Rdbhost.connect(domain, acct_number);
     },
     afterEach: function() {
@@ -60,8 +60,8 @@ test('sql include found', function(assert) {
             pw = frm.querySelector("input[name='password']"),
             sub = frm.querySelector("input[type='submit']");
 
-        eml.value = private.getItem('demo_email');
-        pw.value = private.getItem('demo_pass');
+        eml.value = privat.getItem('demo_email');
+        pw.value = privat.getItem('demo_pass');
         sub.click();
     }, 500);
 
