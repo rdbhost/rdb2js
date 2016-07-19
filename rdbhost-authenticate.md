@@ -22,8 +22,8 @@ The `confirm_fedauth_login` method should be called in the startup code for the 
     
     liProm.then(function(userData) {
         if (userData.status === 'loggedin') {
-           app.user = userData.identifer;
-           app.key = userData.key;
+            app.user = userData.identifer;
+            app.key = userData.key;
         }
         else 
             throw new Error('login status: '+userData.status);
