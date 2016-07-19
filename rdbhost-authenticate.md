@@ -5,11 +5,11 @@ This module adds two methods to the Rdbhost connection objects, `fedauth_login` 
 The traditional way of including it is with a script tag after the rdb2.js script.
 
     <script src="http://www.rdbhost.com/vendor/rdbhost/2.0/rdb2.js"></script>
-    <script src="http://www.rdbhost.com/vendor/rdbhost/2.0/rdb2-authenticate.js"></script>
+    <script src="http://www.rdbhost.com/vendor/rdbhost/2.0/rdbhost-authenticate.js"></script>
 
 A more performant way is to include it in the LABJS config.
 
-    $L = $L.script('/vendor/rdbhost/2.0/rdb2-authenticate.js');
+    $L = $L.script('/vendor/rdbhost/2.0/rdbhost-authenticate.js');
 
 To use the rdbhost-authenticate module, you need to setup an account on each authentication providers you choose to use.  _Twitter_, _Facebook_, and _Google_ all support federated identity.
 
@@ -21,7 +21,12 @@ The `confirm_fedauth_login` method should be called in the startup code for the 
     var liProm = Rdbhost.confirm_fedauth_login();
     
     liProm.then(function(userData) {
-        // todo - fill this in
+        if (userData.status === 'loggedin') {
+           app.user = userData.identifer;
+           app.key = userData.key;
+        }
+        else 
+            throw new Error('login status: '+userData.status);
     }
 
 The `fedauth_login` method is called when the user indicates an intention to login.
