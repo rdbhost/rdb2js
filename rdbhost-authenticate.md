@@ -11,7 +11,7 @@ A more performant way is to include it in the LABJS config.
 
     $L = $L.script('/vendor/rdbhost/2.0/rdb2-authenticate.js');
 
-To use the rdbhost-authenticate module, you need to setup an account on the authentication providers you choose to use.  _Twitter_, _Facebook_, and _Google_ all support federated identity.
+To use the rdbhost-authenticate module, you need to setup an account on each authentication providers you choose to use.  _Twitter_, _Facebook_, and _Google_ all support federated identity.
 
 Have the `client_key` and `client_secret` data available from the setup.
 
