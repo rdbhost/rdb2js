@@ -15,15 +15,13 @@ To use the rdbhost-emailing module, you need an account on one of the emailing w
 
 Emailing
 
-To run a charge, you use the query and the charge methods. The sql you provide to .query() will provide the 'amount', 'description' and the 'idx' in fields of those names. The charge method takes parameters for the credit card data. The idx value is nominally unique, and is returned in the results.
+To send an email, you use the query and one of the email methods. 
 
 Look at an example:
 
     var spr = Rdbhost.preauth()
-          .query("SELECT MIN(ordernum) AS idx, SUM(price) AS amount, 'purchase' AS description \
-                        FROM cart WHERE ordernum = %(order)s; ")
-          .params({'order': order_num})
-          .email();
+          .query("SELECT body FROM lookup.emails; ")
+          .email_host({'from': 'David', 'from_email': 'dkeeney@rdbhost.com'});
 
     spr.then(function(d) {
        alert('email sent successfully');
@@ -31,14 +29,8 @@ Look at an example:
 
 The server sends one email for each row returned by the query.
 
-These methods return promises. Each promise resolves with a list of rows that indcate SUCCESS or error for each row/charge attempt.
+These methods return promises. Each promise resolves with a list of rows that indcate SUCCESS or error for each email attempt.
 
-The first time you run this query, the library will have you confirm the white-listing of the query, and will at some point create a table to hold the Stripe.com API keys, and present a form to you for you to provide (via cut and paste) the API key for insertion into the new table.
+The first time you run this query, the library will have you confirm the white-listing of the query.
 
 
-var spr = Rdbhost.preauth()
-          .query("SELECT MIN(ordernum) AS idx, SUM(price) AS amount \
-                    FROM cart WHERE ordernum = %(order)s; ")
-          .params({'order': order_num,
-                   'postcall': 'INSERT INTO chg_table (idx, id) VALUE({idx}, {id});'})
-          .charge(cc_num, cc_exp_mon, cc_exp_yr, cc_cvc);
