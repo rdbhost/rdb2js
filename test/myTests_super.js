@@ -18,10 +18,8 @@ QUnit.module('Authorization tests', {
     afterEach: function(assert) {
         console.log('afterEach');
         var done = assert.async();
-        Rdbhost.once('connection-closed:super', function() {
-            done();
-        });
-        Rdbhost.disconnect(1000, '');
+
+        Rdbhost.reset_rdbhost(done)
     }
 });
 
@@ -48,12 +46,15 @@ QUnit.test('super request cancel', function(assert) {
             done();
         });
 
-    setTimeout(function() {
-        var frm = document.getElementById('partial-super-auth'),
-            cncl = frm.querySelector('.cancel');
-        ok(frm.textContent.indexOf('SELECT 1') >= 0, 'sql found');
-        cncl.click();
-    }, 500);
+    Rdbhost.once('form-displayed', function() {
+        setTimeout(function() {
+
+            var frm = document.getElementById('partial-super-auth'),
+                cncl = frm.querySelector('.cancel');
+            ok(frm.textContent.indexOf('SELECT 1') >= 0, 'sql found');
+            cncl.click();
+        }, 100)
+    });
 
     var st = setTimeout(function() { done(); }, 5000);
 });
@@ -82,18 +83,20 @@ QUnit.test('super request confirm', function(assert) {
             done();
         });
 
-    setTimeout(function() {
-        var frm = document.getElementById('partial-super-auth'),
-            eml = frm.querySelector("input[name='email']"),
-            pw = frm.querySelector("input[name='password']"),
-            sub = frm.querySelector("input[type='submit']");
+    Rdbhost.once('form-displayed', function() {
+        setTimeout(function () {
+            var frm = document.getElementById('partial-super-auth'),
+                eml = frm.querySelector("input[name='email']"),
+                pw = frm.querySelector("input[name='password']"),
+                sub = frm.querySelector("input[type='submit']");
 
-        ok(frm.textContent.indexOf('SELECT 1 AS b') >= 0, 'sql found');
+            ok(frm.textContent.indexOf('SELECT 1 AS b') >= 0, 'sql found');
 
-        eml.value = demo_email;
-        pw.value =  demo_pass;
-        sub.click();
-    }, 500);
+            eml.value = demo_email;
+            pw.value = demo_pass;
+            sub.click();
+        }, 500)
+    });
 
     var st = setTimeout(function() { done(); }, 5000);
 });
@@ -123,16 +126,18 @@ QUnit.test('super request http confirm', function(assert) {
             done();
         });
 
-    setTimeout(function() {
-        var frm = document.getElementById('partial-super-auth'),
-            eml = frm.querySelector("input[name='email']"),
-            pw = frm.querySelector("input[name='password']"),
-            sub = frm.querySelector("input[type='submit']");
+    Rdbhost.once('form-displayed', function() {
+        setTimeout(function () {
+            var frm = document.getElementById('partial-super-auth'),
+                eml = frm.querySelector("input[name='email']"),
+                pw = frm.querySelector("input[name='password']"),
+                sub = frm.querySelector("input[type='submit']");
 
-        eml.value = demo_email;
-        pw.value =  demo_pass;
-        sub.click();
-    }, 500);
+            eml.value = demo_email;
+            pw.value = demo_pass;
+            sub.click();
+        }, 500)
+    });
 
     var st = setTimeout(function() { done(); }, 5000);
 });
@@ -164,11 +169,13 @@ QUnit.test('super request http cancel', function(assert) {
             done();
         });
 
-    setTimeout(function() {
-        var frm = document.getElementById('partial-super-auth'),
-            cncl = frm.querySelector('.cancel');
-        cncl.click();
-    }, 500);
+    Rdbhost.once('form-displayed', function() {
+        setTimeout(function () {
+            var frm = document.getElementById('partial-super-auth'),
+                cncl = frm.querySelector('.cancel');
+            cncl.click();
+        }, 500)
+    });
 
     var st = setTimeout(function() { done(); }, 5000);
 });
@@ -179,6 +186,8 @@ QUnit.module('modal-force tests', {
     beforeEach: function (assert) {
 
         console.log('beforeEach 1');
+        domain = privat.getItem('domain');
+        acct_number = parseInt(privat.getItem('acct_number'), 10);
         Rdbhost.connect(domain, acct_number);
         // get_password();
 
@@ -205,10 +214,7 @@ QUnit.module('modal-force tests', {
 
         console.log('afterEach 1');
         var done = assert.async();
-        Rdbhost.once('connection-closed:super', function() {
-            done();
-        });
-        Rdbhost.disconnect(1000, '');
+        Rdbhost.reset_rdbhost(done);
         var el = document.getElementById('test-link');
         document.body.removeChild(el);
         delete Rdbhost.clickrecd;
@@ -249,11 +255,13 @@ QUnit.test('super request modal', function(assert) {
         el.click();
         Rdbhost.clicktried.push(1);
     }, 500);
-    setTimeout(function() {
-        var frm = document.getElementById('partial-super-auth'),
-            cncl = frm.querySelector('.cancel');
-        cncl.click();
-    }, 800);
+    Rdbhost.once('form-displayed', function() {
+        setTimeout(function () {
+            var frm = document.getElementById('partial-super-auth'),
+                cncl = frm.querySelector('.cancel');
+            cncl.click();
+        }, 800)
+    });
 
     var st = setTimeout(function() { done(); }, 5000);
 });
@@ -278,10 +286,7 @@ module('Confirm tests', {
     },
     afterEach: function(assert) {
         var done = assert.async();
-        Rdbhost.once('connection-closed:super', function() {
-            done();
-        });
-        Rdbhost.disconnect(1000, '');
+        Rdbhost.reset_rdbhost(done);
     }
 });
 
@@ -318,16 +323,18 @@ test('super request http cancel-confirm', 4, function(assert) {
             ok(false, 'cancel error thrown on prep')
         });
 
-    setTimeout(function() {
-        var frm = document.getElementById('partial-super-auth'),
-            eml = frm.querySelector("input[name='email']"),
-            pw = frm.querySelector("input[name='password']"),
-            sub = frm.querySelector("input[type='submit']");
+    Rdbhost.once('form-displayed', function() {
+        setTimeout(function () {
+            var frm = document.getElementById('partial-super-auth'),
+                eml = frm.querySelector("input[name='email']"),
+                pw = frm.querySelector("input[name='password']"),
+                sub = frm.querySelector("input[type='submit']");
 
-        eml.value = demo_email;
-        pw.value = demo_pass;
-        sub.click();
-    }, 1000);
+            eml.value = demo_email;
+            pw.value = demo_pass;
+            sub.click();
+        }, 1000)
+    });
 
     setTimeout(function() {
         var frm = document.getElementById('partial-confirm'),
@@ -370,16 +377,18 @@ test('super request http confirm-YES', 5, function(assert) {
 
     });
 
-    setTimeout(function() {
-        var frm = document.getElementById('partial-super-auth'),
-            eml = frm.querySelector("input[name='email']"),
-            pw = frm.querySelector("input[name='password']"),
-            sub = frm.querySelector("input[type='submit']");
+    Rdbhost.once('form-displayed', function() {
+        setTimeout(function () {
+            var frm = document.getElementById('partial-super-auth'),
+                eml = frm.querySelector("input[name='email']"),
+                pw = frm.querySelector("input[name='password']"),
+                sub = frm.querySelector("input[type='submit']");
 
-        eml.value = demo_email;
-        pw.value = demo_pass;
-        sub.click();
-    }, 500);
+            eml.value = demo_email;
+            pw.value = demo_pass;
+            sub.click();
+        }, 500)
+    });
 
     setTimeout(function() {
         var frm = document.getElementById('partial-confirm'),
@@ -421,16 +430,18 @@ test('super request ws cancel-confirm', 4, function(assert) {
 
     });
 
-    setTimeout(function() {
-        var frm = document.getElementById('partial-super-auth'),
-            eml = frm.querySelector("input[name='email']"),
-            pw = frm.querySelector("input[name='password']"),
-            sub = frm.querySelector("input[type='submit']");
+    Rdbhost.once('form-displayed', function() {
+        setTimeout(function () {
+            var frm = document.getElementById('partial-super-auth'),
+                eml = frm.querySelector("input[name='email']"),
+                pw = frm.querySelector("input[name='password']"),
+                sub = frm.querySelector("input[type='submit']");
 
-        eml.value = demo_email;
-        pw.value = demo_pass;
-        sub.click();
-    }, 500);
+            eml.value = demo_email;
+            pw.value = demo_pass;
+            sub.click();
+        }, 500)
+    });
 
     setTimeout(function() {
         var frm = document.getElementById('partial-confirm'),
@@ -472,16 +483,18 @@ test('super request ws confirm-YES', 5, function(assert) {
 
     });
 
-    setTimeout(function() {
-        var frm = document.getElementById('partial-super-auth'),
-            eml = frm.querySelector("input[name='email']"),
-            pw = frm.querySelector("input[name='password']"),
-            sub = frm.querySelector("input[type='submit']");
+    Rdbhost.once('form-displayed', function() {
+        setTimeout(function () {
+            var frm = document.getElementById('partial-super-auth'),
+                eml = frm.querySelector("input[name='email']"),
+                pw = frm.querySelector("input[name='password']"),
+                sub = frm.querySelector("input[type='submit']");
 
-        eml.value = demo_email;
-        pw.value = demo_pass;
-        sub.click();
-    }, 500);
+            eml.value = demo_email;
+            pw.value = demo_pass;
+            sub.click();
+        }, 500)
+    });
 
     setTimeout(function() {
         var frm = document.getElementById('partial-confirm'),
@@ -510,10 +523,7 @@ module('Alternate Template Location tests', {
     },
     afterEach: function(assert) {
         var done = assert.async();
-        Rdbhost.once('connection-closed:super', function() {
-            done();
-        });
-        Rdbhost.disconnect(1000, '');
+        Rdbhost.reset_rdbhost(done);
     }
 });
 
@@ -543,12 +553,14 @@ test('super request alt path', 4, function(assert) {
             done();
         });
 
-    setTimeout(function() {
-        var frm = document.getElementById('partial-super-auth'),
-            cncl = frm.querySelector('.cancel');
-        ok(frm.textContent.indexOf('ALTERNATE LOCAT') >= 0, 'ALTERN .. text found');
-        cncl.click();
-    }, 500);
+    Rdbhost.once('form-displayed', function() {
+        setTimeout(function () {
+            var frm = document.getElementById('partial-super-auth'),
+                cncl = frm.querySelector('.cancel');
+            ok(frm.textContent.indexOf('ALTERNATE LOCAT') >= 0, 'ALTERN .. text found');
+            cncl.click();
+        }, 500)
+    });
 
     var st = setTimeout(function() { done(); }, 5000);
 });

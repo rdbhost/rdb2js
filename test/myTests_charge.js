@@ -99,15 +99,17 @@ module('all tables ok', {
     afterEach: function(assert) {
         SETUP_OK = false;
         var done = assert.async();
-        Rdbhost.once('connection-closed:super', function() {
-            done();
-        });
+        // Rdbhost.once('connection-closed:super', function() {
+        //     done();
+        // });
         var p = Rdbhost.super(super_authcode).query(dropApiTable).get_data();
         p.then(function() {
-                Rdbhost.disconnect(1000, '');
+                // Rdbhost.disconnect(1000, '');
+                Rdbhost.reset_rdbhost(done);
             },
             function(e) {
-                Rdbhost.disconnect(1000, '');
+                // Rdbhost.disconnect(1000, '');
+                Rdbhost.reset_rdbhost(done);
             });
     }
 });
@@ -173,9 +175,12 @@ test('charge tests - routine fail', function(assert) {
             done();
         });
 
-    setTimeout(function() {
-        submit_superauth_form();
-    }, 800);
+    Rdbhost.on('form-displayed', function() {
+
+        setTimeout(function() {
+            submit_superauth_form();
+        }, 800);
+    });
 
     var st = setTimeout(function() {
         ok(false, 'timeout');
@@ -217,9 +222,12 @@ test('charge tests - routine success', function(assert) {
             done();
         });
 
-    setTimeout(function() {
-        submit_superauth_form();
-    }, 800);
+    Rdbhost.on('form-submit', function() {
+
+        setTimeout(function() {
+            submit_superauth_form();
+        }, 800);
+    });
 
     var st = setTimeout(function() {
         ok(false, 'timeout');
@@ -267,15 +275,17 @@ module('charge table missing', {
     afterEach: function(assert) {
         SETUP_OK = false;
         var done = assert.async();
-        Rdbhost.once('connection-closed:super', function() {
-            done();
-        });
+        // Rdbhost.once('connection-closed:super', function() {
+        //     done();
+        // });
         var p = Rdbhost.super(super_authcode).query(dropApiTable).get_data();
         p.then(function() {
-                Rdbhost.disconnect(1000, '');
+                // Rdbhost.disconnect(1000, '');
+                Rdbhost.reset_rdbhost(done);
             },
             function(e) {
-                Rdbhost.disconnect(1000, '');
+                // Rdbhost.disconnect(1000, '');
+                Rdbhost.reset_rdbhost(done);
             });
     }
 });
@@ -332,9 +342,12 @@ test('charge tests - routine', function(assert) {
             done();
         });
 
-    setTimeout(function() {
-        submit_superauth_form();
-    }, 800);
+    Rdbhost.on('form-displayed', function() {
+
+        setTimeout(function() {
+            submit_superauth_form();
+        }, 800);
+    });
 
     var st = setTimeout(function() {
         done();
@@ -378,15 +391,17 @@ module('apikeys table missing', {
     afterEach: function(assert) {
         SETUP_OK = false;
         var done = assert.async();
-        Rdbhost.once('connection-closed:super', function() {
-            done();
-        });
+        // Rdbhost.once('connection-closed:super', function() {
+        //     done();
+        // });
         var p = Rdbhost.super(super_authcode).query(dropApiTable).get_data();
         p.then(function() {
-                Rdbhost.disconnect(1000, '');
+                // Rdbhost.disconnect(1000, '');
+                Rdbhost.reset_rdbhost(done);
             },
             function(e) {
-                Rdbhost.disconnect(1000, '');
+                // Rdbhost.disconnect(1000, '');
+                Rdbhost.reset_rdbhost(done);
             });
     }
 });
@@ -442,9 +457,7 @@ test('charge tests - routine', function(assert) {
             done();
         });
 
-    setTimeout(function() {
-
-        submit_superauth_form();
+    Rdbhost.on('form-displayed', function() {
 
         setTimeout(function() {
 
@@ -459,7 +472,7 @@ test('charge tests - routine', function(assert) {
             sub1.click();
         }, 800)
 
-    }, 800);
+    });
 
     var st = setTimeout(function() {
         done();
@@ -506,15 +519,17 @@ module('apikeys table empty', {
     afterEach: function(assert) {
         SETUP_OK = false;
         var done = assert.async();
-        Rdbhost.once('connection-closed:super', function() {
-            done();
-        });
+        // Rdbhost.once('connection-closed:super', function() {
+        //     done();
+        // });
         var p = Rdbhost.super(super_authcode).query(dropApiTable).get_data();
         p.then(function() {
-                Rdbhost.disconnect(1000, '');
+                // Rdbhost.disconnect(1000, '');
+                Rdbhost.reset_rdbhost(done);
             },
             function(e) {
-                Rdbhost.disconnect(1000, '');
+                // Rdbhost.disconnect(1000, '');
+                Rdbhost.reset_rdbhost(done);
             });
     }
 });
@@ -571,9 +586,7 @@ test('charge tests - routine', function(assert) {
             done();
         });
 
-    setTimeout(function() {
-
-        submit_superauth_form();
+    Rdbhost.on('form-displayed', function() {
 
         setTimeout(function() {
 
@@ -588,7 +601,7 @@ test('charge tests - routine', function(assert) {
             sub1.click();
         }, 800)
 
-    }, 800);
+    });
 
     var st = setTimeout(function() {
         ok(false, 'timeout');
@@ -637,15 +650,17 @@ module('refunding', {
     afterEach: function(assert) {
         SETUP_OK = false;
         var done = assert.async();
-        Rdbhost.once('connection-closed:super', function() {
-            done();
-        });
+        // Rdbhost.once('connection-closed:super', function() {
+        //     done();
+        // });
         var p = Rdbhost.super(super_authcode).query(dropApiTable).get_data();
         p.then(function() {
-                Rdbhost.disconnect(1000, '');
+                // Rdbhost.disconnect(1000, '');
+                Rdbhost.reset_rdbhost(done);
             },
             function(e) {
-                Rdbhost.disconnect(1000, '');
+                // Rdbhost.disconnect(1000, '');
+                Rdbhost.reset_rdbhost(done);
             });
     }
 });
@@ -720,9 +735,12 @@ test('refund tests - routine success', function(assert) {
             done();
         });
 
-    setTimeout(function() {
-        submit_superauth_form();
-    }, 800);
+    Rdbhost.on('form-displayed', function() {
+
+        setTimeout(function() {
+            submit_superauth_form();
+        }, 800);
+    });
 
     var st = setTimeout(function() {
         done();
@@ -792,9 +810,12 @@ test('refund tests - routine fail', function(assert) {
             done();
         });
 
-    setTimeout(function() {
-        submit_superauth_form();
-    }, 800);
+    Rdbhost.on('form-displayed', function() {
+
+        setTimeout(function() {
+            submit_superauth_form();
+        }, 800);
+    });
 
     var st = setTimeout(function() {
         done();

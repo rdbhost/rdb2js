@@ -18,6 +18,9 @@ if (!privat.getItem('demo_pass'))
 privat.setItem('demo_stripe_email', 'dkeeney@rdbhost.com');
 privat.setItem('demo_stripe_key', 'cPvPkcyWggrVF8IB0R0N2kc34PwL54SC');  // sandbox account
 
+privat.setItem('demo_postmark_email', 'rdbhost@rdbhost.com');
+privat.setItem('demo_postmark_key', '0be3da1e-f0b3-421e-ae6c-64ceda2cb914');  // sandbox account
+
 
 
 function get_auth(init, acctnum, email, passwd) {
