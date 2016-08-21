@@ -91,9 +91,21 @@
 			font-size: 14px;
 		}
 
+		#partial-confirm form .input-block.left {
+			text-align: left;
+		}
+
+		#partial-confirm form .input-block.padded {
+			margin: 20px 0;
+		}
+
 		#partial-confirm form .input-block label {
 			display: block;
 			text-align: left;
+		}
+
+		#partial-confirm form .input-block.inline label {
+			display: inline-block;
 		}
 
 		#partial-confirm form .input-block .input {
@@ -112,6 +124,10 @@
 			-webkit-box-shadow: 0 0 0 50px #ffffff inset;
 			/* Change the color to your own background color */
 			-webkit-text-fill-color: #222;
+		}
+
+		#partial-confirm form .input-block.inline input[type="checkbox"] {
+			display: inline-block;
 		}
 
 		#partial-confirm form input[type="submit"] {
@@ -163,6 +179,11 @@
 		</div>
 
 		<h3>Auth Confirm Form.</h3>
+
+		<div class="input-block inline left padded">
+			<input type="checkbox" name="no_more" />
+			<label for="no_more">Do not prompt for confirmation again</label>
+		</div>
 
 		<div class="submit_query">
 			<input type="submit" class="submit-btn" value="Run SQL" />
