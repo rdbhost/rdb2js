@@ -5,6 +5,11 @@ var domain, demo_email, demo_pass, super_authcode, demo_postmark_key, demo_postm
 var SETUP_OK = false;
 
 
+/*
+   todo - add tests for fixed() and for column().
+   todo - factor out before and after code, to make test module leaner
+ */
+
 
 function submit_superauth_form() {
 
@@ -89,15 +94,17 @@ module('all tables ok', {
     afterEach: function(assert) {
         SETUP_OK = false;
         var done = assert.async();
-        Rdbhost.once('connection-closed:super', function() {
-            done();
-        });
+        // Rdbhost.once('connection-closed:super', function() {
+        //     done();
+        // });
         var p = Rdbhost.super(super_authcode).query(dropApiTable).get_data();
         p.then(function() {
-                Rdbhost.disconnect(1000, '');
+                // Rdbhost.disconnect(1000, '');
+                Rdbhost.reset_rdbhost(done);
             },
             function(e) {
-                Rdbhost.disconnect(1000, '');
+                // Rdbhost.disconnect(1000, '');
+                Rdbhost.reset_rdbhost(done);
             });
     }
 });
@@ -161,9 +168,12 @@ test('email tests - routine fail', function(assert) {
             done();
         });
 
-    setTimeout(function() {
-        submit_superauth_form();
-    }, 800);
+    Rdbhost.on('form-displayed', function() {
+
+        setTimeout(function() {
+            submit_superauth_form();
+        }, 800);
+    });
 
     var st = setTimeout(function() {
         ok(false, 'timeout');
@@ -198,9 +208,13 @@ test('email tests - routine success', function(assert) {
             done();
         });
 
-    setTimeout(function() {
-        submit_superauth_form();
-    }, 800);
+    Rdbhost.on('form-displayed', function() {
+
+        setTimeout(function() {
+            submit_superauth_form();
+        }, 800);
+    });
+
 
     var st = setTimeout(function() {
         ok(false, 'timeout');
@@ -250,15 +264,17 @@ module('apikeys table missing', {
     afterEach: function(assert) {
         SETUP_OK = false;
         var done = assert.async();
-        Rdbhost.once('connection-closed:super', function() {
-            done();
-        });
+        // Rdbhost.once('connection-closed:super', function() {
+        //     done();
+        // });
         var p = Rdbhost.super(super_authcode).query(dropApiTable).get_data();
         p.then(function() {
-                Rdbhost.disconnect(1000, '');
+                // Rdbhost.disconnect(1000, '');
+                Rdbhost.reset_rdbhost(done);
             },
             function(e) {
-                Rdbhost.disconnect(1000, '');
+                // Rdbhost.disconnect(1000, '');
+                Rdbhost.reset_rdbhost(done);
             });
     }
 });
@@ -292,7 +308,7 @@ test('test setup', function(assert) {
 
 // routine operation
 //
-test('email tests - routine', function(assert) {
+test('email tests - routine fail', function(assert) {
 
     var done = assert.async();
 
@@ -306,7 +322,10 @@ test('email tests - routine', function(assert) {
 
     p.then(function(d) {
             ok(true, 'then called');
-            ok(d.result_sets[0].row_count[0] === -1, d.status);
+            ok(d.row_count[0] === 1, 'rows '+d.row_count[0]);
+            ok(d.result_sets[0].rows[0].idx === 1, 'idx is 1');
+            ok(d.result_sets[0].rows[0].result.indexOf('422') >= 0, 'Error 422');
+            ok(d.result_sets[0].rows[0].result.indexOf("Invalid 'From") >= 0, 'Invalid "From');
             clearTimeout(st);
             done();
         })
@@ -316,9 +335,7 @@ test('email tests - routine', function(assert) {
             done();
         });
 
-    setTimeout(function() {
-
-        submit_superauth_form();
+    Rdbhost.on('form-displayed', function() {
 
         setTimeout(function() {
 
@@ -331,9 +348,9 @@ test('email tests - routine', function(assert) {
             key.value = demo_postmark_key;
 
             sub1.click();
-        }, 800)
+        }, 500)
+    });
 
-    }, 800);
 
     var st = setTimeout(function() {
         done();
@@ -354,9 +371,8 @@ module('apikeys table empty', {
         demo_pass = privat.getItem('demo_pass');
         domain = privat.getItem('domain');
 
-        demo_stripe_key = privat.getItem('demo_postmark_key');
-        demo_stripe_email = privat.getItem('demo_postmark_email');
-
+        demo_postmark_key = privat.getItem('demo_postmark_key');
+        demo_postmark_email = privat.getItem('demo_postmark_email');
         Rdbhost.connect(domain, acct_number);
 
         var q = [dropApiTable, createApiKeyTable].join('\n');
@@ -382,15 +398,17 @@ module('apikeys table empty', {
     afterEach: function(assert) {
         SETUP_OK = false;
         var done = assert.async();
-        Rdbhost.once('connection-closed:super', function() {
-            done();
-        });
+        // Rdbhost.once('connection-closed:super', function() {
+        //     done();
+        // });
         var p = Rdbhost.super(super_authcode).query(dropApiTable).get_data();
         p.then(function() {
-                Rdbhost.disconnect(1000, '');
+                // Rdbhost.disconnect(1000, '');
+                Rdbhost.reset_rdbhost(done);
             },
             function(e) {
-                Rdbhost.disconnect(1000, '');
+                // Rdbhost.disconnect(1000, '');
+                Rdbhost.reset_rdbhost(done);
             });
     }
 });
@@ -425,7 +443,7 @@ test('test setup', function(assert) {
 
 // routine operation
 //
-test('email tests - routine', function(assert) {
+test('email tests - routine success', function(assert) {
 
     var done = assert.async();
 
@@ -434,13 +452,14 @@ test('email tests - routine', function(assert) {
     Rdbhost.email_config('dev.rdbhost.com', 'rdbhost@rdbhost.com', 'postmark');
     var p = Rdbhost.super()
         .query("")
-        .email('');
+        .email('David', 'rdbhost@rdbhost.com', 'Me', 'dkeeney@travelbyroad.net', 'Test', 'test body');
 
     p.then(function(d) {
             ok(true, 'then called');
             ok(d.result_sets.length, 'results returned');
             ok(d.result_sets[0].rows.length, 'rows returned');
-            ok(d.result_sets[0].rows[0].t === '', d.status);
+            ok(d.result_sets[0].rows[0].idx === 1, 'idx is 1');
+            ok(d.result_sets[0].rows[0].result === 'Success', 'result is Success');
             clearTimeout(st);
             done();
         })
@@ -450,9 +469,7 @@ test('email tests - routine', function(assert) {
             done();
         });
 
-    setTimeout(function() {
-
-        submit_superauth_form();
+    Rdbhost.on('form-displayed', function() {
 
         setTimeout(function() {
 
@@ -465,9 +482,8 @@ test('email tests - routine', function(assert) {
             key.value = demo_postmark_key;
 
             sub1.click();
-        }, 800)
-
-    }, 800);
+        }, 800);
+    });
 
     var st = setTimeout(function() {
         ok(false, 'timeout');
