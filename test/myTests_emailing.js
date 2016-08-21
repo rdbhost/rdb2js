@@ -1,13 +1,20 @@
 
 var domain, demo_email, demo_pass, super_authcode, demo_postmark_key, demo_postmark_email;
 
+domain = privat.getItem('domain');
+acct_number = parseInt(privat.getItem('acct_number'), 10);
+demo_email = privat.getItem('demo_email');
+demo_pass = privat.getItem('demo_pass');
 
-var SETUP_OK = false;
+demo_postmark_key = privat.getItem('demo_postmark_key');
+demo_postmark_email = privat.getItem('demo_postmark_email');
 
 
 /*
    todo - add tests for fixed() and for column().
-   todo - factor out before and after code, to make test module leaner
+
+   todo - add test for multiple addressees
+   todo - add test for no addressees
  */
 
 
@@ -50,62 +57,58 @@ var dropApiTable = 'DROP TABLE IF EXISTS auth.apikeys;',
                 SELECT pg_temp.t(%(apikey)s, %(account_email)s);";
 
 
+function beforeEach(assert, q, parms) {
+
+    var done = assert.async();
+
+    Rdbhost.connect(domain, acct_number);
+
+    var p = get_super_auth(acct_number, demo_email, demo_pass);
+    p.then(function(d) {
+
+        super_authcode = d.authcode;
+
+        Rdbhost.once('connection-closed:super', function() {
+            done();
+        });
+        var p = Rdbhost.super(super_authcode)
+            .query(q)
+            .params(parms)
+            .get_data();
+        p.then(function () {
+                Rdbhost.disconnect(1000, '');
+            },
+            function (e) {
+                Rdbhost.disconnect(1000, '');
+            });
+    });
+}
+
+function afterEach(assert, q, parms) {
+
+    var done = assert.async();
+
+    var p = Rdbhost.super(super_authcode).query(q).params(parms).get_data();
+    p.then(function() {
+            Rdbhost.reset_rdbhost(done);
+        },
+        function(e) {
+            Rdbhost.reset_rdbhost(done);
+        });
+}
+
 module('all tables ok', {
 
     beforeEach: function (assert) {
 
-        SETUP_OK = true;
-        Rdbhost.reset_rdbhost();
-
-        var done = assert.async();
-
-        domain = privat.getItem('domain');
-        acct_number = parseInt(privat.getItem('acct_number'), 10);
-        demo_email = privat.getItem('demo_email');
-        demo_pass = privat.getItem('demo_pass');
-
-        demo_postmark_key = privat.getItem('demo_postmark_key');
-        demo_postmark_email = privat.getItem('demo_postmark_email');
-
-        Rdbhost.connect(domain, acct_number);
-
-        var q = [dropApiTable, createApiKeyTable, addApiKey].join('\n');
-
-        var p = get_super_auth(acct_number, demo_email, demo_pass);
-        p.then(function(d) {
-
-            super_authcode = d.authcode;
-
-            Rdbhost.once('connection-closed:super', function() {
-                done();
-            });
-            var p = Rdbhost.super(super_authcode)
-                .query(q)
-                .params({'apikey': demo_postmark_key, 'account_email': demo_postmark_email})
-                .get_data();
-            p.then(function () {
-                    Rdbhost.disconnect(1000, '');
-                },
-                function (e) {
-                    Rdbhost.disconnect(1000, '');
-                });
-        });
+        var q = [dropApiTable, createApiKeyTable, addApiKey].join('\n'),
+            parms = {'apikey': demo_postmark_key, 'account_email': demo_postmark_email};
+        beforeEach(assert, q, parms);
     },
+
     afterEach: function(assert) {
-        SETUP_OK = false;
-        var done = assert.async();
-        // Rdbhost.once('connection-closed:super', function() {
-        //     done();
-        // });
-        var p = Rdbhost.super(super_authcode).query(dropApiTable).get_data();
-        p.then(function() {
-                // Rdbhost.disconnect(1000, '');
-                Rdbhost.reset_rdbhost(done);
-            },
-            function(e) {
-                // Rdbhost.disconnect(1000, '');
-                Rdbhost.reset_rdbhost(done);
-            });
+
+        afterEach(assert, dropApiTable, []);
     }
 });
 
@@ -118,24 +121,24 @@ test('test setup', function(assert) {
         .query("SELECT count(*) FROM auth.apikeys WHERE service = 'postmark';")
         .get_data();
 
+    function complete(t) { clearTimeout(t); done() }
     s.then(function(d) {
             ok(true, 'auth.apikeys found');
             ok(d.result_sets[0].rows[0].count === 1, d.status);
-            clearTimeout(t);
-            done();
+            complete(t);
         },
         function(e) {
             ok(false, 'error in SELECT FROM apikeys ' + e.message);
-            clearTimeout(t);
-            done();
+            complete(t);
         });
 
     var t = setTimeout(function() {
         ok(false, 'timeout');
-        done();
+        complete(t);
     }, 500);
 
 });
+
 
 // routine operation
 //
@@ -143,9 +146,7 @@ test('email tests - routine fail', function(assert) {
 
     var done = assert.async();
 
-    ok(SETUP_OK,'setup ok');
-    Rdbhost.connect(domain, acct_number);
-    Rdbhost.email_config('dev.rdbhost.com', 'rdbhost@rdbhost.com', 'postmark');
+    Rdbhost.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
 
     var p = Rdbhost.super()
                     .query("")
@@ -172,7 +173,7 @@ test('email tests - routine fail', function(assert) {
 
         setTimeout(function() {
             submit_superauth_form();
-        }, 800);
+        }, 300);
     });
 
     var st = setTimeout(function() {
@@ -188,9 +189,7 @@ test('email tests - routine success', function(assert) {
 
     var done = assert.async();
 
-    ok(SETUP_OK,'setup ok');
-    Rdbhost.connect(domain, acct_number);
-    Rdbhost.email_config('dev.rdbhost.com', 'rdbhost@rdbhost.com', 'postmark');
+    Rdbhost.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
 
     var p = Rdbhost.super()
         .query("")
@@ -212,7 +211,7 @@ test('email tests - routine success', function(assert) {
 
         setTimeout(function() {
             submit_superauth_form();
-        }, 800);
+        }, 300);
     });
 
 
@@ -226,56 +225,15 @@ test('email tests - routine success', function(assert) {
 module('apikeys table missing', {
 
     beforeEach: function (assert) {
-        SETUP_OK = true;
-        Rdbhost.reset_rdbhost();
-
-        var done = assert.async();
-
-        acct_number = parseInt(privat.getItem('acct_number'), 10);
-        demo_email = privat.getItem('demo_email');
-        demo_pass = privat.getItem('demo_pass');
-        domain = privat.getItem('domain');
-
-        demo_postmark_key = privat.getItem('demo_postmark_key');
-        demo_postmark_email = privat.getItem('demo_postmark_email');
-
-        Rdbhost.connect(domain, acct_number);
 
         var q = [dropApiTable].join('\n');
+        beforeEach(assert, q, []);
 
-        var p0 = get_super_auth(acct_number, demo_email, demo_pass);
-        p0.then(function(d) {
-            super_authcode = d.authcode;
-
-            Rdbhost.once('connection-closed:super', function() {
-                done();
-            });
-            var p = Rdbhost.super(super_authcode)
-                .query(q)
-                .get_data();
-            return p.then(function() {
-                    Rdbhost.disconnect(1000, '');
-                },
-                function(e) {
-                    Rdbhost.disconnect(1000, '');
-                });
-        })
+        Rdbhost.connect(domain, acct_number);
     },
     afterEach: function(assert) {
-        SETUP_OK = false;
-        var done = assert.async();
-        // Rdbhost.once('connection-closed:super', function() {
-        //     done();
-        // });
-        var p = Rdbhost.super(super_authcode).query(dropApiTable).get_data();
-        p.then(function() {
-                // Rdbhost.disconnect(1000, '');
-                Rdbhost.reset_rdbhost(done);
-            },
-            function(e) {
-                // Rdbhost.disconnect(1000, '');
-                Rdbhost.reset_rdbhost(done);
-            });
+
+        afterEach(assert, dropApiTable, []);
     }
 });
 
@@ -302,7 +260,7 @@ test('test setup', function(assert) {
     var t = setTimeout(function() {
         ok(false, 'timeout');
         done();
-    }, 500);
+    }, 300);
 
 });
 
@@ -312,8 +270,6 @@ test('email tests - routine fail', function(assert) {
 
     var done = assert.async();
 
-    ok(SETUP_OK,'setup ok');
-    Rdbhost.connect(domain, acct_number);
     Rdbhost.email_config('dev.rdbhost.com', 'rdbhost@rdbhost.com', 'postmark');
 
     var p = Rdbhost.super()
@@ -348,7 +304,7 @@ test('email tests - routine fail', function(assert) {
             key.value = demo_postmark_key;
 
             sub1.click();
-        }, 500)
+        }, 300)
     });
 
 
@@ -361,55 +317,14 @@ test('email tests - routine fail', function(assert) {
 module('apikeys table empty', {
 
     beforeEach: function (assert) {
-        SETUP_OK = true;
-        Rdbhost.reset_rdbhost();
-
-        var done = assert.async();
-
-        acct_number = parseInt(privat.getItem('acct_number'), 10);
-        demo_email = privat.getItem('demo_email');
-        demo_pass = privat.getItem('demo_pass');
-        domain = privat.getItem('domain');
-
-        demo_postmark_key = privat.getItem('demo_postmark_key');
-        demo_postmark_email = privat.getItem('demo_postmark_email');
-        Rdbhost.connect(domain, acct_number);
 
         var q = [dropApiTable, createApiKeyTable].join('\n');
 
-        var p0 = get_super_auth(acct_number, demo_email, demo_pass);
-        p0.then(function(d) {
-            super_authcode = d.authcode;
-
-            var p = Rdbhost.super(super_authcode)
-                .query(q)
-                // .params({'apikey': demo_stripe_key, 'account_email': demo_stripe_email})
-                .get_data();
-            p.then(function() {
-                    Rdbhost.disconnect(1000, '');
-                    done();
-                },
-                function(e) {
-                    Rdbhost.disconnect(1000, '');
-                    done();
-                });
-        })
+        beforeEach(assert, q, []);
     },
     afterEach: function(assert) {
-        SETUP_OK = false;
-        var done = assert.async();
-        // Rdbhost.once('connection-closed:super', function() {
-        //     done();
-        // });
-        var p = Rdbhost.super(super_authcode).query(dropApiTable).get_data();
-        p.then(function() {
-                // Rdbhost.disconnect(1000, '');
-                Rdbhost.reset_rdbhost(done);
-            },
-            function(e) {
-                // Rdbhost.disconnect(1000, '');
-                Rdbhost.reset_rdbhost(done);
-            });
+
+        afterEach(assert, dropApiTable, []);
     }
 });
 
@@ -424,7 +339,7 @@ test('test setup', function(assert) {
 
     s.then(function(d) {
             ok(true, 'apikeys table found');
-            ok(d.result_sets[0].rows === undefined, 'key in apikeys already');
+            ok(d.result_sets[0].rows === undefined, 'key not in apikeys');
             clearTimeout(t);
             done();
         },
@@ -447,8 +362,6 @@ test('email tests - routine success', function(assert) {
 
     var done = assert.async();
 
-    ok(SETUP_OK,'setup ok');
-    Rdbhost.connect(domain, acct_number);
     Rdbhost.email_config('dev.rdbhost.com', 'rdbhost@rdbhost.com', 'postmark');
     var p = Rdbhost.super()
         .query("")
@@ -482,7 +395,7 @@ test('email tests - routine success', function(assert) {
             key.value = demo_postmark_key;
 
             sub1.click();
-        }, 800);
+        }, 300);
     });
 
     var st = setTimeout(function() {
