@@ -11,12 +11,17 @@ demo_postmark_email = privat.getItem('demo_postmark_email');
 
 
 /*
-   todo - add tests for fixed() and for column().
 
-   todo - add test for multiple addressees
    todo - add test for no addressees
  */
 
+function timeoutBuilder(done) {
+
+    return setTimeout(function() {
+        ok(false, 'timeout');
+        complete(t);
+    }, 5000);
+}
 
 function submit_superauth_form() {
 
@@ -28,6 +33,22 @@ function submit_superauth_form() {
     eml.value = demo_email;
     pw.value = demo_pass;
     sub.click();
+}
+
+function submit_service_form() {
+
+    setTimeout(function() {
+
+        var frm = document.getElementById('partial-service'),
+            eml = frm.querySelector("input[name='account_email']"),
+            key = frm.querySelector("input[name='apikey']"),
+            sub1 = frm.querySelector("input[type='submit']");
+
+        eml.value = demo_postmark_email;
+        key.value = demo_postmark_key;
+
+        sub1.click();
+    }, 300);
 }
 
 
@@ -71,16 +92,12 @@ function beforeEach(assert, q, parms) {
         Rdbhost.once('connection-closed:super', function() {
             done();
         });
+        function disco() {Rdbhost.disconnect(1000, '');}
         var p = Rdbhost.super(super_authcode)
             .query(q)
             .params(parms)
             .get_data();
-        p.then(function () {
-                Rdbhost.disconnect(1000, '');
-            },
-            function (e) {
-                Rdbhost.disconnect(1000, '');
-            });
+        p.then(disco, disco);
     });
 }
 
@@ -89,25 +106,63 @@ function afterEach(assert, q, parms) {
     var done = assert.async();
 
     var p = Rdbhost.super(super_authcode).query(q).params(parms).get_data();
-    p.then(function() {
-            Rdbhost.reset_rdbhost(done);
-        },
-        function(e) {
-            Rdbhost.reset_rdbhost(done);
-        });
+    function reset() {
+        Rdbhost.reset_rdbhost(done);
+    }
+    p.then(reset, reset);
 }
+
+function fake_results_promise() {
+    return Promise.resolve({   "status":["complete","OK"],
+                "websocket-id":"x7fd98bee9e10",
+                "times":["0.006820","0.003835"],
+                "noise":"65J9OeoZIz9A",
+                "row_count":[1,"1 Rows Affected"],
+                "request-id":"super2",
+                "result_sets":[
+                    {   "header":{"result":705,"idx":23},
+                        "rows":[{"result":"Success","idx":1}]
+                    }
+                    ]
+            });
+}
+
+function MockSuper(retObj) {
+
+    retObj = retObj || {};
+
+    function rdgw(json_getter) {
+        var this_ = this;
+        retObj.json = json_getter.call(this_);
+
+        return fake_results_promise();
+    }
+    function rdgh(data_extractor) {
+        var this_ = this,
+            url_formdata = data_extractor.call(this_),
+            url = url_formdata[0],
+            formData = url_formdata[1];
+        retObj.url = url;
+        retObj.formData = formData;
+
+        return fake_results_promise();
+    }
+
+    return function(authcode) {
+        return Rdbhost.super(authcode, rdgw, rdgh);
+    }
+}
+
 
 module('all tables ok', {
 
     beforeEach: function (assert) {
-
         var q = [dropApiTable, createApiKeyTable, addApiKey].join('\n'),
             parms = {'apikey': demo_postmark_key, 'account_email': demo_postmark_email};
         beforeEach(assert, q, parms);
     },
 
     afterEach: function(assert) {
-
         afterEach(assert, dropApiTable, []);
     }
 });
@@ -132,10 +187,7 @@ test('test setup', function(assert) {
             complete(t);
         });
 
-    var t = setTimeout(function() {
-        ok(false, 'timeout');
-        complete(t);
-    }, 500);
+    var t = timeoutBuilder(done);
 
 });
 
@@ -176,10 +228,7 @@ test('email tests - routine fail', function(assert) {
         }, 300);
     });
 
-    var st = setTimeout(function() {
-        ok(false, 'timeout');
-        done();
-    }, 5000);
+    var st = timeoutBuilder(done);
 });
 
 
@@ -191,9 +240,11 @@ test('email tests - routine success', function(assert) {
 
     Rdbhost.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
 
+    var mock = {};
     var p = Rdbhost.super()
-        .query("")
-        .email('David', 'rdbhost@rdbhost.com', 'Me', 'dkeeney@travelbyroad.net', 'Test', 'test body');
+    // var p = MockSuper(mock)()
+        .email('David', 'rdbhost@rdbhost.com', 'Me', 'dkeeney@travelbyroad.net',
+                        'Test allTok routine success', 'test body');
 
     p.then(function(d) {
             ok(true, 'then called');
@@ -214,12 +265,177 @@ test('email tests - routine success', function(assert) {
         }, 300);
     });
 
-
-    var st = setTimeout(function() {
-        ok(false, 'timeout');
-        done();
-    }, 5000);
+    var st = timeoutBuilder(done);
 });
+
+
+// routine operation - multiple emails
+//
+test('email tests - multiple emails', function(assert) {
+
+    var done = assert.async();
+
+    Rdbhost.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
+
+    var c = Rdbhost.column_wrapper;
+    var p = Rdbhost.super()
+        .query("SELECT 'demo1@travelbyroad.net' AS tomail, 1 AS idx \n" +
+                "  UNION SELECT 'demo2@travelbyroad.net' AS tomail, 2 AS idx")
+        .email('David', 'rdbhost@rdbhost.com', 'Me', c('tomail'),
+            'Test allTok multiple emails d1, d2', 'test body');
+
+    p.then(function(d) {
+        ok(true, 'then called');
+        ok(d.result_sets[0].rows.length === 2, '2 results recieved');
+        ok(d.result_sets[0].rows[0].result.indexOf('Success') >= 0, d.status);
+        ok(d.result_sets[0].rows[1].result.indexOf('Success') >= 0, d.status);
+        ok(d.result_sets[0].rows[1].idx === 2, d.status);
+        clearTimeout(st);
+        done();
+    })
+        .catch(function(e) {
+            ok(false, 'catch called ' + e.message);
+            clearTimeout(st);
+            done();
+        });
+
+    Rdbhost.on('form-displayed', function() {
+
+        setTimeout(function() {
+            submit_superauth_form();
+        }, 300);
+    });
+
+    var st = timeoutBuilder(done);
+});
+
+
+// routine operation - no emails
+//
+test('email tests - no emails from query', function(assert) {
+
+    var done = assert.async();
+
+    Rdbhost.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
+
+    var c = Rdbhost.column_wrapper;
+    var p = Rdbhost.super()
+        .query("SELECT 'demo1@travelbyroad.net' AS tomail, 1 AS idx WHERE 1=2")
+        .email('David', 'rdbhost@rdbhost.com', 'Me', c('tomail'),
+            'Test allTok no emails', 'test body');
+
+    p.then(function(d) {
+        ok(true, 'then called');
+        ok(d.result_sets[0].rows.length === 1, '1 results recieved');
+        ok(d.result_sets[0].rows[0].result.indexOf('Illegal email address \'None') >= 0, 'illegal email error');
+        clearTimeout(st);
+        done();
+    })
+        .catch(function(e) {
+            ok(false, 'catch called ' + e.message);
+            clearTimeout(st);
+            done();
+        });
+
+    Rdbhost.on('form-displayed', function() {
+
+        setTimeout(function() {
+            submit_superauth_form();
+        }, 300);
+    });
+
+    var st = timeoutBuilder(done);
+});
+
+
+// routine operation
+//
+test('email tests - with query', function(assert) {
+
+    var done = assert.async();
+
+    Rdbhost.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
+
+    var mock = {},
+        c = Rdbhost.column_wrapper;
+
+    // var p = Rdbhost.super()
+    var p = MockSuper(mock)()
+        .query("SELECT 'demo@tbr.net' AS tomail")
+        .email('David', 'rdbhost@rdbhost.com', 'Me', c('tomail'),
+            'Test allTok with query', 'test body with query');
+
+    p.then(function(d) {
+            ok(mock.json, 'mock json ok');
+            var jsn = JSON.parse(mock.json);
+            ok(jsn.authcode.length > 20, 'mock json authcode 20 chars');
+            ok(jsn.mode === 'email', 'mock json mode === email');
+            ok(jsn.q.indexOf('ECT "_q_"."tomail" AS "To:') >=0, '"_q_.tomail AS To:" found');
+            ok(jsn.args.length === 7, 'mock json has 7 args');
+            clearTimeout(st);
+            done();
+        })
+        .catch(function(e) {
+            ok(false, 'catch called ' + e.message);
+            clearTimeout(st);
+            done();
+        });
+
+    Rdbhost.on('form-displayed', function() {
+
+        setTimeout(function() {
+            submit_superauth_form();
+        }, 300);
+    });
+
+    var st = timeoutBuilder(done);
+});
+
+
+// routine operation
+//
+test('email tests - with fixed', function(assert) {
+
+    var done = assert.async();
+
+    Rdbhost.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
+
+    var mock = {},
+        f = Rdbhost.fixed_wrapper;
+
+    // var p = Rdbhost.super()
+    var p = MockSuper(mock)()
+        .query("SELECT 'demo@tbr.net' AS tomail")
+        .email('David', 'rdbhost@rdbhost.com', 'Me', f('demo-tomail@tbr.net'),
+            'Test allTok with fixed', 'test body with fixed');
+
+    p.then(function(d) {
+            ok(mock.json, 'mock json ok');
+            var jsn = JSON.parse(mock.json);
+            ok(jsn.authcode.length > 20, 'mock json authcode 20 chars');
+            ok(jsn.mode === 'email', 'mock json mode === email');
+            ok(jsn.q.indexOf('ECT \'demo-tomail@tbr.net\' AS "To:",') >= 0, '"demo-tomail@tbr.net AS To:" found');
+            ok(jsn.args.length === 7, 'mock json has 7 args');
+            clearTimeout(st);
+            done();
+        })
+        .catch(function(e) {
+            ok(false, 'catch called ' + e.message);
+            clearTimeout(st);
+            done();
+        });
+
+    Rdbhost.on('form-displayed', function() {
+
+        setTimeout(function() {
+            submit_superauth_form();
+        }, 300);
+    });
+
+    var st = timeoutBuilder(done);
+});
+
+
 
 
 module('apikeys table missing', {
@@ -257,10 +473,7 @@ test('test setup', function(assert) {
             done();
         });
 
-    var t = setTimeout(function() {
-        ok(false, 'timeout');
-        done();
-    }, 300);
+    var t = timeoutBuilder(done);
 
 });
 
@@ -270,7 +483,7 @@ test('email tests - routine fail', function(assert) {
 
     var done = assert.async();
 
-    Rdbhost.email_config('dev.rdbhost.com', 'rdbhost@rdbhost.com', 'postmark');
+    Rdbhost.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
 
     var p = Rdbhost.super()
         .query("")
@@ -293,24 +506,10 @@ test('email tests - routine fail', function(assert) {
 
     Rdbhost.on('form-displayed', function() {
 
-        setTimeout(function() {
-
-            var frm = document.getElementById('partial-apikey'),
-                eml = frm.querySelector("input[name='email']"),
-                key = frm.querySelector("input[name='apikey']"),
-                sub1 = frm.querySelector("input[type='submit']");
-
-            eml.value = demo_postmark_email;
-            key.value = demo_postmark_key;
-
-            sub1.click();
-        }, 300)
+        submit_service_form();
     });
 
-
-    var st = setTimeout(function() {
-        done();
-    }, 5000);
+    var st = timeoutBuilder(done);
 });
 
 
@@ -349,10 +548,7 @@ test('test setup', function(assert) {
             done();
         });
 
-    var t = setTimeout(function() {
-        ok(false, 'timeout');
-        done();
-    }, 5000);
+    var t = timeoutBuilder(done);
 
 });
 
@@ -384,24 +580,10 @@ test('email tests - routine success', function(assert) {
 
     Rdbhost.on('form-displayed', function() {
 
-        setTimeout(function() {
-
-            var frm = document.getElementById('partial-apikey'),
-                eml = frm.querySelector("input[name='email']"),
-                key = frm.querySelector("input[name='apikey']"),
-                sub1 = frm.querySelector("input[type='submit']");
-
-            eml.value = demo_postmark_email;
-            key.value = demo_postmark_key;
-
-            sub1.click();
-        }, 300);
+        submit_service_form();
     });
 
-    var st = setTimeout(function() {
-        ok(false, 'timeout');
-        done();
-    }, 5000);
+    var st = timeoutBuilder(done);
 });
 
 
