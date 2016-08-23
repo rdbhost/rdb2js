@@ -38,8 +38,8 @@ Configuration Methods:
 
     email_config(host, host_email, service)
     
-'service' is 'postmark', 'sendgrid', or 'mailgun' for the webservice you are using. 
-The 'host' and 'host_email' are a name and email-address for the `email_host` method.
+`service` is 'postmark', 'sendgrid', or 'mailgun' for the webservice you are using. 
+The `host` and `host_email` are a name and email-address (yours, perhaps) for the `email_host` method.
 
 
 
@@ -50,21 +50,25 @@ Parameter Methods:
     
     
 Explaining these parameter methods takes some context.  If you just pass strings as parameters to the emailing methods,
-the email method creates an SQL query with each value parameterized.  The query gets a token inlined, and the value is passed as an argument.  
+the email method creates an SQL query with each value parameterized.  The query gets a substitution-token inlined, and the value is passed as an argument.  
 
-Sometimes you want the value itself inlined, so the value becomes part of the whitelisted query.  If you wrap the value in the `fixed_wrapper` method, the value gets interpolated into the query instead of being parameterized.  
+Sometimes you want the value itself inlined, so the value itself becomes part of the whitelisted query.  If you wrap the value in the `fixed_wrapper` method, the value gets interpolated into the query instead of being parameterized.  
 
 Sometimes the values for the fields come from a database, rather than as literals.  The SQL passed in the .query() method will retrieve the values, and each value included in the email using `column_wrapper` method wrapping the column name.
 
-When using the .query() method, the query can return multiple records, which will result in multiple emails.  Each record must include an 'idx' field.  The idx field should be unique per record, so you can identify which result row results from each record.    
+When using the .query() method, the query can return multiple records, which will result in multiple emails.  Each record must include an `idx` field.  The idx field should be unique per record, so you can identify which result row results from each record.    
 
 Look at an example:
 
+    // registers name and email as recipients of email_host email
     Rdbhost.email_config('President', 'pres@example.net', 'postmark');
     
+    // The subject line is hard coded into the query, and the email body comes
+    //   from a table.
     var spr = Rdbhost.preauth()
           .query("SELECT 1 AS idx, body FROM lookup.emails; ")
-          .email_host('David', 'dkeeney@rdbhost.com', 'title', Rdbhost.column_wrapper(body));
+          .email_host('David', 'dkeeney@rdbhost.com', 
+                       Rdbhost.fixed_wrapper('special title'), Rdbhost.column_wrapper('body'));
 
     spr.then(function(d) {
        alert('email sent successfully');
@@ -72,7 +76,7 @@ Look at an example:
 
 The server sends one email for each row returned by the query.
 
-These methods return promises. Each promise resolves with a list of rows that indcate SUCCESS or error for each email attempt.
+The email methods return promises. Each promise resolves with a list of rows that indcate 'SUCCESS' or error for each email attempt.
 
 The first time you run each query as `preauth`, the library will have you confirm the white-listing of the query.
 
