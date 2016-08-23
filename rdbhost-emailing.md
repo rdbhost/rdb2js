@@ -49,7 +49,7 @@ Parameter Methods:
     fixed_wrapper(string)
     
     
-Explaining these parameter methods takes some context.  If you just pass strings as parameters to the emailing methods,
+Explaining these parameter methods takes some context:  If you just pass strings as parameters to the emailing methods,
 the email method creates an SQL query with each value parameterized.  The query gets a substitution-token inlined, and the value is passed as an argument.  
 
 Sometimes you want the value itself inlined, so the value itself becomes part of the whitelisted query.  If you wrap the value in the `fixed_wrapper` method, the value gets interpolated into the query instead of being parameterized.  
