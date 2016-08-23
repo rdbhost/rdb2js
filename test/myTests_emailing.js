@@ -192,7 +192,7 @@ test('test setup', function(assert) {
 });
 
 
-// routine operation
+// routine operation that fails
 //
 test('email tests - routine fail', function(assert) {
 
@@ -326,8 +326,7 @@ test('email tests - no emails from query', function(assert) {
 
     p.then(function(d) {
         ok(true, 'then called');
-        ok(d.result_sets[0].rows.length === 1, '1 results recieved');
-        ok(d.result_sets[0].rows[0].result.indexOf('Illegal email address \'None') >= 0, 'illegal email error');
+        ok(d.row_count[0] === 0, '0 results recieved');
         clearTimeout(st);
         done();
     })
