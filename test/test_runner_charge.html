@@ -16,8 +16,8 @@
                 $L = $L.script('../vendor/fetch/fetch.js').wait();
         });
         $L = $L.script('../test/private.js').wait()
-            .script('../lib/js/rdbhost_livereload.js')
-            .script('../lib/js/rdbhost-charge.js');
+            .script('../lib/js/rdb2-livereload.js')
+            .script('../lib/js/rdb2-charge.js');
         $L.script('myTests_charge.js').wait(function() { QUnit.start() });
 
   </script>

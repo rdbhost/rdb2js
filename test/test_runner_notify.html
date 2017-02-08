@@ -19,7 +19,7 @@
             }
         );
     $L = $L.script('../test/private.js').wait()
-        .script('../lib/js/rdbhost_livereload.js');
+        .script('../lib/js/rdb2-livereload.js');
 
     $L.script('myTests_notify.js').wait(function() { QUnit.start(); } );
 
