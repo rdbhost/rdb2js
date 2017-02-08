@@ -8,15 +8,15 @@ This module adds two methods to the Rdbhost connection objects, `fedauth_login` 
 The traditional way of including it is with a script tag after the rdb2.js script.
 
     <script src="http://www.rdbhost.com/vendor/rdbhost/2.0/rdb2.js"></script>
-    <script src="http://www.rdbhost.com/vendor/rdbhost/2.0/rdbhost-authenticate.js"></script>
+    <script src="http://www.rdbhost.com/vendor/rdbhost/2.0/rdb2-authenticate.js"></script>
 
 A more performant way is to include it in the LABJS config.
 
-    $L = $L.script('/vendor/rdbhost/2.0/rdbhost-authenticate.js');
+    $L = $L.script('/vendor/rdbhost/2.0/rdb2-authenticate.js');
 
 ##How to Use
 
-To use the rdbhost-authenticate module, you need to setup an account on each authentication providers you choose to use.  _Twitter_, _Facebook_, and _Google_ all support federated identity.
+To use the rdb2-authenticate module, you need to setup an account on each authentication providers you choose to use.  _Twitter_, _Facebook_, and _Google_ all support federated identity.
 
 Have the `client_key` and `client_secret` data available from the setup.
 

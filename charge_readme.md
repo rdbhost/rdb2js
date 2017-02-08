@@ -18,8 +18,8 @@ A more performant way is to include it in the LABJS config.
     $L = $L.script('/vendor/rdbhost/2.0/rdb2-charge.js');
 
 
-To use the rdbhost-charge module, you need an account on Stripe.com.  Use the sandbox codes to
-test your app using the rdbhost-charge.js code.   Go to the Stripe.com website and setup an account.  
+To use the rdb2-charge module, you need an account on Stripe.com.  Use the sandbox codes to
+test your app using the rdb2-charge.js code.   Go to the Stripe.com website and setup an account.
 Have the account authorization data available.
 
 ##Charges

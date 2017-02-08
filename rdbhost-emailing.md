@@ -5,13 +5,13 @@ This module adds three methods to the Rdbhost connection objects, 'email' and 'e
 The traditional way of including it is with a script tag after the rdb2.js script.
 
     <script src="http://www.rdbhost.com/vendor/rdbhost/2.0/rdb2.js"></script>
-    <script src="http://www.rdbhost.com/vendor/rdbhost/2.0/rdbhost-emailing.js"></script>
+    <script src="http://www.rdbhost.com/vendor/rdbhost/2.0/rdb2-emailing.js"></script>
 
 A more performant way is to include it in the LABJS config.
 
-    $L = $L.script('/vendor/rdbhost/2.0/rdbhost-emailing.js');
+    $L = $L.script('/vendor/rdbhost/2.0/rdb2-emailing.js');
 
-To use the rdbhost-emailing module, you need an account on one of the emailing web services.  
+To use the rdb2-emailing module, you need an account on one of the emailing web services.
 
 Emailing
 
