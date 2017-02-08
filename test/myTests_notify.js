@@ -333,7 +333,7 @@ test('listen request receives w cloning', 12, function(assert){
         });
 
     var p2 = r2.get_data();
-    ok(p2.constructor.toString().indexOf('Promise') >= 0, 'pomise is object');
+    ok(p2.constructor.toString().indexOf('Promise') >= 0, 'promise is object');
     p2.then(function(d) {
             // ok(true, 'then called');
             ok(d.result_sets.length == 1, 'result_sets len');

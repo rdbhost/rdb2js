@@ -28,7 +28,7 @@ function get_auth(init, acctnum, email, passwd) {
         })
     });
 }
-var get_super_auth = get_auth.bind(null, 'super');
+// var get_super_auth = get_methods['auth'].bind(null, 'super');
 
 
 

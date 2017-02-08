@@ -92,7 +92,7 @@ test('test ', function(assert) {
     url.href = "/";
     url.pathname = '/rdb2js/test/test_runner_authenticate.html';
     url.search = '?dun=1';
-    var li = Rdbhost.fedauth_login('Oauthtest', url.href);
+    var li = Rdbhost.Authenticate.fedauth_login('Oauthtest', url.href);
 
     li.then(function(e) {
             ok(false, 'should not succeed');
@@ -159,7 +159,7 @@ test('test 1', 3, function(assert) {
         }, 100)
     });
 
-    var li = Rdbhost.fedauth_login('Twitter', url.href);
+    var li = Rdbhost.Authenticate.fedauth_login('Twitter', url.href);
 
     li.then(function(e) {
             ok(false, 'should not succeed');
@@ -206,7 +206,7 @@ test('test 2', 3, function(assert) {
         }, 100)
     });
 
-    var li = Rdbhost.fedauth_login('Twitter', url.href);
+    var li = Rdbhost.Authenticate.fedauth_login('Twitter', url.href);
 
     li.then(function(e) {
             ok(false, 'should not succeed');
@@ -276,7 +276,7 @@ test('test 1', 3, function(assert) {
         }, 100)
     });
 
-    var li = Rdbhost.fedauth_login('Twitter', url.href);
+    var li = Rdbhost.Authenticate.fedauth_login('Twitter', url.href);
 
     li.then(function(e) {
             ok(false, 'should not succeed');

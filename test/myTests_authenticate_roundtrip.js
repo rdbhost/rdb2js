@@ -62,25 +62,33 @@ module('Fedauth providers prepare Test', {
             "       'http://oauthbin.com/v1/echo?%%7B%%22email%%22%%3A%%22testuser%%40here.now%%22%%2C%%22id%%22%%3A%%22012345%%22%%7D'," +
             "       'id', 'email');").get_data();
 
-        supr.then(done, done);
+        supr.then(
+            function() {
+                done();
+                Rdbhost.disconnect(1000, '');
+            },
+            function() {
+                done();
+                Rdbhost.disconnect(1000, '');
+            }
+        );
 
-        Rdbhost.disconnect(1000, '');
     }
 });
 
 
 test('test authenticate setup', function(assert) {
 
-    done = assert.async();
+    var done = assert.async();
 
     if (window.location.search.indexOf('dun') < 0) {
 
         var url = document.createElement('a');
         url.href = "/";
-        url.pathname = '/rdb2js/test/test_runner_authenticate1.html';
+        url.pathname = '/V2/rdb2js/test/test_runner_authenticate1.html';
         url.search = '?dun=1';
 
-        var p = Rdbhost.fedauth_login('Oauthtest', url.href);
+        var p = Rdbhost.Authenticate.fedauth_login('Oauthtest', url.href);
         // p.then(done, done);
 
         Rdbhost.once('form-displayed', function () {
@@ -103,7 +111,7 @@ test('test authenticate setup', function(assert) {
 
         var t = setTimeout(function() { done() }, 1000);
 
-        var p1 = Rdbhost.confirm_fedauth_login();
+        var p1 = Rdbhost.Authenticate.confirm_fedauth_login();
         p1.then(function(d) {
 
                 ok(true, 'then function called');

@@ -149,7 +149,7 @@ function MockSuper(retObj) {
     }
 
     return function(authcode) {
-        return Rdbhost.super(authcode, rdgw, rdgh);
+        return Rdbhost.Email.super(authcode, rdgw, rdgh);
     }
 }
 
@@ -198,9 +198,9 @@ test('email tests - routine fail', function(assert) {
 
     var done = assert.async();
 
-    Rdbhost.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
+    Rdbhost.Email.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
 
-    var p = Rdbhost.super()
+    var p = Rdbhost.Email.super()
                     .query("")
                     .email('');  // no valid params provided
 
@@ -238,10 +238,10 @@ test('email tests - routine success', function(assert) {
 
     var done = assert.async();
 
-    Rdbhost.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
+    Rdbhost.Email.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
 
     var mock = {};
-    var p = Rdbhost.super()
+    var p = Rdbhost.Email.super()
     // var p = MockSuper(mock)()
         .email('David', 'rdbhost@rdbhost.com', 'Me', 'dkeeney@travelbyroad.net',
                         'Test allTok routine success', 'test body');
@@ -275,10 +275,10 @@ test('email tests - multiple emails', function(assert) {
 
     var done = assert.async();
 
-    Rdbhost.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
+    Rdbhost.Email.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
 
-    var c = Rdbhost.column_wrapper;
-    var p = Rdbhost.super()
+    var c = Rdbhost.Email.column_wrapper;
+    var p = Rdbhost.Email.super()
         .query("SELECT 'demo1@travelbyroad.net' AS tomail, 1 AS idx \n" +
                 "  UNION SELECT 'demo2@travelbyroad.net' AS tomail, 2 AS idx")
         .email('David', 'rdbhost@rdbhost.com', 'Me', c('tomail'),
@@ -316,10 +316,10 @@ test('email tests - no emails from query', function(assert) {
 
     var done = assert.async();
 
-    Rdbhost.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
+    Rdbhost.Email.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
 
-    var c = Rdbhost.column_wrapper;
-    var p = Rdbhost.super()
+    var c = Rdbhost.Email.column_wrapper;
+    var p = Rdbhost.Email.super()
         .query("SELECT 'demo1@travelbyroad.net' AS tomail, 1 AS idx WHERE 1=2")
         .email('David', 'rdbhost@rdbhost.com', 'Me', c('tomail'),
             'Test allTok no emails', 'test body');
@@ -353,12 +353,12 @@ test('email tests - with query', function(assert) {
 
     var done = assert.async();
 
-    Rdbhost.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
+    Rdbhost.Email.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
 
     var mock = {},
-        c = Rdbhost.column_wrapper;
+        c = Rdbhost.Email.column_wrapper;
 
-    // var p = Rdbhost.super()
+    // var p = Rdbhost.Email.super()
     var p = MockSuper(mock)()
         .query("SELECT 'demo@tbr.net' AS tomail")
         .email('David', 'rdbhost@rdbhost.com', 'Me', c('tomail'),
@@ -397,12 +397,12 @@ test('email tests - with fixed', function(assert) {
 
     var done = assert.async();
 
-    Rdbhost.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
+    Rdbhost.Email.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
 
     var mock = {},
-        f = Rdbhost.fixed_wrapper;
+        f = Rdbhost.Email.fixed_wrapper;
 
-    // var p = Rdbhost.super()
+    // var p = Rdbhost.Email.super()
     var p = MockSuper(mock)()
         .query("SELECT 'demo@tbr.net' AS tomail")
         .email('David', 'rdbhost@rdbhost.com', 'Me', f('demo-tomail@tbr.net'),
@@ -482,9 +482,9 @@ test('email tests - routine fail', function(assert) {
 
     var done = assert.async();
 
-    Rdbhost.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
+    Rdbhost.Email.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
 
-    var p = Rdbhost.super()
+    var p = Rdbhost.Email.super()
         .query("")
         .email('');
 
@@ -557,8 +557,8 @@ test('email tests - routine success', function(assert) {
 
     var done = assert.async();
 
-    Rdbhost.email_config('dev.rdbhost.com', 'rdbhost@rdbhost.com', 'postmark');
-    var p = Rdbhost.super()
+    Rdbhost.Email.email_config('dev.rdbhost.com', 'rdbhost@rdbhost.com', 'postmark');
+    var p = Rdbhost.Email.super()
         .query("")
         .email('David', 'rdbhost@rdbhost.com', 'Me', 'dkeeney@travelbyroad.net', 'Test', 'test body');
 

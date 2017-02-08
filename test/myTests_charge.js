@@ -55,7 +55,7 @@ var dropApiTable = 'DROP TABLE IF EXISTS auth.apikeys;',
                           paid BOOLEAN, \
                           refunded BOOLEAN, \
                           last4 VARCHAR(4), \
-                          error VARCHAR(50) \
+                          error VARCHAR(150) \
                         );';
 
 
@@ -150,7 +150,7 @@ test('charge tests - routine fail', function(assert) {
 
     ok(SETUP_OK,'setup ok');
     Rdbhost.connect(domain, acct_number);
-    var p = Rdbhost.super()
+    var p = Rdbhost.Charge.super()
                     .query("SELECT 1 AS amount, 'test' AS description, 'me' AS idx;")
                     .charge('1234123412341234', '', '11', '2018');
 
@@ -197,7 +197,7 @@ test('charge tests - routine success', function(assert) {
 
     ok(SETUP_OK,'setup ok');
     Rdbhost.connect(domain, acct_number);
-    var p = Rdbhost.super()
+    var p = Rdbhost.Charge.super()
         .query("SELECT 75 AS amount, 'test' AS description, 'me' AS idx;")
         .charge('4242424242424242', '100', '11', '2018');
 
@@ -325,7 +325,7 @@ test('charge tests - routine', function(assert) {
 
     ok(SETUP_OK,'setup ok');
     Rdbhost.connect(domain, acct_number);
-    var p = Rdbhost.super()
+    var p = Rdbhost.Charge.super()
         .query("SELECT 1 AS amount, 'test' AS description, 'me' AS idx;")
         .charge('1234123412341234', '', '11', '2018');
 
@@ -441,7 +441,7 @@ test('charge tests - routine', function(assert) {
 
     ok(SETUP_OK,'setup ok');
     Rdbhost.connect(domain, acct_number);
-    var p = Rdbhost.super()
+    var p = Rdbhost.Charge.super()
         .query("SELECT 1 AS amount, 'test' AS description, 'me' AS idx;")
         .charge('1234123412341234', '', '11', '2018');
 
@@ -570,7 +570,7 @@ test('charge tests - routine', function(assert) {
 
     ok(SETUP_OK,'setup ok');
     Rdbhost.connect(domain, acct_number);
-    var p = Rdbhost.super()
+    var p = Rdbhost.Charge.super()
         .query("SELECT 1 AS amount, 'test' AS description, 'me' AS idx;")
         .charge('1234123412341234', '', '11', '2018');
 
@@ -675,7 +675,7 @@ test('refund tests - routine success', function(assert) {
     ok(SETUP_OK,'setup ok');
 
     Rdbhost.connect(domain, acct_number);
-    var p = Rdbhost.super()
+    var p = Rdbhost.Charge.super()
         .query("SELECT 75 AS amount, 'test' AS description, 'me' AS idx;")
         .charge('4242424242424242', '100', '11', '2018');
 
@@ -696,7 +696,7 @@ test('refund tests - routine success', function(assert) {
                 ok(transaction_id !== '0', transaction_id);
 
                 // do refund
-                var refundProm = Rdbhost.super()
+                var refundProm = Rdbhost.Charge.super()
                     .query("SELECT amount, idx, id FROM charges LIMIT 1;")
                     .refund();
 
@@ -756,7 +756,7 @@ test('refund tests - routine fail', function(assert) {
 
     ok(SETUP_OK,'setup ok');
     Rdbhost.connect(domain, acct_number);
-    var p = Rdbhost.super()
+    var p = Rdbhost.Charge.super()
         .query("SELECT 75 AS amount, 'test' AS description, 'me' AS idx;")
         .charge('4242424242424242', '100', '11', '2018');
 
@@ -776,7 +776,7 @@ test('refund tests - routine fail', function(assert) {
                 ok(transaction_id !== '0', transaction_id);
 
                 // do refund
-                var refundProm = Rdbhost.super()
+                var refundProm = Rdbhost.Charge.super()
                     .query("SELECT id, idx, 80 AS amount FROM charges LIMIT 1;")
                     .refund();
 
