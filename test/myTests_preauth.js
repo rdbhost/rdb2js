@@ -74,7 +74,7 @@ asyncTest('preauth request cancel', 3, function() {
         var frm = document.getElementById('partial-preauth-auth'),
             cncl = frm.querySelector('.cancel');
         cncl.click();
-    }, 5000);
+    }, 500);
 
     var st = setTimeout(function() { start(); }, 5000);
 });
