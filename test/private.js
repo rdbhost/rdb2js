@@ -7,7 +7,7 @@ var privat = sessionStorage;
     if (window.location.href.indexOf('devsrc.') > -1)
         db_domain = 'dev.rdbhost.com';
     else if (window.location.href.indexOf('src.') > -1)
-        db_domain = 'www.rdbhost.comn';
+        db_domain = 'www.rdbhost.com';
     else  // user testing, assume production server
         db_domain = 'www.rdbhost.com';
 

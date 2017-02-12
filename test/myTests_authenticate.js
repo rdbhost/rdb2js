@@ -142,7 +142,6 @@ module('Fedauth no-twitter Test', {
 //
 QUnit.test('test 1', 3, function(assert) {
 
-    debugger;
     var done = assert.async();
 
     var url = document.createElement('a');
