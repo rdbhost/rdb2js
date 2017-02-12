@@ -12,6 +12,7 @@ QUnit.module('Authorization tests', {
         acct_number = parseInt(privat.getItem('acct_number'), 10);
         demo_email = privat.getItem('demo_email');
         demo_pass = privat.getItem('demo_pass');
+
         Rdbhost.reset_rdbhost(undefined, 'clean');
         Rdbhost.paranoid_confirm = false;
         Rdbhost.connect(domain, acct_number);
@@ -194,7 +195,6 @@ QUnit.module('modal-force tests', {
         Rdbhost.reset_rdbhost(undefined, 'clean');
         Rdbhost.paranoid_confirm = false;
         Rdbhost.connect(domain, acct_number);
-        // get_password();
 
         Rdbhost.clickrecd = [];
         Rdbhost.clicktried = [];
@@ -353,13 +353,11 @@ QUnit.test('super request http cancel-confirm', 4, function(assert) {
         }, 100);
     });
 
-
-
     var st = setTimeout(function() { done(); }, 5000);
 });
 
 
-// send super request, cancel authorization dialog
+// send super request, confirm authorization dialog
 //
 QUnit.test('super request http confirm-YES', 5, function(assert) {
 
@@ -584,6 +582,158 @@ QUnit.test('super request alt path', 4, function(assert) {
 
     var st = setTimeout(function() { done(); }, 5000);
 });
+
+
+module('Paranoid Form tests', {
+
+    beforeEach: function (assert) {
+        var done = assert.async();
+        var domain = privat.getItem('domain'),
+            acct_number = parseInt(privat.getItem('acct_number'), 10);
+        demo_email = privat.getItem('demo_email');
+        demo_pass = privat.getItem('demo_pass');
+
+        Rdbhost.reset_rdbhost(done, 'clean');
+        Rdbhost.paranoid_confirm = true;
+        Rdbhost.connect(domain, acct_number);
+    },
+    afterEach: function(assert) {
+        var done = assert.async();
+        Rdbhost.reset_rdbhost(done, 'clean');
+    }
+});
+
+
+// send super request, confirm authorization dialog
+//
+QUnit.test('super request http confirm-YES', 5, function(assert) {
+
+    var done = assert.async();
+
+    var fd = new FormData();
+    var e = Rdbhost.super()
+        .query('SELECT 1 AS a');
+
+    var p = e.get_data();
+    ok(p.constructor.toString().indexOf('Promise') >= 0, p);
+    p.then(function(d) {
+        ok(true, 'then called');
+
+        var p1 = Rdbhost.super().query('SELECT 2 AS b;').form_data(fd).get_data();
+        ok(p1.constructor.toString().indexOf('Promise') >= 0, p1);
+        p1.then(function(d) {
+                ok(true, '2nd request confirm not canceled');
+                ok(d.status[1] === 'OK', d.status);
+                clearTimeout(st);
+                done();
+            })
+            .catch(function(e) {
+                ok(false, '2nd request confirm canceled');
+                clearTimeout(st);
+                done();
+            });
+
+    });
+
+    Rdbhost.once('form-displayed', function() {
+        setTimeout(function () {
+            var frm = document.getElementById('partial-super-auth'),
+                eml = frm.querySelector("input[name='email']"),
+                pw = frm.querySelector("input[name='password']"),
+                sub = frm.querySelector("input[type='submit']");
+
+            eml.value = demo_email;
+            pw.value = demo_pass;
+
+            setTimeout(function() {
+                Rdbhost.once('form-displayed', function() {
+                    setTimeout(function() {
+                        var frm = document.getElementById('partial-confirm'),
+                            nm = frm.querySelector('input[name="no_more"]'),
+                            sub1 = frm.querySelector("input[type='submit']");
+
+                        sub1.click();
+                    }, 100)
+                }, 500);
+            }, 2);
+
+            sub.click();
+        }, 100);
+    });
+
+    var st = setTimeout(function() { done(); }, 5000);
+});
+
+
+// send super request, opt-out of confirm on first authorization dialog
+//
+QUnit.test('super request http confirm-Once-Only', 9, function(assert) {
+
+    var done = assert.async();
+
+    var fd = new FormData();
+    var e = Rdbhost.super()
+        .query('SELECT 1 AS a');
+
+    var p = e.get_data();
+    ok(p.constructor.toString().indexOf('Promise') >= 0, p);
+    p.then(function(d) {
+        ok(true, 'then called');
+
+        var p1 = Rdbhost.super().query('SELECT 2 AS b;').form_data(fd).get_data();
+        ok(p1.constructor.toString().indexOf('Promise') >= 0, p1);
+        p1.then(function(d) {
+            ok(true, '2nd request confirm not canceled');
+            ok(d.status[1] === 'OK', d.status);
+
+            var p2 = Rdbhost.super().query('SELECT 3 AS c;').form_data(fd).get_data();
+            ok(p2.constructor.toString().indexOf('Promise') >= 0, p2);
+            p2.then(function(d) {
+                    ok(true, '3rd request confirm not canceled');
+                    ok(d.status[1] === 'OK', d.status);
+                    ok(!Rdbhost.paranoid_confirm, 'paranoid_confirm off');
+                    clearTimeout(st);
+                    done();
+                });
+            })
+            .catch(function(e) {
+                ok(false, '3rd request confirm canceled');
+                clearTimeout(st);
+                done();
+            });
+
+    });
+
+    Rdbhost.once('form-displayed', function() {
+        setTimeout(function () {
+            var frm = document.getElementById('partial-super-auth'),
+                eml = frm.querySelector("input[name='email']"),
+                pw = frm.querySelector("input[name='password']"),
+                sub = frm.querySelector("input[type='submit']");
+
+            eml.value = demo_email;
+            pw.value = demo_pass;
+
+            setTimeout(function() {
+                Rdbhost.once('form-displayed', function() {
+                    setTimeout(function() {
+                        var frm = document.getElementById('partial-confirm'),
+                            nm = frm.querySelector('input[name="no_more"]'),
+                            sub1 = frm.querySelector("input[type='submit']");
+
+                        nm.checked = 'checked';
+                        sub1.click();
+                    }, 100)
+                }, 500);
+            }, 2);
+
+            sub.click();
+        }, 100);
+    });
+
+    var st = setTimeout(function() { done(); }, 5000);
+});
+
 
 
 
