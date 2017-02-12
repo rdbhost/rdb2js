@@ -74,6 +74,8 @@ module('all tables ok', {
         demo_stripe_key = privat.getItem('demo_stripe_key');
         demo_stripe_email = privat.getItem('demo_stripe_email');
 
+        Rdbhost.reset_rdbhost(undefined, 'clean');
+        Rdbhost.paranoid_confirm = false;
         Rdbhost.connect(domain, acct_number);
 
         var q = [dropApiTable, createApiKeyTable, addApiKey, dropChargesTable, createChargesTable].join('\n');
@@ -106,10 +108,12 @@ module('all tables ok', {
         p.then(function() {
                 // Rdbhost.disconnect(1000, '');
                 Rdbhost.reset_rdbhost(done);
+                Rdbhost.paranoid_confirm = false;
             },
             function(e) {
                 // Rdbhost.disconnect(1000, '');
                 Rdbhost.reset_rdbhost(done);
+                Rdbhost.paranoid_confirm = false;
             });
     }
 });
@@ -250,6 +254,8 @@ module('charge table missing', {
         demo_stripe_key = privat.getItem('demo_stripe_key');
         demo_stripe_email = privat.getItem('demo_stripe_email');
 
+        Rdbhost.reset_rdbhost(undefined, 'clean');
+        Rdbhost.paranoid_confirm = false;
         Rdbhost.connect(domain, acct_number);
 
         var q = [dropApiTable, createApiKeyTable, addApiKey, dropChargesTable].join('\n');
@@ -282,10 +288,12 @@ module('charge table missing', {
         p.then(function() {
                 // Rdbhost.disconnect(1000, '');
                 Rdbhost.reset_rdbhost(done);
+                Rdbhost.paranoid_confirm = false;
             },
             function(e) {
                 // Rdbhost.disconnect(1000, '');
                 Rdbhost.reset_rdbhost(done);
+                Rdbhost.paranoid_confirm = false;
             });
     }
 });
@@ -366,6 +374,8 @@ module('apikeys table missing', {
         demo_pass = privat.getItem('demo_pass');
         domain = privat.getItem('domain');
 
+        Rdbhost.reset_rdbhost(undefined, 'clean');
+        Rdbhost.paranoid_confirm = false;
         Rdbhost.connect(domain, acct_number);
 
         var q = [dropApiTable, dropChargesTable, createChargesTable].join('\n');
@@ -494,6 +504,8 @@ module('apikeys table empty', {
         demo_stripe_key = privat.getItem('demo_stripe_key');
         demo_stripe_email = privat.getItem('demo_stripe_email');
 
+        Rdbhost.reset_rdbhost(undefined, 'clean');
+        Rdbhost.paranoid_confirm = false;
         Rdbhost.connect(domain, acct_number);
 
         var q = [dropApiTable, createApiKeyTable, dropChargesTable, createChargesTable].join('\n');
@@ -519,16 +531,11 @@ module('apikeys table empty', {
     afterEach: function(assert) {
         SETUP_OK = false;
         var done = assert.async();
-        // Rdbhost.once('connection-closed:super', function() {
-        //     done();
-        // });
         var p = Rdbhost.super(super_authcode).query(dropApiTable).get_data();
         p.then(function() {
-                // Rdbhost.disconnect(1000, '');
                 Rdbhost.reset_rdbhost(done);
             },
             function(e) {
-                // Rdbhost.disconnect(1000, '');
                 Rdbhost.reset_rdbhost(done);
             });
     }
@@ -625,6 +632,8 @@ module('refunding', {
         demo_stripe_key = privat.getItem('demo_stripe_key');
         demo_stripe_email = privat.getItem('demo_stripe_email');
 
+        Rdbhost.reset_rdbhost(undefined, 'clean');
+        Rdbhost.paranoid_confirm = false;
         Rdbhost.connect(domain, acct_number);
 
         var q = [dropApiTable, createApiKeyTable, addApiKey, dropChargesTable, createChargesTable].join('\n');

@@ -24,6 +24,7 @@ module('Authorization tests', {
         demo_pass = privat.getItem('demo_pass');
 
         Rdbhost.reset_rdbhost(undefined, 'clean');
+        Rdbhost.paranoid_confirm = false;
         Rdbhost.connect(domain, acct_number);
         // get_password();
         var p = get_super_auth(acct_number, demo_email, demo_pass);

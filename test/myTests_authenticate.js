@@ -66,6 +66,8 @@ module('Fedauth no-table Test', {
     beforeEach: function (assert) {
 
         Rdbhost.reset_rdbhost(undefined, 'clean');
+        Rdbhost.paranoid_confirm = false;
+
         Rdbhost.connect(privat.getItem('domain'), acct_number);
         Rdbhost.use_labjs_loader($LAB);
 

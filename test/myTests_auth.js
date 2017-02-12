@@ -44,6 +44,7 @@ module('Authorization tests', {
     beforeEach: function (assert) {
 
         Rdbhost.reset_rdbhost(undefined, 'clean');
+        Rdbhost.paranoid_confirm = false;
         var done = assert.async();
 
         domain = privat.getItem('domain');
@@ -70,6 +71,7 @@ module('Authorization tests', {
         Rdbhost.disconnect(1000, '');
         setTimeout(function() {
             Rdbhost.reset_rdbhost(undefined, 'clean');
+            Rdbhost.paranoid_confirm = false;
             done();
         }, 500);
     }

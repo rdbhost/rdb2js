@@ -27,6 +27,7 @@ module('Fedauth providers prepare Test', {
     beforeEach: function (assert) {
 
         Rdbhost.reset_rdbhost(undefined, 'clean');
+        Rdbhost.paranoid_confirm = false;
 
         domain = privat.getItem('domain');
         acct_number = parseInt(privat.getItem('acct_number'), 10);
@@ -69,11 +70,13 @@ module('Fedauth providers prepare Test', {
                 done();
                 Rdbhost.disconnect(1000, '');
                 Rdbhost.reset_rdbhost(undefined, 'clean');
+                Rdbhost.paranoid_confirm = false;
             },
             function() {
                 done();
                 Rdbhost.disconnect(1000, '');
                 Rdbhost.reset_rdbhost(undefined, 'clean');
+                Rdbhost.paranoid_confirm = false;
             }
         );
 

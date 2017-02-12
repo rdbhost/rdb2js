@@ -108,6 +108,7 @@ function afterEach(assert, q, parms) {
     var p = Rdbhost.super(super_authcode).query(q).params(parms).get_data();
     function reset() {
         Rdbhost.reset_rdbhost(done);
+        Rdbhost.paranoid_confirm = false;
     }
     p.then(reset, reset);
 }

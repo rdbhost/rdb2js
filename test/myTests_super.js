@@ -13,6 +13,7 @@ QUnit.module('Authorization tests', {
         demo_email = privat.getItem('demo_email');
         demo_pass = privat.getItem('demo_pass');
         Rdbhost.reset_rdbhost(undefined, 'clean');
+        Rdbhost.paranoid_confirm = false;
         Rdbhost.connect(domain, acct_number);
         done();
     },
@@ -189,6 +190,9 @@ QUnit.module('modal-force tests', {
         console.log('beforeEach 1');
         domain = privat.getItem('domain');
         acct_number = parseInt(privat.getItem('acct_number'), 10);
+
+        Rdbhost.reset_rdbhost(undefined, 'clean');
+        Rdbhost.paranoid_confirm = false;
         Rdbhost.connect(domain, acct_number);
         // get_password();
 
@@ -280,8 +284,10 @@ module('Confirm tests', {
         demo_email = privat.getItem('demo_email');
         demo_pass = privat.getItem('demo_pass');
         acct_number = parseInt(privat.getItem('acct_number'), 10);
-        Rdbhost.connect(domain, acct_number);
+
+        Rdbhost.reset_rdbhost(undefined, 'clean');
         Rdbhost.paranoid_confirm = true;
+        Rdbhost.connect(domain, acct_number);
     },
     afterEach: function(assert) {
         var done = assert.async();
@@ -529,6 +535,9 @@ module('Alternate Template Location tests', {
                 (window.location.port ? ':' + window.location.port: '');
         }
         var path = window.location.pathname.replace('/test_runner_super.html', '/tpl/');
+
+        Rdbhost.reset_rdbhost(undefined, 'clean');
+        Rdbhost.paranoid_confirm = true;
         Rdbhost.connect(domain, acct_number, window.location.origin + path);
         // get_password();
     },
