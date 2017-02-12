@@ -4,9 +4,11 @@ PASSWORD = undefined;
 SUPER_AUTH = get_super_auth(privat.getItem('acct_number'), privat.getItem('demo_email'), privat.getItem('demo_pass'));
 
 domain = privat.getItem('domain');
-acct_number = parseInt(privat.getItem('acct_number'), 2);
+acct_number = parseInt(privat.getItem('acct_number'), 10);
 demo_email = privat.getItem('demo_email');
 demo_pass = privat.getItem('demo_pass');
+
+PREAUTH_ROLENAME = 'p00000000'+acct_number;
 
 
 function submit_superauth_form() {
@@ -63,7 +65,8 @@ module('Fedauth no-table Test', {
 
     beforeEach: function (assert) {
 
-        Rdbhost.connect('dev.rdbhost.com', 14);
+        Rdbhost.reset_rdbhost(undefined, 'clean');
+        Rdbhost.connect(privat.getItem('domain'), acct_number);
         Rdbhost.use_labjs_loader($LAB);
 
         var q = 'DROP TABLE IF EXISTS auth.fedoauth_providers_temp; \
@@ -84,7 +87,7 @@ module('Fedauth no-table Test', {
 
 // check that no-table situation is handled correctly
 //
-test('test ', function(assert) {
+QUnit.test('test ', function(assert) {
 
     var done = assert.async();
 
@@ -111,14 +114,14 @@ module('Fedauth no-twitter Test', {
 
     beforeEach: function (assert) {
 
-        Rdbhost.connect('dev.rdbhost.com', 14);
+        Rdbhost.connect(privat.getItem('domain'), acct_number);
         Rdbhost.use_labjs_loader($LAB);
 
         var q = 'DROP TABLE IF EXISTS auth.fedoauth_providers_temp; \
                  ALTER TABLE auth.fedoauth_providers RENAME TO fedoauth_providers_temp; \
                  CREATE TABLE auth.fedoauth_providers (LIKE auth.fedoauth_providers_temp INCLUDING INDEXES); \
                  GRANT SELECT ON auth.fedoauth_providers TO global_reader; \
-                 GRANT SELECT ON auth.fedoauth_providers TO p0000000014; \
+                 GRANT SELECT ON auth.fedoauth_providers TO ' + PREAUTH_ROLENAME + '; \
                  INSERT INTO auth.fedoauth_providers SELECT * FROM auth.fedoauth_providers_temp; \
                  DELETE FROM auth.fedoauth_providers WHERE provider = \'Twitter\'';
 
@@ -137,8 +140,9 @@ module('Fedauth no-twitter Test', {
 
 // check that no-twitter record shows fedauth form
 //
-test('test 1', 3, function(assert) {
+QUnit.test('test 1', 3, function(assert) {
 
+    debugger;
     var done = assert.async();
 
     var url = document.createElement('a');
@@ -176,7 +180,7 @@ test('test 1', 3, function(assert) {
 
 // check that completing fedauth form results in login redirect
 //
-test('test 2', 3, function(assert) {
+QUnit.test('test 2', 3, function(assert) {
 
     var done = assert.async();
 
@@ -226,7 +230,7 @@ module('Fedauth no-twitter keys Test', {
 
     beforeEach: function (assert) {
 
-        Rdbhost.connect('dev.rdbhost.com', 14);
+        Rdbhost.connect(privat.getItem('domain'), acct_number);
         Rdbhost.use_labjs_loader($LAB);
 
         var q = 'DROP TABLE IF EXISTS auth.fedoauth_providers_temp; \n' +
@@ -235,7 +239,7 @@ module('Fedauth no-twitter keys Test', {
                 '-- global_reader needs priv for access by servers authentication processing, and p-role needs \n' +
                 '--  access for tests coming from this library. \n' +
                 'GRANT SELECT ON auth.fedoauth_providers TO global_reader; \n' +
-                'GRANT SELECT ON auth.fedoauth_providers TO p0000000014; \n' +
+                'GRANT SELECT ON auth.fedoauth_providers TO '+ PREAUTH_ROLENAME + '; \n' +
                 'INSERT INTO auth.fedoauth_providers SELECT * FROM auth.fedoauth_providers_temp; \n' +
                 'UPDATE auth.fedoauth_providers SET client_key=\'\', client_secret=\'\' WHERE provider = \'Twitter\'';
 
@@ -254,7 +258,7 @@ module('Fedauth no-twitter keys Test', {
 
 // check that no-keys in twitter record shows fedauth form
 //
-test('test 1', 3, function(assert) {
+QUnit.test('test 1', 3, function(assert) {
 
     var done = assert.async();
 

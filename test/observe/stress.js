@@ -12,7 +12,7 @@ function stress_functions() {
 
     document.getElementById('preauth').addEventListener('click', function(evt) {
 
-        Rdbhost.connect('dev.rdbhost.com', 14, partials_path());
+        Rdbhost.connect(privat.getItem('domain'), 14, partials_path());
         var preauth = Rdbhost.preauth();
 
         var p = preauth.query('SELECT 123; \n\n SELECT \'abc\'; UPDATE whatever SET a=1;\n\nINSERT INTO wherever (b) VALUES(2);').get_data();
@@ -26,7 +26,7 @@ function stress_functions() {
 
     document.getElementById('auth').addEventListener('click', function(evt) {
 
-        Rdbhost.connect('dev.rdbhost.com', 14, partials_path());
+        Rdbhost.connect(privat.getItem('domain'), 14, partials_path());
         var auth = Rdbhost.auth();
 
         var p = auth.query('SELECT 123; \n\n SELECT \'abc\';').get_data();
@@ -41,7 +41,7 @@ function stress_functions() {
 
     document.getElementById('super').addEventListener('click', function(evt) {
 
-        Rdbhost.connect('dev.rdbhost.com', 14, partials_path());
+        Rdbhost.connect(privat.getItem('domain'), 14, partials_path());
         var spr = Rdbhost.super();
 
         var p = spr.query('SELECT 123; \n\n SELECT \'abc\'; UPDATE whatever SET a=1;\n\nINSERT INTO wherever (b) VALUES(2);').get_data();
@@ -55,7 +55,7 @@ function stress_functions() {
 
     document.getElementById('credit').addEventListener('click', function(evt) {
 
-        Rdbhost.connect('dev.rdbhost.com', 14, partials_path());
+        Rdbhost.connect(privat.getItem('domain'), 14, partials_path());
 
         var p = Rdbhost.show_form('apikey', function() {}, function() {}, {});
         p.catch(function(e) {
@@ -70,7 +70,7 @@ function stress_functions() {
 
         Rdbhost.paranoid_confirm = true;
 
-        Rdbhost.connect('dev.rdbhost.com', 14, partials_path());
+        Rdbhost.connect(privat.getItem('domain'), 14, partials_path());
         var spr = Rdbhost.super('fake-authcode');
 
         var p = spr.query('SELECT 123; \n\n SELECT \'abc\';').get_data();
@@ -87,7 +87,7 @@ function stress_functions() {
 
     document.getElementById('fedauth').addEventListener('click', function(evt) {
 
-        Rdbhost.connect('dev.rdbhost.com', 14, partials_path());
+        Rdbhost.connect(privat.getItem('domain'), 14, partials_path());
 
         Rdbhost.show_form('fedauth', function() {}, function() {}, {});
 

@@ -12,6 +12,7 @@ QUnit.module('Authorization tests', {
         acct_number = parseInt(privat.getItem('acct_number'), 10);
         demo_email = privat.getItem('demo_email');
         demo_pass = privat.getItem('demo_pass');
+        Rdbhost.reset_rdbhost(undefined, 'clean');
         Rdbhost.connect(domain, acct_number);
         done();
     },
@@ -19,7 +20,7 @@ QUnit.module('Authorization tests', {
         console.log('afterEach');
         var done = assert.async();
 
-        Rdbhost.reset_rdbhost(done)
+        Rdbhost.reset_rdbhost(done, 'clean');
     }
 });
 
@@ -214,7 +215,7 @@ QUnit.module('modal-force tests', {
 
         console.log('afterEach 1');
         var done = assert.async();
-        Rdbhost.reset_rdbhost(done);
+        Rdbhost.reset_rdbhost(done, 'clean');
         var el = document.getElementById('test-link');
         document.body.removeChild(el);
         delete Rdbhost.clickrecd;
@@ -268,8 +269,6 @@ QUnit.test('super request modal', function(assert) {
 
 
 
-
-
 // var domain, acct_number, demo_email, demo_pass,
 //    PASSWORD = undefined;
 
@@ -286,13 +285,13 @@ module('Confirm tests', {
     },
     afterEach: function(assert) {
         var done = assert.async();
-        Rdbhost.reset_rdbhost(done);
+        Rdbhost.reset_rdbhost(done, 'clean');
     }
 });
 
 // send super request via http, cancel authorization dialog
 //
-test('super request http cancel-confirm', 4, function(assert) {
+QUnit.test('super request http cancel-confirm', 4, function(assert) {
 
     var done = assert.async();
 
@@ -320,7 +319,8 @@ test('super request http cancel-confirm', 4, function(assert) {
 
         })
         .catch(function(e) {
-            ok(false, 'cancel error thrown on prep')
+            ok(false, 'cancel error thrown on prep '+e.message);
+            done();
         });
 
     Rdbhost.once('form-displayed', function() {
@@ -332,15 +332,22 @@ test('super request http cancel-confirm', 4, function(assert) {
 
             eml.value = demo_email;
             pw.value = demo_pass;
+
+            setTimeout(function() {
+                Rdbhost.once('form-displayed', function() {
+                    setTimeout(function() {
+                        var frm = document.getElementById('partial-confirm'),
+                            cncl = frm.querySelector('.cancel');
+                        cncl.click();
+                    }, 100)
+                }, 500);
+            }, 2);
+
             sub.click();
-        }, 1000)
+        }, 100);
     });
 
-    setTimeout(function() {
-        var frm = document.getElementById('partial-confirm'),
-            cncl = frm.querySelector('.cancel');
-        cncl.click();
-    }, 1500);
+
 
     var st = setTimeout(function() { done(); }, 5000);
 });
@@ -348,7 +355,7 @@ test('super request http cancel-confirm', 4, function(assert) {
 
 // send super request, cancel authorization dialog
 //
-test('super request http confirm-YES', 5, function(assert) {
+QUnit.test('super request http confirm-YES', 5, function(assert) {
 
     var done = assert.async();
 
@@ -386,16 +393,20 @@ test('super request http confirm-YES', 5, function(assert) {
 
             eml.value = demo_email;
             pw.value = demo_pass;
+
+            setTimeout(function() {
+                Rdbhost.once('form-displayed', function() {
+                    setTimeout(function() {
+                        var frm = document.getElementById('partial-confirm'),
+                            sub = frm.querySelector("input[type='submit']");
+                        sub.click();
+                    }, 100)
+                }, 500);
+            }, 2);
+
             sub.click();
-        }, 500)
+        }, 100);
     });
-
-    setTimeout(function() {
-        var frm = document.getElementById('partial-confirm'),
-            sub = frm.querySelector("input[type='submit']");
-        sub.click();
-    }, 1000);
-
 
     var st = setTimeout(function() { done(); }, 5000);
 });
@@ -403,7 +414,7 @@ test('super request http confirm-YES', 5, function(assert) {
 
 // send super request via ws, cancel authorization dialog
 //
-test('super request ws cancel-confirm', 4, function(assert) {
+QUnit.test('super request ws cancel-confirm', 4, function(assert) {
 
     var done = assert.async();
 
@@ -455,7 +466,7 @@ test('super request ws cancel-confirm', 4, function(assert) {
 
 // send super request, cancel authorization dialog
 //
-test('super request ws confirm-YES', 5, function(assert) {
+QUnit.test('super request ws confirm-YES', 5, function(assert) {
 
     var done = assert.async();
 
@@ -523,14 +534,14 @@ module('Alternate Template Location tests', {
     },
     afterEach: function(assert) {
         var done = assert.async();
-        Rdbhost.reset_rdbhost(done);
+        Rdbhost.reset_rdbhost(done, 'clean');
     }
 });
 
 
 // send super request, confirm with authorization dialog from alt location
 //
-test('super request alt path', 4, function(assert) {
+QUnit.test('super request alt path', 4, function(assert) {
 
     var done = assert.async();
 

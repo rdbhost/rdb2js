@@ -12,7 +12,7 @@ var demo_pass, demo_email, acct_number, domain,
 
 function get_auth(init, acctnum, email, passwd) {
 
-    var url = 'https://dev.rdbhost.com/acct/login/00000000' + acctnum,
+    var url = 'https://'+privat.getItem('domain')+'/acct/login/00000000' + acctnum,
         formData = new FormData();
 
     formData.append('arg:email', email);
@@ -43,6 +43,7 @@ module('Authorization tests', {
 
     beforeEach: function (assert) {
 
+        Rdbhost.reset_rdbhost(undefined, 'clean');
         var done = assert.async();
 
         domain = privat.getItem('domain');
@@ -68,6 +69,7 @@ module('Authorization tests', {
         var done = assert.async();
         Rdbhost.disconnect(1000, '');
         setTimeout(function() {
+            Rdbhost.reset_rdbhost(undefined, 'clean');
             done();
         }, 500);
     }

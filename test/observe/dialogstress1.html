@@ -26,10 +26,10 @@
   </style>
 
   <title>Dialog Stress Page</title>
-  <script type="text/javascript" src="https://dev.rdbhost.com/vendor/labjs/LAB.js"></script>
+  <script type="text/javascript" src="../vendor/labjs/LAB.js"></script>
   <script>
     var $L = $LAB
-        .script('https://dev.rdbhost.com/vendor/rdbhost/latest/lib/js/rdb2-bundle.js').wait(
+        .script('../lib/js/rdb2-bundle.js').wait(
             function() {
 
               if ( !Rdbhost.featuredetects.hasPromises() )
@@ -45,7 +45,7 @@
     $L = $L.wait(function() {
       stress_functions();
 
-      Rdbhost.connect('dev.rdbhost.com', 14);
+      Rdbhost.connect(privat.getItem('domain'), 14);
       var preauth = Rdbhost.preauth();
       Rdbhost.activate_reloader(preauth);
     });

@@ -5,7 +5,7 @@ SUPER_AUTH = undefined;
 
 function get_auth(init, acctnum, email, passwd) {
 
-    var url = 'https://dev.rdbhost.com/acct/login/00000000' + acctnum,
+    var url = 'https://'+privat.getItem('domain')+'/acct/login/00000000' + acctnum,
         formData = new FormData();
 
     formData.append('arg:email', email);

@@ -116,7 +116,7 @@ test('listen request invokes reloader on image', 8, function(assert){
     var savedImgSrc = el.src;
 
     Rdbhost.once('notify-received:rdbhost_ftp_channel:super', function f(ch, pl) {
-        ok(fail, 'notify-received should not be received');
+        ok(false, 'notify-received should not be received');
     });
     Rdbhost.once('reload-request', function f(ch, pl) {
         ok('event', 'notify event received');
@@ -136,6 +136,7 @@ test('listen request invokes reloader on image', 8, function(assert){
     function cleanup() {
         setTimeout(function() {
             clearTimeout(st);
+            clearTimeout(st1);
             document.body.removeChild(el);
             done();
         }, 50)
@@ -156,7 +157,7 @@ test('listen request invokes reloader on image', 8, function(assert){
             cleanup();
         });
 
-    setTimeout(function() {
+    var st1 = setTimeout(function() {
         var frm = document.getElementById('partial-super-auth'),
             eml = frm.querySelector("input[name='email']"),
             pw = frm.querySelector("input[name='password']"),
@@ -165,9 +166,9 @@ test('listen request invokes reloader on image', 8, function(assert){
         eml.value = demo_email;
         pw.value = privat.getItem('demo_pass');
         sub.click();
-    }, 500);
+    }, 1500);
 
-    var st = setTimeout(function() { done(); }, 1000);
+    var st = setTimeout(function() { done(); }, 11000);
 });
 
 
@@ -200,11 +201,6 @@ test('listen request ignored from wrong role', 4, function(assert){
     Rdbhost.once('notify-received:rdbhost_ftp_channel:reader', function f(ch, pl) {
         ok(false, 'notify-received should not be received');
     });
-/*
-    Rdbhost.once('reload-request', function f(ch, pl) {
-        ok(false, 'notify event received');
-    });
-*/
 
     var r = Rdbhost.preauth()
         .query("NOTIFY \"rdbhost_ftp_channel:reader\", 'SAVE FILE /dummy.gif';")

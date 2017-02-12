@@ -26,12 +26,14 @@ module('Fedauth providers prepare Test', {
 
     beforeEach: function (assert) {
 
+        Rdbhost.reset_rdbhost(undefined, 'clean');
+
         domain = privat.getItem('domain');
-        acct_number = parseInt(privat.getItem('acct_number'), 2);
+        acct_number = parseInt(privat.getItem('acct_number'), 10);
         demo_email = privat.getItem('demo_email');
         demo_pass = privat.getItem('demo_pass');
         
-        Rdbhost.connect('dev.rdbhost.com', 14);
+        Rdbhost.connect(privat.getItem('domain'), acct_number);
 
         var done = assert.async();
 
@@ -66,10 +68,12 @@ module('Fedauth providers prepare Test', {
             function() {
                 done();
                 Rdbhost.disconnect(1000, '');
+                Rdbhost.reset_rdbhost(undefined, 'clean');
             },
             function() {
                 done();
                 Rdbhost.disconnect(1000, '');
+                Rdbhost.reset_rdbhost(undefined, 'clean');
             }
         );
 
@@ -85,7 +89,8 @@ test('test authenticate setup', function(assert) {
 
         var url = document.createElement('a');
         url.href = "/";
-        url.pathname = '/V2/rdb2js/test/test_runner_authenticate1.html';
+        // url.pathname = '/V2/rdb2js/test/test_runner_authenticate1.html';
+        url.pathname = window.location.pathname;
         url.search = '?dun=1';
 
         var p = Rdbhost.Authenticate.fedauth_login('Oauthtest', url.href);

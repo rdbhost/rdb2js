@@ -23,6 +23,7 @@ module('Authorization tests', {
         demo_email = privat.getItem('demo_email');
         demo_pass = privat.getItem('demo_pass');
 
+        Rdbhost.reset_rdbhost(undefined, 'clean');
         Rdbhost.connect(domain, acct_number);
         // get_password();
         var p = get_super_auth(acct_number, demo_email, demo_pass);
@@ -51,8 +52,9 @@ module('Authorization tests', {
 
 // send preauth request with query, verify promise fulfilled with error
 //
-asyncTest('preauth request cancel', 3, function() {
+QUnit.test('preauth request cancel', 3, function(assert) {
 
+    var done = assert.async();
     var e = Rdbhost.preauth()
         .query('SELECT 1 AS a; /* testing-delete */');
 
@@ -61,29 +63,33 @@ asyncTest('preauth request cancel', 3, function() {
     p.then(function(d) {
             ok(false, 'then called');
             clearTimeout(st);
-            start();
+            done();
         })
         .catch(function(e) {
             ok(true, 'then error called');
             ok(e.message.substr(0, 11) === 'authorizati', e.message);
             clearTimeout(st);
-            start();
+            done();
         });
 
-    setTimeout(function() {
-        var frm = document.getElementById('partial-preauth-auth'),
-            cncl = frm.querySelector('.cancel');
-        cncl.click();
-    }, 500);
+    Rdbhost.once('form-displayed', function() {
+        setTimeout(function() {
 
-    var st = setTimeout(function() { start(); }, 5000);
+            var frm = document.getElementById('partial-preauth-auth'),
+                cncl = frm.querySelector('.cancel');
+            cncl.click();
+        }, 100)
+    });
+
+    var st = setTimeout(function() { done(); }, 15000);
 });
 
 
 // send super request, confirm with authorization dialog
 //
-asyncTest('preauth request confirm', 3, function() {
+QUnit.test('preauth request confirm', 3, function(assert) {
 
+    var done = assert.async();
     var e = Rdbhost.preauth()
         .query('SELECT 1 AS a; /* testing-delete */');
 
@@ -93,29 +99,32 @@ asyncTest('preauth request confirm', 3, function() {
             ok(true, 'then called');
             ok(d.result_sets[0].rows[0].a === 1, d.status);
             clearTimeout(st);
-            start();
+            done();
         })
         .catch(function(e) {
             ok(false, 'then error called');
             clearTimeout(st);
-            start();
+            done();
         });
 
-    setTimeout(function() {
-        var frm = document.getElementById('partial-preauth-auth');
-        if ( !frm )
-            return;
+    Rdbhost.once('form-displayed', function() {
+        setTimeout(function() {
 
-        var eml = frm.querySelector("input[name='email']"),
-            pw = frm.querySelector("input[name='password']"),
-            sub = frm.querySelector("input[type='submit']");
+            var frm = document.getElementById('partial-preauth-auth');
+            if ( !frm )
+                return;
 
-        eml.value = demo_email;
-        pw.value = privat.getItem('demo_pass'); //get_password();
-        sub.click();
-    }, 500);
+            var eml = frm.querySelector("input[name='email']"),
+                pw = frm.querySelector("input[name='password']"),
+                sub = frm.querySelector("input[type='submit']");
 
-    var st = setTimeout(function() { start(); }, 5000);
+            eml.value = demo_email;
+            pw.value = privat.getItem('demo_pass'); //get_password();
+            sub.click();
+        }, 100)
+    });
+
+    var st = setTimeout(function() { done(); }, 15000);
 });
 
 

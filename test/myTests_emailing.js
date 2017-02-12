@@ -557,7 +557,7 @@ test('email tests - routine success', function(assert) {
 
     var done = assert.async();
 
-    Rdbhost.Email.email_config('dev.rdbhost.com', 'rdbhost@rdbhost.com', 'postmark');
+    Rdbhost.Email.email_config(privat.getItem('domain'), 'rdbhost@rdbhost.com', 'postmark');
     var p = Rdbhost.Email.super()
         .query("")
         .email('David', 'rdbhost@rdbhost.com', 'Me', 'dkeeney@travelbyroad.net', 'Test', 'test body');

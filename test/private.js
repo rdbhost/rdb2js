@@ -1,31 +1,38 @@
 
-
-
 var privat = sessionStorage;
 
+(function() {
 
-privat.setItem('bad_acct_number', 2);
-privat.setItem('bad_email', 'demo@travelbyroad.net');
+    var db_domain;
+    if (window.location.href.indexOf('devsrc.') > -1)
+        db_domain = 'dev.rdbhost.com';
+    else if (window.location.href.indexOf('src.') > -1)
+        db_domain = 'www.rdbhost.comn';
+    else  // user testing, assume production server
+        db_domain = 'www.rdbhost.com';
 
-
-privat.setItem('domain', 'dev.rdbhost.com');
-privat.setItem('acct_number', 14);
-
-privat.setItem('demo_email', 'jsdemos@travelbyroad.net');
-if (!privat.getItem('demo_pass'))
-    privat.setItem('demo_pass', prompt('enter password for jsdemos'));
-
-privat.setItem('demo_stripe_email', 'dkeeney@rdbhost.com');
-privat.setItem('demo_stripe_key', 'cPvPkcyWggrVF8IB0R0N2kc34PwL54SC');  // sandbox account
-
-privat.setItem('demo_postmark_email', 'rdbhost@rdbhost.com');
-privat.setItem('demo_postmark_key', '0be3da1e-f0b3-421e-ae6c-64ceda2cb914');  // sandbox account
+    privat.setItem('bad_acct_number', 2);
+    privat.setItem('bad_email', 'demo@travelbyroad.net');
 
 
+    privat.setItem('domain', db_domain);
+    privat.setItem('acct_number', 12);
+
+    privat.setItem('demo_email', 'js@travelbyroad.net');
+    if (!privat.getItem('demo_pass'))
+        privat.setItem('demo_pass', prompt('enter password for js@travelbyroad.net'));
+
+    privat.setItem('demo_stripe_email', 'dkeeney@rdbhost.com');
+    privat.setItem('demo_stripe_key', 'cPvPkcyWggrVF8IB0R0N2kc34PwL54SC');  // sandbox account
+
+    privat.setItem('demo_postmark_email', 'rdbhost@rdbhost.com');
+    privat.setItem('demo_postmark_key', '0be3da1e-f0b3-421e-ae6c-64ceda2cb914');  // sandbox account
+
+})();
 
 function get_auth(init, acctnum, email, passwd) {
 
-    var url = 'https://dev.rdbhost.com/acct/login/00000000' + acctnum,
+    var url = 'https://'+privat.getItem('domain')+'/acct/login/00000000' + acctnum,
         formData = new FormData();
 
     formData.append('arg:email', email);
