@@ -6,14 +6,20 @@ var demo_pass, demo_email, acct_number, domain,
 module('Notify tests', {
 
     setup: function (assert) {
+        var done = assert.async();
 
         domain = privat.getItem('domain');
         acct_number = parseInt(privat.getItem('acct_number'), 10);
         demo_email = privat.getItem('demo_email');
         demo_pass = privat.getItem('demo_pass');
 
-        Rdbhost.connect(domain, acct_number);
-        Rdbhost.activate_reloader(Rdbhost.reader());
+        function _t() {
+            Rdbhost.paranoid_confirm = false;
+            Rdbhost.connect(domain, acct_number);
+            var pr = Rdbhost.activate_reloader(Rdbhost.reader());
+            pr.then(done);
+        }
+        Rdbhost.reset_rdbhost(_t, 'clean');
     },
     teardown: function(assert) {
         var done = assert.async();
@@ -126,7 +132,7 @@ test('listen request invokes reloader on image', 8, function(assert){
         setTimeout(function() {
             var el1 = document.getElementById('test-image');
             ok(el1.src !== savedImgSrc, 'src '+el1.src);
-        }, 10);
+        }, 20);
     });
 
     var r = Rdbhost.super()

@@ -82,6 +82,8 @@ function beforeEach(assert, q, parms) {
 
     var done = assert.async();
 
+    Rdbhost.reset_rdbhost(undefined, 'clean');
+    Rdbhost.paranoid_confirm = false;
     Rdbhost.connect(domain, acct_number);
 
     var p = get_super_auth(acct_number, demo_email, demo_pass);

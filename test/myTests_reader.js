@@ -54,6 +54,8 @@ module('Request tests', {
     beforeEach: function () {
         domain = privat.getItem('domain');
         acct_number = parseInt(privat.getItem('acct_number'), 10);
+        Rdbhost.reset_rdbhost(undefined, 'clean');
+        Rdbhost.paranoid_confirm = false;
         Rdbhost.connect(domain, acct_number);
     },
     afterEach: function() {
