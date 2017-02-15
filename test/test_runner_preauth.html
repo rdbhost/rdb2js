@@ -9,7 +9,7 @@
   <script type="text/javascript" src="../vendor/labjs/LAB.js"></script>
   <script>
     var $L = $LAB
-        .script('../lib/js/rdb2-bundle.js').wait(
+        .script('../lib/js/util-bundle;rdbhost.js').wait(
             function() {
 
               if ( !Rdbhost.featuredetects.hasPromises() )
