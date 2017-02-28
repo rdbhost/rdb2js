@@ -455,14 +455,15 @@ QUnit.test('super request ws cancel-confirm', 4, function(assert) {
             eml.value = demo_email;
             pw.value = demo_pass;
             sub.click();
-        }, 500)
-    });
+        }, 500);
 
-    setTimeout(function() {
-        var frm = document.getElementById('partial-confirm'),
-            cncl = frm.querySelector('.cancel');
-        cncl.click();
-    }, 1000);
+        setTimeout(function() {
+            var frm = document.getElementById('partial-confirm'),
+                cncl = frm.querySelector('.cancel');
+            cncl.click();
+        }, 1000);
+
+    });
 
     var st = setTimeout(function() { done(); }, 5000);
 });
@@ -508,14 +509,15 @@ QUnit.test('super request ws confirm-YES', 5, function(assert) {
             eml.value = demo_email;
             pw.value = demo_pass;
             sub.click();
-        }, 500)
-    });
+        }, 500);
 
-    setTimeout(function() {
-        var frm = document.getElementById('partial-confirm'),
-            sub = frm.querySelector("input[type='submit']");
-        sub.click();
-    }, 1000);
+        setTimeout(function() {
+            var frm = document.getElementById('partial-confirm'),
+                sub = frm.querySelector("input[type='submit']");
+            sub.click();
+        }, 1000);
+
+    });
 
 
     var st = setTimeout(function() { done(); }, 5000);
