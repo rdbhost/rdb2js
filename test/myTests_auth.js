@@ -114,9 +114,9 @@ test('preauth request cancel', 3, function(assert){
 });
 
 
-// send super request, confirm with authorization dialog
+// send auth request, confirm with authorization dialog
 //
-test('preauth request confirm', 3, function(assert){
+test('auth request confirm', 3, function(assert){
 
     var done = assert.async();
 
