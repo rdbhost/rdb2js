@@ -134,15 +134,15 @@ function MockSuper(retObj) {
 
     retObj = retObj || {};
 
-    function rdgw(json_getter) {
+    function rdgw(json_getter, auth_cache) {
         var this_ = this;
-        retObj.json = json_getter.call(this_);
+        retObj.json = json_getter.call(this_, auth_cache);
 
         return fake_results_promise();
     }
-    function rdgh(data_extractor) {
+    function rdgh(data_extractor, auth_cache) {
         var this_ = this,
-            url_formdata = data_extractor.call(this_),
+            url_formdata = data_extractor.call(this_, auth_cache),
             url = url_formdata[0],
             formData = url_formdata[1];
         retObj.url = url;
