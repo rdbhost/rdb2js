@@ -76,7 +76,7 @@ QUnit.test('super request confirm', function(assert) {
     ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(true, 'then called');
-            ok(d.result_sets[0].rows[0].b === 1, d.status);
+            ok(d.result_sets[0].records.rows[0].b === 1, d.status);
             clearTimeout(st);
             done();
         })
@@ -119,7 +119,7 @@ QUnit.test('super request http confirm', function(assert) {
     ok(p.constructor.toString().indexOf('Promise') >= 0, p);
     p.then(function(d) {
             ok(true, 'then called');
-            ok(d.result_sets[0].rows[0].c === 1, d.status);
+            ok(d.result_sets[0].records.rows[0].c === 1, d.status);
             clearTimeout(st);
             done();
         })

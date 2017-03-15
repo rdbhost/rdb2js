@@ -91,7 +91,7 @@ test('reader request ok', 5, function(assert){
         ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is Promise');
         p.then(function(d) {
                 ok(true, 'then called');
-                ok(d.result_sets[0].rows[0].a === 1, d.status);
+                ok(d.result_sets[0].records.rows[0].a === 1, d.status);
                 clearTimeout(st);
                 done();
             })
@@ -120,7 +120,7 @@ test('reader request ok 2', 3, function(assert){
     ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is Promise');
     p.then(function(d) {
             ok(true, 'then called');
-            ok(d.result_sets[0].rows[0].a === 1, d.status);
+            ok(d.result_sets[0].records.rows[0].a === 1, d.status);
             clearTimeout(st);
             done();
         })
@@ -147,7 +147,7 @@ test('reader request ok namedParams', 3, function(assert){
     ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is Promise');
     p.then(function(d) {
             ok(true, 'then called');
-            ok(d.result_sets[0].rows[0].a === '1', d.status);
+            ok(d.result_sets[0].records.rows[0].a === '1', d.status);
             clearTimeout(st);
             done();
         })
@@ -174,7 +174,7 @@ test('reader request ok args', 3, function(assert){
     ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is Promise');
     p.then(function(d) {
             ok(true, 'then called');
-            ok(d.result_sets[0].rows[0].a === '1', d.status);
+            ok(d.result_sets[0].records.rows[0].a === '1', d.status);
             clearTimeout(st);
             done();
         })
@@ -238,7 +238,7 @@ test('cloned request ok', 8, function(assert){
     var p1a = p1.then(function(d) {
             ok(true, 'then called');
             ok(d.result_sets.length === 1, d.result_sets.length);
-            ok(d.result_sets[0].rows[0].a === '1', 'value1 '+d.result_sets[0].rows[0].a);
+            ok(d.result_sets[0].records.rows[0].a === '1', 'value1 '+d.result_sets[0].records.rows[0].a);
         })
         .catch(function(e) {
             ok(false, 'then error called '+ e.message);
@@ -249,7 +249,7 @@ test('cloned request ok', 8, function(assert){
     var p2a = p2.then(function(d) {
             ok(true, 'then called');
             ok(d.result_sets.length === 1, d.result_sets.length);
-            ok(d.result_sets[0].rows[0].a === '5', 'value2 '+d.result_sets[0].rows[0].a);
+            ok(d.result_sets[0].records.rows[0].a === '5', 'value2 '+d.result_sets[0].records.rows[0].a);
         })
         .catch(function(e) {
             ok(false, 'then error called '+ e.message);
@@ -285,7 +285,7 @@ test('cloned request ok 2', 7, function(assert){
     var p1a = p1.then(function(d) {
             ok(true, 'then called');
             ok(d.result_sets.length === 1, d.result_sets.length);
-            ok(d.result_sets[0].rows[0].a === '1', 'value1 '+d.result_sets[0].rows[0].a);
+            ok(d.result_sets[0].records.rows[0].a === '1', 'value1 '+d.result_sets[0].records.rows[0].a);
         })
         .catch(function(e) {
             ok(false, 'then error called '+e.message);
@@ -376,7 +376,7 @@ test('formData reader request ok', 4, function(assert){
     ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is Promise');
     p.then(function(d) {
             ok(true, 'then called');
-            ok(d.result_sets[0].rows[0].a === '1', d.status);
+            ok(d.result_sets[0].records.rows[0].a === '1', d.status);
             clearTimeout(st);
             done();
         })

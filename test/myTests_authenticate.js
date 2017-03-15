@@ -116,6 +116,7 @@ module('Fedauth no-twitter Test', {
 
     beforeEach: function (assert) {
 
+        Rdbhost.paranoid_confirm = false;
         Rdbhost.connect(privat.getItem('domain'), acct_number);
         Rdbhost.use_labjs_loader($LAB);
 

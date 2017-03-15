@@ -129,7 +129,7 @@ test('test setup', function(assert) {
 
     s.then(function(d) {
             ok(true, 'auth.apikeys found');
-            ok(d.result_sets[0].rows[0].count === 1, d.status);
+            ok(d.result_sets[0].records.rows[0].count === 1, d.status);
             clearTimeout(t);
             done();
         },
@@ -160,15 +160,15 @@ test('charge tests - routine fail', function(assert) {
 
     p.then(function(d) {
             ok(true, 'then called');
-            ok(d.result_sets[0].rows[0].result.indexOf('card number is incorrect') >= 0, d.status);
+            ok(d.result_sets[0].records.rows[0].result.indexOf('card number is incorrect') >= 0, d.status);
 
             // add test to verify charges table got new entry
             var chkProm = Rdbhost.super().query('SELECT * FROM charges;').get_data();
             chkProm.then(function(d) {
 
-                ok(d.result_sets[0].rows.length === 1, 'rows len '+ d.result_sets[0].rows.length);
-                ok(d.result_sets[0].rows[0].error.indexOf('number is incorr') >=0, d.result_sets[0].rows[0].error);
-                ok(d.result_sets[0].rows[0].amount === '1', d.result_sets[0].rows[0].amount);
+                ok(d.result_sets[0].records.rows.length === 1, 'rows len '+ d.result_sets[0].records.rows.length);
+                ok(d.result_sets[0].records.rows[0].error.indexOf('number is incorr') >=0, d.result_sets[0].records.rows[0].error);
+                ok(d.result_sets[0].records.rows[0].amount === '1', d.result_sets[0].records.rows[0].amount);
                 clearTimeout(st);
                 done();
             })
@@ -207,15 +207,15 @@ test('charge tests - routine success', function(assert) {
 
     p.then(function(d) {
             ok(true, 'then called');
-            ok(d.result_sets[0].rows[0].result.indexOf('Success') >= 0, d.status);
+            ok(d.result_sets[0].records.rows[0].result.indexOf('Success') >= 0, d.status);
 
             // add test to verify charges table got new entry
             var chkProm = Rdbhost.super().query('SELECT * FROM charges;').get_data();
             chkProm.then(function(d) {
 
-                ok(d.result_sets[0].rows.length === 1, 'rows len '+ d.result_sets[0].rows.length);
-                ok(d.result_sets[0].rows[0].paid === true, 'paid is true');
-                ok(d.result_sets[0].rows[0].amount === '75', d.result_sets[0].rows[0].amount);
+                ok(d.result_sets[0].records.rows.length === 1, 'rows len '+ d.result_sets[0].records.rows.length);
+                ok(d.result_sets[0].records.rows[0].paid === true, 'paid is true');
+                ok(d.result_sets[0].records.rows[0].amount === '75', d.result_sets[0].records.rows[0].amount);
                 clearTimeout(st);
                 done();
             });
@@ -552,7 +552,7 @@ test('test setup', function(assert) {
 
     s.then(function(d) {
             ok(true, 'apikeys table found');
-            ok(d.result_sets[0].rows === undefined, 'key in apikeys already');
+            ok(d.result_sets[0].records.rows === undefined, 'key in apikeys already');
             clearTimeout(t);
             done();
         },
@@ -690,18 +690,18 @@ test('refund tests - routine success', function(assert) {
 
     p.then(function(d) {
             ok(true, 'then called');
-            ok(d.result_sets[0].rows[0].result.indexOf('Success') >= 0, d.status);
+            ok(d.result_sets[0].records.rows[0].result.indexOf('Success') >= 0, d.status);
 
             // add test to verify charges table got new entry
             var chkProm = Rdbhost.super().query('SELECT * FROM charges;').get_data();
             chkProm.then(function(d) {
 
-                ok(d.result_sets[0].rows.length === 1, 'rows len '+ d.result_sets[0].rows.length);
-                ok(d.result_sets[0].rows[0].refunded === false, 'refunded is false');
-                ok(d.result_sets[0].rows[0].paid === true, 'paid is true');
-                ok(d.result_sets[0].rows[0].amount === '75', d.result_sets[0].rows[0].amount);
+                ok(d.result_sets[0].records.rows.length === 1, 'rows len '+ d.result_sets[0].records.rows.length);
+                ok(d.result_sets[0].records.rows[0].refunded === false, 'refunded is false');
+                ok(d.result_sets[0].records.rows[0].paid === true, 'paid is true');
+                ok(d.result_sets[0].records.rows[0].amount === '75', d.result_sets[0].records.rows[0].amount);
 
-                var transaction_id = d.result_sets[0].rows[0].id;
+                var transaction_id = d.result_sets[0].records.rows[0].id;
                 ok(transaction_id !== '0', transaction_id);
 
                 // do refund
@@ -712,15 +712,15 @@ test('refund tests - routine success', function(assert) {
                 refundProm.then(function(d) {
 
                         ok(true, 'then called');
-                        ok(d.result_sets[0].rows[0].result.indexOf('Success') >= 0, d.status);
+                        ok(d.result_sets[0].records.rows[0].result.indexOf('Success') >= 0, d.status);
 
                         // add test to verify charges table got new refund entry
                         var chkRefund = Rdbhost.super().query('SELECT * FROM charges;').get_data();
                         chkRefund.then(function(d) {
 
-                                ok(d.result_sets[0].rows.length === 2, 'rows len ' + d.result_sets[0].rows.length);
-                                ok(d.result_sets[0].rows[1].refunded === true, 'refunded true');
-                                ok(d.result_sets[0].rows[1].amount === '75', d.result_sets[0].rows[0].amount);
+                                ok(d.result_sets[0].records.rows.length === 2, 'rows len ' + d.result_sets[0].records.rows.length);
+                                ok(d.result_sets[0].records.rows[1].refunded === true, 'refunded true');
+                                ok(d.result_sets[0].records.rows[1].amount === '75', d.result_sets[0].records.rows[0].amount);
 
                                 clearTimeout(st);
                                 done();
@@ -771,17 +771,17 @@ test('refund tests - routine fail', function(assert) {
 
     p.then(function(d) {
             ok(true, 'then called');
-            ok(d.result_sets[0].rows[0].result.indexOf('Success') >= 0, d.status);
+            ok(d.result_sets[0].records.rows[0].result.indexOf('Success') >= 0, d.status);
 
             // add test to verify charges table got new entry
             var chkProm = Rdbhost.super().query('SELECT * FROM charges;').get_data();
             chkProm.then(function(d) {
 
-                ok(d.result_sets[0].rows.length === 1, 'rows len '+ d.result_sets[0].rows.length);
-                ok(d.result_sets[0].rows[0].paid === true, 'paid true');
-                ok(d.result_sets[0].rows[0].amount === '75', d.result_sets[0].rows[0].amount);
+                ok(d.result_sets[0].records.rows.length === 1, 'rows len '+ d.result_sets[0].records.rows.length);
+                ok(d.result_sets[0].records.rows[0].paid === true, 'paid true');
+                ok(d.result_sets[0].records.rows[0].amount === '75', d.result_sets[0].records.rows[0].amount);
 
-                var transaction_id = d.result_sets[0].rows[0].id;
+                var transaction_id = d.result_sets[0].records.rows[0].id;
                 ok(transaction_id !== '0', transaction_id);
 
                 // do refund
@@ -792,15 +792,15 @@ test('refund tests - routine fail', function(assert) {
                 refundProm.then(function(d) {
 
                     ok(true, 'then called');
-                    ok(d.result_sets[0].rows[0].result.indexOf('Success') >= 0, d.status);
+                    ok(d.result_sets[0].records.rows[0].result.indexOf('Success') >= 0, d.status);
 
                     // add test to verify charges table got new refund entry
                     var chkRefund = Rdbhost.super().query('SELECT * FROM charges;').get_data();
                     chkRefund.then(function(d) {
 
-                        ok(d.result_sets[0].rows.length === 2, 'rows len ' + d.result_sets[0].rows.length);
-                        ok(d.result_sets[0].rows[1].paid === true, 'paid true');
-                        ok(d.result_sets[0].rows[1].amount === '80', d.result_sets[0].rows[0].amount);
+                        ok(d.result_sets[0].records.rows.length === 2, 'rows len ' + d.result_sets[0].records.rows.length);
+                        ok(d.result_sets[0].records.rows[1].paid === true, 'paid true');
+                        ok(d.result_sets[0].records.rows[1].amount === '80', d.result_sets[0].records.rows[0].amount);
 
 
                         // todo - check stripe site to verify these refunds are happening.   should not make 80

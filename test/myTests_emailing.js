@@ -18,9 +18,9 @@ demo_postmark_email = privat.getItem('demo_postmark_email');
 function timeoutBuilder(done) {
 
     return setTimeout(function() {
-        ok(false, 'timeout');
-        complete(t);
-    }, 5000);
+        ok(false, 'timeout expired');
+        done();
+    }, 10000);
 }
 
 function submit_superauth_form() {
@@ -182,7 +182,7 @@ test('test setup', function(assert) {
     function complete(t) { clearTimeout(t); done() }
     s.then(function(d) {
             ok(true, 'auth.apikeys found');
-            ok(d.result_sets[0].rows[0].count === 1, d.status);
+            ok(d.result_sets[0].records.rows[0].count === 1, d.status);
             complete(t);
         },
         function(e) {
@@ -210,9 +210,9 @@ test('email tests - routine fail', function(assert) {
     p.then(function(d) {
             ok(true, 'then called');
             ok(d.result_sets.length, 'result sets provided');
-            ok(d.result_sets[0].rows.length, 'result sets provided');
-            ok(d.result_sets[0].rows[0].result.indexOf('Unprocessable Entity') >= 0, 'Unprocessable string found');
-            ok(d.result_sets[0].rows[0].result.indexOf("Invalid 'From' value") >= 0, 'Invalid From string found');
+            ok(d.result_sets[0].records.rows.length, 'result sets provided');
+            ok(d.result_sets[0].records.rows[0].result.indexOf('Unprocessable Entity') >= 0, 'Unprocessable string found');
+            ok(d.result_sets[0].records.rows[0].result.indexOf("Invalid 'From' value") >= 0, 'Invalid From string found');
 
             clearTimeout(st);
             done();
@@ -251,7 +251,7 @@ test('email tests - routine success', function(assert) {
 
     p.then(function(d) {
             ok(true, 'then called');
-            ok(d.result_sets[0].rows[0].result.indexOf('Success') >= 0, d.status);
+            ok(d.result_sets[0].records.rows[0].result.indexOf('Success') >= 0, d.status);
             clearTimeout(st);
             done();
         })
@@ -289,10 +289,10 @@ test('email tests - multiple emails', function(assert) {
 
     p.then(function(d) {
         ok(true, 'then called');
-        ok(d.result_sets[0].rows.length === 2, '2 results recieved');
-        ok(d.result_sets[0].rows[0].result.indexOf('Success') >= 0, d.status);
-        ok(d.result_sets[0].rows[1].result.indexOf('Success') >= 0, d.status);
-        ok(d.result_sets[0].rows[1].idx === 2, d.status);
+        ok(d.result_sets[0].records.rows.length === 2, '2 results recieved');
+        ok(d.result_sets[0].records.rows[0].result.indexOf('Success') >= 0, d.status);
+        ok(d.result_sets[0].records.rows[1].result.indexOf('Success') >= 0, d.status);
+        ok(d.result_sets[0].records.rows[1].idx === 2, d.status);
         clearTimeout(st);
         done();
     })
@@ -373,10 +373,96 @@ test('email tests - with query', function(assert) {
             ok(jsn.authcode.length > 20, 'mock json authcode 20 chars');
             ok(jsn.mode === 'email', 'mock json mode === email');
             ok(jsn.q.indexOf('ECT "_q_"."tomail" AS "To:') >=0, '"_q_.tomail AS To:" found');
-            ok(jsn.args.length === 7, 'mock json has 7 args');
+            ok(jsn.args.length === 5, 'mock json has 5 args');
             clearTimeout(st);
             done();
         })
+        .catch(function(e) {
+            ok(false, 'catch called ' + e.message);
+            clearTimeout(st);
+            done();
+        });
+
+    Rdbhost.on('form-displayed', function() {
+
+        setTimeout(function() {
+            submit_superauth_form();
+        }, 300);
+    });
+
+    var st = timeoutBuilder(done);
+});
+
+
+// routine operation
+//
+test('email tests - with attachments', function(assert) {
+
+    var done = assert.async();
+
+    Rdbhost.Email.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
+
+    var mock = {},
+        c = Rdbhost.Email.column_wrapper,
+        attach = {'abc': 'FILE ABC def\n ---\n'};
+
+
+    // var p = Rdbhost.Email.super()
+    var p = MockSuper(mock)()
+        .query("SELECT 'demo@tbr.net' AS tomail")
+        .email('David', 'rdbhost@rdbhost.com', 'Me', c('tomail'),
+            'Test allTok with attachment', 'test body with attachment', '', attach);
+
+    p.then(function(d) {
+            ok(mock.json, 'mock json ok');
+            var jsn = JSON.parse(mock.json);
+            ok(jsn.authcode.length > 20, 'mock json authcode 20 chars');
+            ok(jsn.mode === 'email', 'mock json mode === email');
+            ok(jsn.q.indexOf('ECT "_q_"."tomail" AS "To:') >=0, '"_q_.tomail AS To:" found');
+            ok(jsn.args.length === 8, 'mock json has 8 args');
+            clearTimeout(st);
+            done();
+        })
+        .catch(function(e) {
+            ok(false, 'catch called ' + e.message);
+            clearTimeout(st);
+            done();
+        });
+
+    Rdbhost.on('form-displayed', function() {
+
+        setTimeout(function() {
+            submit_superauth_form();
+        }, 300);
+    });
+
+    var st = timeoutBuilder(done);
+});
+
+
+// routine operation
+//
+test('email tests - with attachments TRUE', function(assert) {
+
+    var done = assert.async();
+
+    Rdbhost.Email.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
+
+    var mock = {},
+        c = Rdbhost.Email.column_wrapper,
+        attach = {'abc': 'FILE ABC def\n ---\n'};
+
+    // var p = Rdbhost.Email.super()
+    var p = Rdbhost.Email.super()
+        .query("SELECT 'demo@travelbyroad.net' AS tomail, 1 AS idx")
+        .email('David', 'rdbhost@rdbhost.com', 'Me', c('tomail'),
+            'Test JavaScript with attachment', 'test body with attachment', '', attach);
+
+    p.then(function(d) {
+        ok(true, 'email with attachment sent');
+        clearTimeout(st);
+        done();
+    })
         .catch(function(e) {
             ok(false, 'catch called ' + e.message);
             clearTimeout(st);
@@ -417,7 +503,7 @@ test('email tests - with fixed', function(assert) {
             ok(jsn.authcode.length > 20, 'mock json authcode 20 chars');
             ok(jsn.mode === 'email', 'mock json mode === email');
             ok(jsn.q.indexOf('ECT \'demo-tomail@tbr.net\' AS "To:",') >= 0, '"demo-tomail@tbr.net AS To:" found');
-            ok(jsn.args.length === 7, 'mock json has 7 args');
+            ok(jsn.args.length === 5, 'mock json has 5 args');
             clearTimeout(st);
             done();
         })
@@ -494,9 +580,9 @@ test('email tests - routine fail', function(assert) {
     p.then(function(d) {
             ok(true, 'then called');
             ok(d.row_count[0] === 1, 'rows '+d.row_count[0]);
-            ok(d.result_sets[0].rows[0].idx === 1, 'idx is 1');
-            ok(d.result_sets[0].rows[0].result.indexOf('422') >= 0, 'Error 422');
-            ok(d.result_sets[0].rows[0].result.indexOf("Invalid 'From") >= 0, 'Invalid "From');
+            ok(d.result_sets[0].records.rows[0].idx === 1, 'idx is 1');
+            ok(d.result_sets[0].records.rows[0].result.indexOf('422') >= 0, 'Error 422');
+            ok(d.result_sets[0].records.rows[0].result.indexOf("Invalid 'From") >= 0, 'Invalid "From');
             clearTimeout(st);
             done();
         })
@@ -540,7 +626,7 @@ test('test setup', function(assert) {
 
     s.then(function(d) {
             ok(true, 'apikeys table found');
-            ok(d.result_sets[0].rows === undefined, 'key not in apikeys');
+            ok(d.result_sets[0].records.rows === undefined, 'key not in apikeys');
             clearTimeout(t);
             done();
         },
@@ -568,9 +654,9 @@ test('email tests - routine success', function(assert) {
     p.then(function(d) {
             ok(true, 'then called');
             ok(d.result_sets.length, 'results returned');
-            ok(d.result_sets[0].rows.length, 'rows returned');
-            ok(d.result_sets[0].rows[0].idx === 1, 'idx is 1');
-            ok(d.result_sets[0].rows[0].result === 'Success', 'result is Success');
+            ok(d.result_sets[0].records.rows.length, 'rows returned');
+            ok(d.result_sets[0].records.rows[0].idx === 1, 'idx is 1');
+            ok(d.result_sets[0].records.rows[0].result === 'Success', 'result is Success');
             clearTimeout(st);
             done();
         })
