@@ -2,62 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>/latest/lib</title>
+  <title>dir listing</title>
+  <link href="/vendor/rdbhost/util/subdir.css" />
 </head>
 <body>
 
 <!-- script id="RDBHOST-SQL-INLINE-ID" type="text/sql" data-sql="" data-role=p0000000012> </script -->
-<!-- script type="text/javascript" src="../vendor/labjs/LAB.js"></script -->
 <script type="text/javascript" src="/vendor/labjs/LAB.js"></script>
+<script src="/vendor/rdbhost/util/subdir.js"></script>
 
 
 <ul>
   <li><a href="{link}">{name}</a></li>
 </ul>
 
-<script>
-  var l = document.getElementsByTagName('ul')[0],
-      i = l.getElementsByTagName('li')[0];
-  l.removeChild(i);
-
-  var $L = $LAB
-      .script('/vendor/rdbhost/latest/lib/js/util-bundle;rdbhost.js').wait(
-          function() {
-
-            if ( !Rdbhost.featuredetects.hasPromises() )
-              $L = $L.script('/vendor/rdbhost/2.1/vendor/es6-promises/dist/es6-promise.js');
-            if ( !Rdbhost.featuredetects.hasFetch() )
-              $L = $L.script('/vendor/rdbhost/2.1/vendor/fetch/fetch.js').wait();
-          }
-      );
-  $L.wait(function() {
-    Rdbhost.connect('dev.rdbhost.com', 12);
-
-    var path = window.location.pathname.replace('/vendor/rdbhost/', '/');
-    var p = Rdbhost.preauth()
-        .query('SELECT name, isdir FROM subdir(%s);')
-        .params([path])
-        .get_data();
-
-    p.then(function(d) {
-          _.each(d.result_sets[0].records.rows, function(r) {
-
-            if (r.name === '')
-              return;
-            if (r.isdir)
-              r.name = r.name + '/';
-
-            var i0 = i.cloneNode(true);
-
-            i0.innerHTML = i.innerHTML.replace('{name}', r.name).replace('{link}', '/vendor/rdbhost' + path + r.name);
-            l.appendChild(i0);
-          })
-        })
-        .catch(function(e) {
-          debugger;
-        })
-  });
-
-</script>
 </body>
 </html>
