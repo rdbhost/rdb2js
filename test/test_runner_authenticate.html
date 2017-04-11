@@ -19,7 +19,8 @@
         );
     $L = $L.script('../test/private.js').wait()
         .script('../lib/js/rdb2-livereload.js')
-        .script('../lib/js/rdb2-authenticate.js');
+        .script('../lib/js/rdb2-authenticate.js')
+        .script('../lib/js/rdb2-emailing.js');
     $L.script('myTests_authenticate.js').wait(function() {
       QUnit.start();
     } );
