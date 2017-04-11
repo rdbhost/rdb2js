@@ -424,7 +424,7 @@ module('Password Tests - table', {
     '  idx INTEGER REFERENCES auth.fedauth_accounts (idx), ' +
     '  password VARCHAR(150) ' +
     '); ',
-    'GRANT SELECT, UPDATE, INSERT, DELETE ON auth.account_passwords TO {0}; '.replace('{0}', make_roleid('p', Rdbhost.account_number())),
+    'GRANT SELECT, UPDATE, INSERT, DELETE ON auth.account_passwords TO {0}; '.replace('{0}', Rdbhost.roleid('p')),
     'DELETE FROM auth.fedauth_accounts WHERE identifier = \'me\' AND issuer = \'LocalPassword\';',
     'DELETE FROM auth.account_passwords;',
     'DELETE FROM auth.account_passwords_temp;',
