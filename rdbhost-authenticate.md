@@ -1,7 +1,7 @@
 
 
 
-#rdbhost_authenticate
+#Rdbhost Authenticate
 
 This module adds two methods to the RdbHost connection objects, `fedauth_login` and `confirm_fedauth_login`.
 
@@ -92,5 +92,5 @@ The `register_password_login` simply puts the provided userid and password (encr
      
 When either of the register methods is first exercised, it will create the necessary server-side tables, other than `fedauth_accounts`.  You must enable Federated Identity logins in order to use this module, even if you only use password logins.  The user account entries are stored in the `auth.fedauth_accounts` table, using 'PasswordLogin' as the Issuer value.   The passwords are stored in their own table `account_passwords`.  
 
-Login failures are stored, and logins will be blocked after 5 failures per minute.  Blocking just means that the login fails without checking the password, returning error 'rdb77'.
+Login failures are stored, and logins will be blocked after 5 failures per minute per ip.  Blocking just means that the login fails without checking the password, returning error 'rdb77'.
 
