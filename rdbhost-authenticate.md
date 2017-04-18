@@ -61,6 +61,8 @@ The `register_login_with_email` accepts one parameter with the user's email addr
         console.log(e.message)
       });
 
+Using the `register_login_with_email` method requires also including the _link_ rdb2-email.js module in your app.  The email body is a very terse welcome message, stored in a table `lookup.templates` with the name 'welcome.tpl'.  Feel free to edit it later with RdbAdmin.
+
 The `register_password_login` simply puts the provided userid and password (encrypted) into the user table.
 
     var userid = $('#userid').val(),
