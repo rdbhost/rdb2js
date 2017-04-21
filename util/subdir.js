@@ -15,7 +15,7 @@ var $L = $LAB
     );
 
 
-function list_dir(acct, container, path) {
+function list_dir(host, acct, container, path) {
 
     var prefix='',
         i0, parentDir,
@@ -27,7 +27,7 @@ function list_dir(acct, container, path) {
     templateRow = templateContainer.getElementsByTagName('li')[0];
     templateContainer.removeChild(templateRow);
 
-    Rdbhost.connect('dev.rdbhost.com', acct);
+    Rdbhost.connect(host, acct);
 
     if (path.indexOf('/vendor/rdbhost/') > -1) {
 
