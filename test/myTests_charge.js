@@ -142,7 +142,7 @@ test('test setup', function(assert) {
     var t = setTimeout(function() {
         ok(false, 'timeout');
         done();
-    }, 500);
+    }, 10000);
 
 });
 
@@ -189,7 +189,7 @@ test('charge tests - routine fail', function(assert) {
     var st = setTimeout(function() {
         ok(false, 'timeout');
         done();
-    }, 5000);
+    }, 10000);
 });
 
 
@@ -236,7 +236,7 @@ test('charge tests - routine success', function(assert) {
     var st = setTimeout(function() {
         ok(false, 'timeout');
         done();
-    }, 5000);
+    }, 10000);
 });
 
 
@@ -321,7 +321,7 @@ test('test setup', function(assert) {
     var t = setTimeout(function() {
         ok(false, 'timeout');
         done();
-    }, 1000);
+    }, 10000);
 
 });
 
