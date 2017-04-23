@@ -321,7 +321,7 @@ test('test setup', function(assert) {
     var t = setTimeout(function() {
         ok(false, 'timeout');
         done();
-    }, 500);
+    }, 1000);
 
 });
 

@@ -15,12 +15,13 @@ demo_postmark_email = privat.getItem('demo_postmark_email');
    todo - add test for no addressees
  */
 
-function timeoutBuilder(done) {
+function timeoutBuilder(done, delay) {
 
+    delay = delay || 10000;
     return setTimeout(function() {
         ok(false, 'timeout expired');
         done();
-    }, 10000);
+    }, delay);
 }
 
 function submit_superauth_form() {
