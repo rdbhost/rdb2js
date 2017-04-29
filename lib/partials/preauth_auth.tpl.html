@@ -18,13 +18,14 @@
             box-shadow: 0px 0px 100px 10px #ababab;
         }
 
-        @media (min-width: 520px) {
+        @media (min-width: 600px) {
             #partial-preauth-auth {
-                width: 400px;
-                margin-top: -200px;
-                margin-left: -200px;
+                width: 600px;
                 left: 50%;
                 top: 50%;
+                -webkit-transform: translateY(-50%) translateX(-50%);
+                -ms-transform: translateY(-50%) translateX(-50%);
+                transform: translateY(-50%) translateX(-50%);
             }
         }
 
@@ -139,8 +140,8 @@
         }
 
         #partial-preauth-auth form pre {
-            max-height: 100px;
-            overflow: hidden;
+            height: 200px;
+            overflow: scroll;
             padding: 10px;
             background: #e4dcc9;
             border-radius: 8px;
@@ -150,7 +151,7 @@
             font-family: "Courier 10 Pitch", Courier, monospace;
             font-size: 95%;
             line-height: 110%;
-            white-space: inherit;
+            white-space: pre;
         }
     </style>
 

@@ -20,12 +20,14 @@
 			max-height: 80%;
 		}
 
-		@media (min-width: 520px) {
+		@media (min-width: 600px) {
 			#partial-fedauth {
-				max-width: 800px;
-				width: 80%;
-				left: 50%;
-  				transform: translateX(-50%);
+				width: 600px;
+        left: 50%;
+        top: 50%;
+        -webkit-transform: translateY(-50%) translateX(-50%);
+        -ms-transform: translateY(-50%) translateX(-50%);
+        transform: translateY(-50%) translateX(-50%);
 			}
 
 			.column {
@@ -189,18 +191,18 @@
 		}
 
 		#partial-fedauth form pre {
-	  		max-height: 100px;
-			overflow: hidden;
-			padding: 10px;
-			background: #e4dcc9;
-			border-radius: 8px;
-			text-align: left;
-			display: block;
-			margin-top: 20px;
-			font-family: "Courier 10 Pitch", Courier, monospace;
-			font-size: 95%;
-			line-height: 110%;
-			white-space: inherit;
+	  	height: 200px;
+      overflow: scroll;
+      padding: 10px;
+      background: #e4dcc9;
+      border-radius: 8px;
+      text-align: left;
+      display: block;
+      margin-top: 20px;
+      font-family: "Courier 10 Pitch", Courier, monospace;
+      font-size: 95%;
+      line-height: 110%;
+      white-space: pre;
 		}
 
 		.special-container {
