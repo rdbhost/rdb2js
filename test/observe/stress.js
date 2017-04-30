@@ -12,6 +12,7 @@ function stress_functions() {
 
     document.getElementById('preauth').addEventListener('click', function(evt) {
 
+        Rdbhost.reset_rdbhost(null, true);
         Rdbhost.connect(privat.getItem('domain'), 14, partials_path());
         var preauth = Rdbhost.preauth();
 
@@ -26,6 +27,7 @@ function stress_functions() {
 
     document.getElementById('auth').addEventListener('click', function(evt) {
 
+        Rdbhost.reset_rdbhost(null, true);
         Rdbhost.connect(privat.getItem('domain'), 14, partials_path());
         var auth = Rdbhost.auth();
 
@@ -41,6 +43,7 @@ function stress_functions() {
 
     document.getElementById('super').addEventListener('click', function(evt) {
 
+        Rdbhost.reset_rdbhost(null, true);
         Rdbhost.connect(privat.getItem('domain'), 14, partials_path());
         var spr = Rdbhost.super();
 

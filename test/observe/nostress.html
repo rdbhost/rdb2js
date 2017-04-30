@@ -28,10 +28,14 @@
   </style>
 
   <title>Dialog Non-Stress Page</title>
-  <script type="text/javascript" src="../vendor/labjs/LAB.js"></script>
+  <script type="text/javascript" src="../../vendor/labjs/LAB.js"></script>
   <script>
+
+    var privat = sessionStorage;
+    privat.setItem('domain', 'dev.rdbhost.com');
+
     var $L = $LAB
-        .script('../lib/js/util-bundle;rdbhost.js').wait(
+        .script('../../lib/js/util-bundle;rdbhost.js').wait(
             function() {
 
               if ( !Rdbhost.featuredetects.hasPromises() )
@@ -45,6 +49,7 @@
         .script('../../lib/js/rdb2-livereload.js');
 
     $L = $L.wait(function() {
+
       stress_functions();
 
       Rdbhost.connect(privat.getItem('domain'), 14);
