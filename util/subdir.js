@@ -15,17 +15,36 @@ var $L = $LAB
     );
 
 
-function list_dir(host, acct, container, path) {
+function render_list(rows, container) {
 
-    var prefix='',
-        i0, parentDir,
-        templateContainer, templateRow;
+    var templateContainer, templateRow, i0, prefix, path;
 
-    path = path || window.location.pathname;
+    prefix = path = '';
 
     templateContainer = container.getElementsByTagName('ul')[0];
     templateRow = templateContainer.getElementsByTagName('li')[0];
     templateContainer.removeChild(templateRow);
+
+    _.each(rows, function(r) {
+
+        if (r.name === '')
+            return;
+        if (r.isdir)
+            r.name = r.name + '/';
+
+        i0 = templateRow.cloneNode(true);
+
+        i0.innerHTML = templateRow.innerHTML.replace('{name}', r.name).replace('{link}', prefix + path + r.name);
+        templateContainer.appendChild(i0);
+    });
+}
+
+function list_dir(host, acct, container, path) {
+
+    var prefix='',
+        i0, parentDir;
+
+    path = path || window.location.pathname;
 
     Rdbhost.connect(host, acct);
 
@@ -40,9 +59,10 @@ function list_dir(host, acct, container, path) {
         parentDir = path.split('/');
         parentDir.splice(-2,2);
         parentDir = parentDir.join('/') + '/';
-        i0 = templateRow.cloneNode(true);
-        i0.innerHTML = templateRow.innerHTML.replace('{name}', '..').replace('{link}', prefix + parentDir);
-        templateContainer.appendChild(i0);
+
+        var row = {name: '..'};
+        render_list([row], container);
+        // i0.innerHTML = templateRow.innerHTML.replace('{name}', '..').replace('{link}', prefix + parentDir);
     }
 
     var p = Rdbhost.preauth()
@@ -52,19 +72,8 @@ function list_dir(host, acct, container, path) {
 
     p.then(function(d) {
         var rows = d.result_sets[0].records.rows;
-        _.each(rows, function(r) {
 
-            if (r.name === '')
-                return;
-            if (r.isdir)
-                r.name = r.name + '/';
-
-            i0 = templateRow.cloneNode(true);
-
-            i0.innerHTML = templateRow.innerHTML.replace('{name}', r.name).replace('{link}', prefix + path + r.name);
-            templateContainer.appendChild(i0);
-        });
-
+        render_list(rows, container);
     })
     .catch(function(e) {
         throw e;
