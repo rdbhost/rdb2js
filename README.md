@@ -7,7 +7,7 @@ Use SQL from your browser, for the smoothest easiest possible client-app develop
 
 The library can be loaded with a script tag, like:
 
-    <script src="https://www.rdbhost.com/vendor/rdbhost/2.0/lib/rdb2-bundle.js"></script>
+    <script src="https://www.rdbhost.com/vendor/rdbhost/2.2/lib/js/util-bundle;rdbhost.js"></script>
 
 but other libraries, including polyfills, will often need to be loaded as well.
 
@@ -17,9 +17,9 @@ I recommend you use Lab.Js to load all modules, with a code block like:
             src="https://www.rdbhost.com/vendor/labjs/LAB.js"></script>
     <script>
       var $L = $LAB
-          .script('../lib/js/rdb2-bundle.js')
+          .script('../rdbhost/2.2/lib/js/util-bundle;rdbhost.js')
           .script('../test/private.js').wait()
-          .script('../lib/js/rdb2-livereload.js');
+          .script('../rdbhost/2.2/lib/js/rdb2-livereload.js');
 
       if (!Rdbhost.featuredetects.hasPromises())
         $L = $L.script('../vendor/es6-promises/dist/es6-promise.js');
