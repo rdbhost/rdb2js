@@ -15,15 +15,19 @@ var $L = $LAB
     );
 
 
-function render_list(rows, container) {
+function get_template(container) {
+    var templateContainer = container.getElementsByTagName('ul')[0],
+        templateRow = templateContainer.getElementsByTagName('li')[0];
+    templateContainer.removeChild(templateRow);
+    return templateRow;
+}
 
-    var templateContainer, templateRow, i0, prefix, path;
+function render_list(rows, container, templateRow) {
+
+    var i0, prefix, path,
+        templateContainer = container.getElementsByTagName('ul')[0],
 
     prefix = path = '';
-
-    templateContainer = container.getElementsByTagName('ul')[0];
-    templateRow = templateContainer.getElementsByTagName('li')[0];
-    templateContainer.removeChild(templateRow);
 
     _.each(rows, function(r) {
 
@@ -42,9 +46,10 @@ function render_list(rows, container) {
 function list_dir(host, acct, container, path) {
 
     var prefix='',
-        i0, parentDir;
+        templateRow, parentDir;
 
     path = path || window.location.pathname;
+    templateRow = get_template(container);
 
     Rdbhost.connect(host, acct);
 
@@ -61,7 +66,7 @@ function list_dir(host, acct, container, path) {
         parentDir = parentDir.join('/') + '/';
 
         var row = {name: '..'};
-        render_list([row], container);
+        render_list([row], container, templateRow);
         // i0.innerHTML = templateRow.innerHTML.replace('{name}', '..').replace('{link}', prefix + parentDir);
     }
 
@@ -71,9 +76,9 @@ function list_dir(host, acct, container, path) {
         .get_data();
 
     p.then(function(d) {
-        var rows = d.result_sets[0].records.rows;
 
-        render_list(rows, container);
+        var rows = d.result_sets[0].records.rows;
+        render_list(rows, container, templateRow);
     })
     .catch(function(e) {
         throw e;
