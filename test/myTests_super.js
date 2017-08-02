@@ -461,7 +461,7 @@ QUnit.test('super request ws cancel-confirm', 4, function(assert) {
             var frm = document.getElementById('partial-confirm'),
                 cncl = frm.querySelector('.cancel');
             cncl.click();
-        }, 1000);
+        }, 1500);
 
     });
 
@@ -735,6 +735,303 @@ QUnit.test('super request http confirm-Once-Only', 9, function(assert) {
 
     var st = setTimeout(function() { done(); }, 5000);
 });
+
+var stache = {};
+function json_reflector(json_getter) {
+
+    var json = json_getter.call(this);
+    stache['json'] = json;
+
+    return Promise.resolve('{"done": true}');
+}
+
+QUnit.module('Interpolation tests', {
+
+    beforeEach: function (assert) {
+        console.log('beforeEach');
+        var done = assert.async();
+        domain = privat.getItem('domain');
+        acct_number = parseInt(privat.getItem('acct_number'), 10);
+        demo_email = privat.getItem('demo_email');
+        demo_pass = privat.getItem('demo_pass');
+
+        Rdbhost.reset_rdbhost(undefined, 'clean');
+        Rdbhost.paranoid_confirm = false;
+        Rdbhost.connect(domain, acct_number);
+
+        for (var member in stache) delete stache[member];
+        done();
+    },
+    afterEach: function(assert) {
+        console.log('afterEach');
+        var done = assert.async();
+
+        Rdbhost.reset_rdbhost(done, 'clean');
+    }
+});
+
+function on_partial_super_auth_submit() {
+    Rdbhost.once('form-displayed', function() {
+        setTimeout(function () {
+            var frm = document.getElementById('partial-super-auth'),
+                eml = frm.querySelector("input[name='email']"),
+                pw = frm.querySelector("input[name='password']"),
+                sub = frm.querySelector("input[type='submit']");
+
+            eml.value = demo_email;
+            pw.value = demo_pass;
+            sub.click();
+        }, 500)
+    });
+}
+
+// send super request, with Fixed_wrapper dialog
+//
+QUnit.test('super request Fixed_Wrapper', function(assert) {
+
+    var done = assert.async();
+    var e = Rdbhost.super(null, json_reflector)
+        .query('SELECT %s, %s AS a;')
+        .params([new Rdbhost.util.Fixed_Wrapper(1), 1]);
+
+    var p = e.get_data();
+    ok(p.constructor.toString().indexOf('Promise') >= 0, p);
+    p.then(function(d) {
+            ok(true, 'then called');
+            clearTimeout(st);
+
+            var data = JSON.parse(stache.json);
+            ok(data.q === 'SELECT \'1\', %s AS a;', data.q);
+            ok(data.args.length === 1, data.args);
+
+            done();
+        })
+        .catch(function(e) {
+            ok(false, 'then error called');
+            clearTimeout(st);
+            done();
+        });
+
+    on_partial_super_auth_submit();
+
+    var st = setTimeout(function() { done(); }, 5000);
+});
+
+
+
+// send super request, with Column_wrapper dialog
+//
+QUnit.test('super request Column_Wrapper', function(assert) {
+
+    var done = assert.async();
+    var e = Rdbhost.super(null, json_reflector)
+        .query('SELECT %s, %s AS a;')
+        .params([new Rdbhost.util.Column_Wrapper('abc'), 1]);
+
+    var p = e.get_data();
+    ok(p.constructor.toString().indexOf('Promise') >= 0, p);
+    p.then(function(d) {
+        ok(true, 'then called');
+        clearTimeout(st);
+
+        var data = JSON.parse(stache.json);
+        ok(data.q === 'SELECT "_q_"."abc", %s AS a;', data.q);
+        ok(data.args.length === 1, data.args);
+
+        done();
+    })
+        .catch(function(e) {
+            ok(false, 'then error called');
+            clearTimeout(st);
+            done();
+        });
+
+    on_partial_super_auth_submit();
+
+    var st = setTimeout(function() { done(); }, 5000);
+});
+
+
+// send super request, with Null_wrapper dialog
+//
+QUnit.test('super request Null_Wrapper', function(assert) {
+
+    var done = assert.async();
+    var e = Rdbhost.super(null, json_reflector)
+        .query('SELECT %s, %s AS a;')
+        .params([new Rdbhost.util.Null_Wrapper(), 1]);
+
+    var p = e.get_data();
+    ok(p.constructor.toString().indexOf('Promise') >= 0, p);
+    p.then(function(d) {
+            ok(true, 'then called');
+            clearTimeout(st);
+
+            var data = JSON.parse(stache.json);
+            ok(data.q === 'SELECT NULL, %s AS a;', data.q);
+            ok(data.args.length === 1, data.args);
+
+            done();
+        })
+        .catch(function(e) {
+            ok(false, 'then error called');
+            clearTimeout(st);
+            done();
+        });
+
+    on_partial_super_auth_submit();
+
+    var st = setTimeout(function() { done(); }, 5000);
+});
+
+
+
+// send super request, with Bare_wrapper dialog
+//
+QUnit.test('super request Bare_Wrapper', function(assert) {
+
+    var done = assert.async();
+    var e = Rdbhost.super(null, json_reflector)
+        .query('SELECT %s, %s AS a;')
+        .params([new Rdbhost.util.Bare_Wrapper(1), 1]);
+
+    var p = e.get_data();
+    ok(p.constructor.toString().indexOf('Promise') >= 0, p);
+    p.then(function(d) {
+            ok(true, 'then called');
+            clearTimeout(st);
+
+            var data = JSON.parse(stache.json);
+            ok(data.q === 'SELECT 1, %s AS a;', data.q);
+            ok(data.args.length === 1, data.args);
+            ok(Object.keys(data.namedParams).length === 0, data.namedParams);
+
+            done();
+        })
+        .catch(function(e) {
+            ok(false, 'then error called');
+            clearTimeout(st);
+            done();
+        });
+
+    on_partial_super_auth_submit();
+
+    var st = setTimeout(function() { done(); }, 5000);
+});
+
+
+
+// send super request, with Bare_wrapper and named param
+//
+QUnit.test('super request named Bare_Wrapper', function(assert) {
+
+    var done = assert.async();
+    var e = Rdbhost.super(null, json_reflector)
+        .query('SELECT %(abc)s, %(def)s AS a;')
+        .params({abc: new Rdbhost.util.Bare_Wrapper(1), def:1});
+
+    var p = e.get_data();
+    ok(p.constructor.toString().indexOf('Promise') >= 0, p);
+    p.then(function(d) {
+            ok(true, 'then called');
+            clearTimeout(st);
+
+            var data = JSON.parse(stache.json);
+            ok(data.q === 'SELECT 1, %(def)s AS a;', data.q);
+            ok(data.args.length === 0, data.args);
+            ok(data.namedParams.def === 1, data.namedParams);
+
+            done();
+        })
+        .catch(function(e) {
+            ok(false, 'then error called');
+            clearTimeout(st);
+            done();
+        });
+
+    on_partial_super_auth_submit();
+
+    var st = setTimeout(function() { done(); }, 5000);
+});
+
+
+
+
+// send super request, with Subquery_wrapper dialog
+//
+QUnit.test('super request Subquery_Wrapper', function(assert) {
+
+    var t = {namedParams: {'a': 1}, args: []};
+
+    var done = assert.async();
+    var e = Rdbhost.super(null, json_reflector)
+        .query('SELECT %s, %s AS a;')
+        .params([new Rdbhost.util.Subquery_Wrapper(t, 'SELECT %(a)s;'), 1]);
+    var p = e.get_data();
+
+    ok(p.constructor.toString().indexOf('Promise') >= 0, p);
+    p.then(function(d) {
+        ok(true, 'then called');
+        clearTimeout(st);
+
+        var data = JSON.parse(stache.json);
+        ok(data.q === 'SELECT (SELECT %(a)s) AS _q_, %s AS a;', data.q);
+        ok(data.args.length === 1, data.args);
+        ok(data.namedParams.a === 1, data.namedParams);
+
+        done();
+    })
+    .catch(function(e) {
+        ok(false, 'then error called '+e.message);
+        clearTimeout(st);
+        done();
+    });
+
+    on_partial_super_auth_submit();
+
+    var st = setTimeout(function() { done(); }, 5000);
+});
+
+
+
+
+// send super request, with multiple wrappers
+//
+QUnit.test('super request multiple Wrapper', function(assert) {
+
+    var t = {namedParams: {'a': 1}, args: []};
+
+    var done = assert.async();
+    var e = Rdbhost.super(null, json_reflector)
+        .query('SELECT %s, %s, %(abc)s, %(hmm)s  AS a;')
+        .params([new Rdbhost.util.Subquery_Wrapper(t, 'SELECT %(a)s;'), 1],
+                 {abc: new Rdbhost.util.Fixed_Wrapper('alpha'),
+                  hmm: new Rdbhost.util.Column_Wrapper('beta')});
+    var p = e.get_data();
+
+    ok(p.constructor.toString().indexOf('Promise') >= 0, p);
+    p.then(function(d) {
+            ok(true, 'then called');
+            clearTimeout(st);
+
+            var data = JSON.parse(stache.json);
+            ok(data.q === 'SELECT (SELECT %(a)s) AS _q_, %s, \'alpha\', "_q_"."beta"  AS a;', data.q);
+            ok(data.args.length === 1, data.args);
+            ok(data.namedParams.a === 1, data.namedParams);
+            done();
+        })
+        .catch(function(e) {
+            ok(false, 'then error called '+e.message);
+            clearTimeout(st);
+            done();
+        });
+
+    on_partial_super_auth_submit();
+
+    var st = setTimeout(function() { done(); }, 5000);
+});
+
+
 
 
 
