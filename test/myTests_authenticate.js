@@ -121,10 +121,10 @@ function do_super_async_query_list(assert, qs) {
 
         var supr = Rdbhost.super().query(q)
             .get_data();
-        supr.then(function(a, b) {
+        supr.then(function(r) {
                 return _do();
             },
-            function(a, b) {
+            function(e) {
                 return _do();
             });
     }
