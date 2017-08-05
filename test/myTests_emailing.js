@@ -55,28 +55,31 @@ function submit_service_form() {
 
 var dropApiTable = 'DROP TABLE IF EXISTS auth.apikeys;',
 
-    createApiKeyTable = 'CREATE TABLE auth.apikeys ( \n\
-                          service VARCHAR(10), \n\
-                          apikey VARCHAR(100), \n\
-                          webmaster_email VARCHAR(150) NULL, \n\
-                          account_email VARCHAR(150) \n\
-                        );',
+    createApiKeyTable =
+        'CREATE TABLE auth.apikeys ( \n \
+          service VARCHAR(10), \n \
+          apikey VARCHAR(100), \n \
+          webmaster_email VARCHAR(150) NULL, \n \
+          account_email VARCHAR(150) \n \
+        ); \n \
+        GRANT SELECT, UPDATE, INSERT ON auth.apikeys TO {0};',
 
-    addApiKey = "CREATE FUNCTION pg_temp.t(_apikey VARCHAR, _acct_email VARCHAR) \n\
-                RETURNS void \n\
-                    AS $$ \n\
-                BEGIN \n\
-                    UPDATE auth.apikeys SET service='postmark', apikey=_apikey, webmaster_email='', \n\
-                                         account_email=_acct_email \n\
-                         WHERE service = 'postmark'; \n\
-                    IF NOT FOUND THEN \n\
-                        INSERT INTO auth.apikeys (service, apikey, webmaster_email, account_email) \n\
-                                         VALUES('postmark', _apikey, '', _acct_email); \n\
-                    END IF; \n\
-                END; \n\
-                $$ LANGUAGE plpgsql; \n\
-                \n\
-                SELECT pg_temp.t(%(apikey)s, %(account_email)s);";
+    addApiKey =
+        "CREATE FUNCTION pg_temp.t(_apikey VARCHAR, _acct_email VARCHAR) \n\
+        RETURNS void \n\
+            AS $$ \n\
+        BEGIN \n\
+            UPDATE auth.apikeys SET service='postmark', apikey=_apikey, webmaster_email='', \n\
+                                 account_email=_acct_email \n\
+                 WHERE service = 'postmark'; \n\
+            IF NOT FOUND THEN \n\
+                INSERT INTO auth.apikeys (service, apikey, webmaster_email, account_email) \n\
+                                 VALUES('postmark', _apikey, '', _acct_email); \n\
+            END IF; \n\
+        END; \n\
+        $$ LANGUAGE plpgsql; \n\
+        \n\
+        SELECT pg_temp.t(%(apikey)s, %(account_email)s);";
 
 
 function beforeEach(assert, q, parms) {
@@ -161,7 +164,12 @@ function MockSuper(retObj) {
 module('all tables ok', {
 
     beforeEach: function (assert) {
-        var q = [dropApiTable, createApiKeyTable, addApiKey].join('\n'),
+
+        Rdbhost.reset_rdbhost(undefined, 'clean');
+        Rdbhost.paranoid_confirm = false;
+        Rdbhost.connect(domain, acct_number);
+
+        var q = [dropApiTable, createApiKeyTable.replace('{0}', Rdbhost.roleid('p')), addApiKey].join(';\n'),
             parms = {'apikey': demo_postmark_key, 'account_email': demo_postmark_email};
         beforeEach(assert, q, parms);
     },
@@ -205,7 +213,7 @@ test('email tests - routine fail', function(assert) {
     Rdbhost.Email.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
 
     var p = Rdbhost.Email.super()
-                    .query("")
+                    .query("SELECT 1 AS idx")
                     .email('');  // no valid params provided
 
     p.then(function(d) {
@@ -227,9 +235,10 @@ test('email tests - routine fail', function(assert) {
 
     Rdbhost.on('form-displayed', function() {
 
-        setTimeout(function() {
-            submit_superauth_form();
-        }, 300);
+        if (document.getElementById('partial-super-auth'))
+            setTimeout(function() { submit_superauth_form(); }, 300);
+        else if (document.getElementById('partial-service'))
+            setTimeout(function() { submit_service_form(); }, 300);
     });
 
     var st = timeoutBuilder(done);
@@ -264,9 +273,10 @@ test('email tests - routine success', function(assert) {
 
     Rdbhost.on('form-displayed', function() {
 
-        setTimeout(function() {
-            submit_superauth_form();
-        }, 300);
+        if (document.getElementById('partial-super-auth'))
+            setTimeout(function() { submit_superauth_form(); }, 300);
+        else if (document.getElementById('partial-service'))
+            setTimeout(function() { submit_service_form(); }, 300);
     });
 
     var st = timeoutBuilder(done);
@@ -281,7 +291,7 @@ test('email tests - multiple emails', function(assert) {
 
     Rdbhost.Email.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
 
-    var c = Rdbhost.Email.column_wrapper;
+    var c = Rdbhost.Email.column;
     var p = Rdbhost.Email.super()
         .query("SELECT 'demo1@travelbyroad.net' AS tomail, 1 AS idx \n" +
                 "  UNION SELECT 'demo2@travelbyroad.net' AS tomail, 2 AS idx")
@@ -305,9 +315,10 @@ test('email tests - multiple emails', function(assert) {
 
     Rdbhost.on('form-displayed', function() {
 
-        setTimeout(function() {
-            submit_superauth_form();
-        }, 300);
+        if (document.getElementById('partial-super-auth'))
+            setTimeout(function() { submit_superauth_form(); }, 300);
+        else if (document.getElementById('partial-service'))
+            setTimeout(function() { submit_service_form(); }, 300);
     });
 
     var st = timeoutBuilder(done);
@@ -322,7 +333,7 @@ test('email tests - no emails from query', function(assert) {
 
     Rdbhost.Email.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
 
-    var c = Rdbhost.Email.column_wrapper;
+    var c = Rdbhost.Email.column;
     var p = Rdbhost.Email.super()
         .query("SELECT 'demo1@travelbyroad.net' AS tomail, 1 AS idx WHERE 1=2")
         .email('David', 'rdbhost@rdbhost.com', 'Me', c('tomail'),
@@ -342,9 +353,10 @@ test('email tests - no emails from query', function(assert) {
 
     Rdbhost.on('form-displayed', function() {
 
-        setTimeout(function() {
-            submit_superauth_form();
-        }, 300);
+        if (document.getElementById('partial-super-auth'))
+            setTimeout(function() { submit_superauth_form(); }, 300);
+        else if (document.getElementById('partial-service'))
+            setTimeout(function() { submit_service_form(); }, 300);
     });
 
     var st = timeoutBuilder(done);
@@ -360,7 +372,7 @@ test('email tests - with query', function(assert) {
     Rdbhost.Email.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
 
     var mock = {},
-        c = Rdbhost.Email.column_wrapper;
+        c = Rdbhost.Email.column;
 
     // var p = Rdbhost.Email.super()
     var p = MockSuper(mock)()
@@ -374,7 +386,7 @@ test('email tests - with query', function(assert) {
             ok(jsn.authcode.length > 20, 'mock json authcode 20 chars');
             ok(jsn.mode === 'email', 'mock json mode === email');
             ok(jsn.q.indexOf('ECT "_q_"."tomail" AS "To:') >=0, '"_q_.tomail AS To:" found');
-            ok(jsn.args.length === 5, 'mock json has 5 args');
+            ok(Object.keys(jsn.namedParams).length === 5, 'mock json has 5 params');
             clearTimeout(st);
             done();
         })
@@ -386,9 +398,10 @@ test('email tests - with query', function(assert) {
 
     Rdbhost.on('form-displayed', function() {
 
-        setTimeout(function() {
-            submit_superauth_form();
-        }, 300);
+        if (document.getElementById('partial-super-auth'))
+            setTimeout(function() { submit_superauth_form(); }, 300);
+        else if (document.getElementById('partial-service'))
+            setTimeout(function() { submit_service_form(); }, 300);
     });
 
     var st = timeoutBuilder(done);
@@ -404,7 +417,7 @@ test('email tests - with attachments', function(assert) {
     Rdbhost.Email.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
 
     var mock = {},
-        c = Rdbhost.Email.column_wrapper,
+        c = Rdbhost.Email.column,
         attach = {'abc': 'FILE ABC def\n ---\n'};
 
 
@@ -420,7 +433,8 @@ test('email tests - with attachments', function(assert) {
             ok(jsn.authcode.length > 20, 'mock json authcode 20 chars');
             ok(jsn.mode === 'email', 'mock json mode === email');
             ok(jsn.q.indexOf('ECT "_q_"."tomail" AS "To:') >=0, '"_q_.tomail AS To:" found');
-            ok(jsn.args.length === 8, 'mock json has 8 args');
+            ok(Object.keys(jsn.namedParams).length === 8, 'mock json has 8 params');
+            // ok(jsn.args.length === 8, 'mock json has 8 args');
             clearTimeout(st);
             done();
         })
@@ -432,9 +446,10 @@ test('email tests - with attachments', function(assert) {
 
     Rdbhost.on('form-displayed', function() {
 
-        setTimeout(function() {
-            submit_superauth_form();
-        }, 300);
+        if (document.getElementById('partial-super-auth'))
+            setTimeout(function() { submit_superauth_form(); }, 300);
+        else if (document.getElementById('partial-service'))
+            setTimeout(function() { submit_service_form(); }, 300);
     });
 
     var st = timeoutBuilder(done);
@@ -450,7 +465,7 @@ test('email tests - with attachments TRUE', function(assert) {
     Rdbhost.Email.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
 
     var mock = {},
-        c = Rdbhost.Email.column_wrapper,
+        c = Rdbhost.Email.column,
         attach = {'abc': 'FILE ABC def\n ---\n'};
 
     // var p = Rdbhost.Email.super()
@@ -472,9 +487,10 @@ test('email tests - with attachments TRUE', function(assert) {
 
     Rdbhost.on('form-displayed', function() {
 
-        setTimeout(function() {
-            submit_superauth_form();
-        }, 300);
+        if (document.getElementById('partial-super-auth'))
+            setTimeout(function() { submit_superauth_form(); }, 300);
+        else if (document.getElementById('partial-service'))
+            setTimeout(function() { submit_service_form(); }, 300);
     });
 
     var st = timeoutBuilder(done);
@@ -490,7 +506,7 @@ test('email tests - with fixed', function(assert) {
     Rdbhost.Email.email_config('Dave', 'rdbhost@rdbhost.com', 'postmark');
 
     var mock = {},
-        f = Rdbhost.Email.fixed_wrapper;
+        f = Rdbhost.Email.fixed;
 
     // var p = Rdbhost.Email.super()
     var p = MockSuper(mock)()
@@ -504,7 +520,8 @@ test('email tests - with fixed', function(assert) {
             ok(jsn.authcode.length > 20, 'mock json authcode 20 chars');
             ok(jsn.mode === 'email', 'mock json mode === email');
             ok(jsn.q.indexOf('ECT \'demo-tomail@tbr.net\' AS "To:",') >= 0, '"demo-tomail@tbr.net AS To:" found');
-            ok(jsn.args.length === 5, 'mock json has 5 args');
+            ok(Object.keys(jsn.namedParams).length === 5, 'mock json has 5 params');
+            // ok(jsn.args.length === 5, 'mock json has 5 args');
             clearTimeout(st);
             done();
         })
@@ -516,9 +533,10 @@ test('email tests - with fixed', function(assert) {
 
     Rdbhost.on('form-displayed', function() {
 
-        setTimeout(function() {
-            submit_superauth_form();
-        }, 300);
+        if (document.getElementById('partial-super-auth'))
+            setTimeout(function() { submit_superauth_form(); }, 300);
+        else if (document.getElementById('partial-service'))
+            setTimeout(function() { submit_service_form(); }, 300);
     });
 
     var st = timeoutBuilder(done);
@@ -606,7 +624,11 @@ module('apikeys table empty', {
 
     beforeEach: function (assert) {
 
-        var q = [dropApiTable, createApiKeyTable].join('\n');
+        Rdbhost.reset_rdbhost(undefined, 'clean');
+        Rdbhost.paranoid_confirm = false;
+        Rdbhost.connect(domain, acct_number);
+
+        var q = [dropApiTable, createApiKeyTable.replace('{0}', Rdbhost.roleid('p'))].join(';\n');
 
         beforeEach(assert, q, []);
     },

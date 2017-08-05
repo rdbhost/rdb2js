@@ -45,16 +45,16 @@ The `host` and `host_email` are a name and email-address (yours, perhaps) for th
 
 Parameter Methods:
 
-    column_wrapper(column_name)
-    fixed_wrapper(string)
+    column(column_name)
+    fixed(string)
     
     
 Explaining these parameter methods takes some context:  If you just pass strings as parameters to the emailing methods,
 the email method creates an SQL query with each value parameterized.  The query gets a substitution-token inlined, and the value is passed as an argument.  
 
-Sometimes you want the value itself inlined, so the value itself becomes part of the whitelisted query.  If you wrap the value in the `fixed_wrapper` method, the value gets interpolated into the query instead of being parameterized.  
+Sometimes you want the value itself inlined, so the value itself becomes part of the whitelisted query.  If you wrap the value in the `fixed` method, the value gets interpolated into the query instead of being parameterized.  
 
-Sometimes the values for the fields come from a database, rather than as literals.  The SQL passed in the .query() method will retrieve the values, and each value included in the email using `column_wrapper` method wrapping the column name.
+Sometimes the values for the fields come from a database, rather than as literals.  The SQL passed in the .query() method will retrieve the values, and each value included in the email using `column` method wrapping the column name.
 
 When using the .query() method, the query can return multiple records, which will result in multiple emails.  Each record must include an `idx` field.  The idx field should be unique per record, so you can identify which result row results from each record.    
 
@@ -68,7 +68,7 @@ Look at an example:
     var spr = Rdbhost.preauth()
           .query("SELECT 1 AS idx, body FROM lookup.emails; ")
           .email_host('David', 'dkeeney@rdbhost.com', 
-                       Rdbhost.fixed_wrapper('special title'), Rdbhost.column_wrapper('body'));
+                       Rdbhost.fixed('special title'), Rdbhost.column('body'));
 
     spr.then(function(d) {
        alert('email sent successfully');

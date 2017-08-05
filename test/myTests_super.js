@@ -785,14 +785,14 @@ function on_partial_super_auth_submit() {
     });
 }
 
-// send super request, with Fixed_wrapper dialog
+// send super request, with Fixed_Marker dialog
 //
-QUnit.test('super request Fixed_Wrapper', function(assert) {
+QUnit.test('super request Fixed_Marker', function(assert) {
 
     var done = assert.async();
     var e = Rdbhost.super(null, json_reflector)
         .query('SELECT %s, %s AS a;')
-        .params([new Rdbhost.util.Fixed_Wrapper(1), 1]);
+        .params([new Rdbhost.util.Fixed_Marker(1), 1]);
 
     var p = e.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, p);
@@ -819,14 +819,14 @@ QUnit.test('super request Fixed_Wrapper', function(assert) {
 
 
 
-// send super request, with Column_wrapper dialog
+// send super request, with Column_Marker dialog
 //
-QUnit.test('super request Column_Wrapper', function(assert) {
+QUnit.test('super request Column_Marker', function(assert) {
 
     var done = assert.async();
     var e = Rdbhost.super(null, json_reflector)
         .query('SELECT %s, %s AS a;')
-        .params([new Rdbhost.util.Column_Wrapper('abc'), 1]);
+        .params([new Rdbhost.util.Column_Marker('abc'), 1]);
 
     var p = e.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, p);
@@ -852,14 +852,14 @@ QUnit.test('super request Column_Wrapper', function(assert) {
 });
 
 
-// send super request, with Null_wrapper dialog
+// send super request, with Null_Marker dialog
 //
-QUnit.test('super request Null_Wrapper', function(assert) {
+QUnit.test('super request Null_Marker', function(assert) {
 
     var done = assert.async();
     var e = Rdbhost.super(null, json_reflector)
         .query('SELECT %s, %s AS a;')
-        .params([new Rdbhost.util.Null_Wrapper(), 1]);
+        .params([new Rdbhost.util.Null_Marker(), 1]);
 
     var p = e.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, p);
@@ -886,14 +886,14 @@ QUnit.test('super request Null_Wrapper', function(assert) {
 
 
 
-// send super request, with Bare_wrapper dialog
+// send super request, with Bare_Marker dialog
 //
-QUnit.test('super request Bare_Wrapper', function(assert) {
+QUnit.test('super request Bare_Marker', function(assert) {
 
     var done = assert.async();
     var e = Rdbhost.super(null, json_reflector)
         .query('SELECT %s, %s AS a;')
-        .params([new Rdbhost.util.Bare_Wrapper(1), 1]);
+        .params([new Rdbhost.util.Bare_Marker(1), 1]);
 
     var p = e.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, p);
@@ -904,7 +904,7 @@ QUnit.test('super request Bare_Wrapper', function(assert) {
             var data = JSON.parse(stache.json);
             ok(data.q === 'SELECT 1, %s AS a;', data.q);
             ok(data.args.length === 1, data.args);
-            ok(Object.keys(data.namedParams).length === 0, data.namedParams);
+            ok(Object.keys(data.namedParams).length === 0, Object.keys(data.namedParams));
 
             done();
         })
@@ -921,14 +921,14 @@ QUnit.test('super request Bare_Wrapper', function(assert) {
 
 
 
-// send super request, with Bare_wrapper and named param
+// send super request, with Bare_Marker and named param
 //
-QUnit.test('super request named Bare_Wrapper', function(assert) {
+QUnit.test('super request named Bare_Marker', function(assert) {
 
     var done = assert.async();
     var e = Rdbhost.super(null, json_reflector)
         .query('SELECT %(abc)s, %(def)s AS a;')
-        .params({abc: new Rdbhost.util.Bare_Wrapper(1), def:1});
+        .params({abc: new Rdbhost.util.Bare_Marker(1), def:1});
 
     var p = e.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, p);
@@ -939,7 +939,7 @@ QUnit.test('super request named Bare_Wrapper', function(assert) {
             var data = JSON.parse(stache.json);
             ok(data.q === 'SELECT 1, %(def)s AS a;', data.q);
             ok(data.args.length === 0, data.args);
-            ok(data.namedParams.def === 1, data.namedParams);
+            ok(data.namedParams.def === "1", data.namedParams.def);
 
             done();
         })
@@ -957,16 +957,16 @@ QUnit.test('super request named Bare_Wrapper', function(assert) {
 
 
 
-// send super request, with Subquery_wrapper dialog
+// send super request, with Subquery_Marker dialog
 //
-QUnit.test('super request Subquery_Wrapper', function(assert) {
+QUnit.test('super request Subquery_Marker', function(assert) {
 
     var t = {namedParams: {'a': 1}, args: []};
 
     var done = assert.async();
     var e = Rdbhost.super(null, json_reflector)
         .query('SELECT %s, %s AS a;')
-        .params([new Rdbhost.util.Subquery_Wrapper(t, 'SELECT %(a)s;'), 1]);
+        .params([new Rdbhost.util.Subquery_Marker(t, 'SELECT %(a)s;'), 1]);
     var p = e.get_data();
 
     ok(p.constructor.toString().indexOf('Promise') >= 0, p);
@@ -977,7 +977,7 @@ QUnit.test('super request Subquery_Wrapper', function(assert) {
         var data = JSON.parse(stache.json);
         ok(data.q === 'SELECT (SELECT %(a)s) AS _q_, %s AS a;', data.q);
         ok(data.args.length === 1, data.args);
-        ok(data.namedParams.a === 1, data.namedParams);
+        ok(data.namedParams.a === "1", data.namedParams);
 
         done();
     })
@@ -1004,9 +1004,9 @@ QUnit.test('super request multiple Wrapper', function(assert) {
     var done = assert.async();
     var e = Rdbhost.super(null, json_reflector)
         .query('SELECT %s, %s, %(abc)s, %(hmm)s  AS a;')
-        .params([new Rdbhost.util.Subquery_Wrapper(t, 'SELECT %(a)s;'), 1],
-                 {abc: new Rdbhost.util.Fixed_Wrapper('alpha'),
-                  hmm: new Rdbhost.util.Column_Wrapper('beta')});
+        .params([new Rdbhost.util.Subquery_Marker(t, 'SELECT %(a)s;'), 1],
+                 {abc: new Rdbhost.util.Fixed_Marker('alpha'),
+                  hmm: new Rdbhost.util.Column_Marker('beta')});
     var p = e.get_data();
 
     ok(p.constructor.toString().indexOf('Promise') >= 0, p);
@@ -1017,7 +1017,7 @@ QUnit.test('super request multiple Wrapper', function(assert) {
             var data = JSON.parse(stache.json);
             ok(data.q === 'SELECT (SELECT %(a)s) AS _q_, %s, \'alpha\', "_q_"."beta"  AS a;', data.q);
             ok(data.args.length === 1, data.args);
-            ok(data.namedParams.a === 1, data.namedParams);
+            ok(data.namedParams.a === "1", data.namedParams);
             done();
         })
         .catch(function(e) {

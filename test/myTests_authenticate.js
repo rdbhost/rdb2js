@@ -603,7 +603,7 @@ QUnit.test('registration with email ', function(assert) {
         setTimeout(function() {
 
             submit_service_form();
-        }, 100);
+        }, 1500);
     });
 
     var reg = Rdbhost.Authenticate.register_login_with_email('abc@travelbyroad.net');
@@ -627,7 +627,7 @@ QUnit.test('registration with email ', function(assert) {
             done();
         },
         function(e) {
-            ok(false, 'should not happen');
+            ok(false, 'should not happen '+e.message);
             done();
         });
 
