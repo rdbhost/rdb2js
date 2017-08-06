@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>QUnit Test Suite - SQL Include</title>
+  <title>QUnit Test Suite - SQL Include & Dynamic loading</title>
   <link rel="stylesheet" href="qunit/qunit-1.21.0.css" type="text/css" media="screen">
   <script type="text/javascript" src="qunit/qunit-1.21.0.js"></script>
   <script>QUnit.config.autostart = false;</script>
@@ -28,7 +28,8 @@
   <!-- script type="text/javascript" src="myTests_sqlinc.js"></script -->
 </head>
   <body>
-  <script id="RDBHOST-SQL-INLINE-ID" type="text/sql" data-sql="SELECT 1;" data-role=p0000000014>{
+  <script id="RDBHOST-SQL-INLINE-ID" type="text/sql" data-sql="SELECT 2;" data-role=p0000000012></script>
+  <script id="RDBHOST~-SQL-INLINE-ID" type="text/sql" data-sql="SELECT 2;" data-role=p0000000012>{
         "error": [
             "rdb10",
             "preauth query not authorized"

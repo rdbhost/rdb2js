@@ -22,7 +22,6 @@ function get_auth(init, acctnum, email, passwd) {
                 var row = d.records.rows[i];
                 if ( row.role.substr(0,1) === init.substr(0,1) )
                     return row;
-
             }
             throw new Error('super not found in login records');
         })
@@ -68,6 +67,8 @@ test('sql include found', function(assert) {
     var p = Rdbhost.inline_sql();
     p.then(function(d) {
             ok(d.status[1] === 'OK', 'status ok');
+            ok(d.result_sets, 'result_sets found');
+            ok(d.result_sets[0].records, 'result_set rows found');
             clearTimeout(st);
             done();
         })
