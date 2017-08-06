@@ -53,7 +53,7 @@ test('listen request ok', 4, function(assert){
             done();
       })
       .catch(function(e) {
-            ok(false, 'then error called');
+            ok(false, 'then error called '+e.message);
             clearTimeout(st);
             done();
       });
