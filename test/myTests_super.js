@@ -966,7 +966,7 @@ QUnit.test('super request Subquery_Marker', function(assert) {
     var done = assert.async();
     var e = Rdbhost.super(null, json_reflector)
         .query('SELECT %s, %s AS a;')
-        .params([new Rdbhost.util.Subquery_Marker(t, 'SELECT %(a)s;'), 1]);
+        .params([new Rdbhost.util.Subquery_Marker('SELECT %(a)s;', t.args, t.namedParams, 'AS'), 1]);
     var p = e.get_data();
 
     ok(p.constructor.toString().indexOf('Promise') >= 0, p);
@@ -1004,7 +1004,8 @@ QUnit.test('super request multiple Wrapper', function(assert) {
     var done = assert.async();
     var e = Rdbhost.super(null, json_reflector)
         .query('SELECT %s, %s, %(abc)s, %(hmm)s  AS a;')
-        .params([new Rdbhost.util.Subquery_Marker(t, 'SELECT %(a)s;'), 1],
+        .params([new Rdbhost.util.Subquery_Marker('SELECT %(a)s;', t.args, t.namedParams, 'AS'), 1],
+        //.params([new Rdbhost.util.Subquery_Marker(t, 'SELECT %(a)s;'), 1],
                  {abc: new Rdbhost.util.Fixed_Marker('alpha'),
                   hmm: new Rdbhost.util.Column_Marker('beta')});
     var p = e.get_data();

@@ -2,6 +2,35 @@
 var demo_pass, demo_email, acct_number, domain,
     SUPER_AUTH = undefined, PASSWORD = undefined;
 
+function fake_results_promise() {
+    return Promise.resolve({});
+}
+function MockReader(retObj) {
+
+    retObj = retObj || {};
+
+    function rdgw(json_getter, auth_cache) {
+        var this_ = this;
+        retObj.json = json_getter.call(this_, auth_cache);
+
+        return fake_results_promise();
+    }
+    function rdgh(data_extractor, auth_cache) {
+        var this_ = this,
+            url_formdata = data_extractor.call(this_, auth_cache),
+            url = url_formdata[0],
+            formData = url_formdata[1];
+        retObj.url = url;
+        retObj.formData = formData;
+
+        return fake_results_promise();
+    }
+
+    return function() {
+        return Rdbhost.reader(rdgw, rdgh);
+    }
+}
+
 
 module('Notify tests', {
 
@@ -94,6 +123,93 @@ test('listen request receives ok', 7, function(assert){
         })
         .catch(function(e) {
             ok(false, 'then error called');
+            clearTimeout(st);
+            done();
+        });
+
+    var st = setTimeout(function() { done(); }, 1000);
+});
+
+
+// send reader listen request with broadcast, verify promise fulfilled (with -1 results)
+//    and that notify is independently received
+//
+test('listen request receives broadcast ok', 7, function(assert){
+
+    var done = assert.async();
+    var notifyrecd = false;
+
+    Rdbhost.once('notify-received:abc', function f(ch, pl) {
+        ok('event', 'notify event received');
+        ok(ch === 'abc', 'channel is correct');
+        ok(pl.substr(0,6) === 'test b', 'payload is correct');
+        notifyrecd = true;
+    });
+
+    var ret = {};
+    var r = Rdbhost.reader() // MockReader(ret)()
+        // .query("NOTIFY \"abc\", 'test message on channel abc';")
+        .broadcast('abc', 'test broadcast')
+        .listen('abc');
+
+    var p = r.get_data();
+
+    ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is object');
+    p.then(function(d) {
+        ok(true, 'then called');
+        ok(d.result_sets.length == 1, 'result_sets len');
+        ok(d.result_sets[0].row_count[0] == -1, 'row_count === 1');
+        if ( notifyrecd ) {
+            clearTimeout(st);
+            done();
+        }
+    })
+        .catch(function(e) {
+            ok(false, 'then error called '+e.message);
+            clearTimeout(st);
+            done();
+        });
+
+    var st = setTimeout(function() { done(); }, 1000);
+});
+
+
+// send reader listen request with broadcast and query, verify promise fulfilled (with -1 results)
+//    and that notify is independently received
+//
+test('listen request receives broadcast and results', 8, function(assert){
+
+    var done = assert.async();
+    var notifyrecd = false;
+
+    Rdbhost.once('notify-received:abc', function f(ch, pl) {
+        ok('event', 'notify event received');
+        ok(ch === 'abc', 'channel is correct');
+        ok(pl.substr(0,6) === 'test b', 'payload is correct');
+        notifyrecd = true;
+    });
+
+    var ret = {};
+    var r = Rdbhost.reader() // MockReader(ret)()
+        .broadcast('abc', 'test broadcast')
+        .listen('abc')
+        .query("SELECT 'wonderful';");
+
+    var p = r.get_data();
+
+    ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is object');
+    p.then(function(d) {
+        ok(true, 'then called');
+        ok(d.result_sets.length == 2, 'result_sets len');
+        ok(d.result_sets[0].row_count[0] == 1, 'row_count[0] === 1');
+        ok(d.result_sets[1].row_count[0] == -1, 'row_count[1] === -1');
+        if ( notifyrecd ) {
+            clearTimeout(st);
+            done();
+        }
+    })
+        .catch(function(e) {
+            ok(false, 'then error called '+e.message);
             clearTimeout(st);
             done();
         });
