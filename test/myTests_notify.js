@@ -252,7 +252,7 @@ test('listen request invokes reloader on image', 8, function(assert){
     });
 
     var r = Rdbhost.super()
-        .query("NOTIFY \"rdbhost_ftp_channel:super\", 'SAVE FILE /dummy.gif';")
+        .query("-- setup channel for live-reload signals \nNOTIFY \"rdbhost_ftp_channel:super\", 'SAVE FILE /dummy.gif';")
         .listen('rdbhost_ftp_channel:super');
 
     function cleanup() {
