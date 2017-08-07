@@ -158,7 +158,7 @@ test('listen request receives broadcast ok', 7, function(assert){
     p.then(function(d) {
         ok(true, 'then called');
         ok(d.result_sets.length == 1, 'result_sets len');
-        ok(d.result_sets[0].row_count[0] == -1, 'row_count === 1');
+        ok(d.result_sets[0].row_count[0] == 1, 'row_count === 1');
         if ( notifyrecd ) {
             clearTimeout(st);
             done();
@@ -202,7 +202,7 @@ test('listen request receives broadcast and results', 8, function(assert){
         ok(true, 'then called');
         ok(d.result_sets.length == 2, 'result_sets len');
         ok(d.result_sets[0].row_count[0] == 1, 'row_count[0] === 1');
-        ok(d.result_sets[1].row_count[0] == -1, 'row_count[1] === -1');
+        ok(d.result_sets[1].row_count[0] == 1, 'row_count[1] === -1');
         if ( notifyrecd ) {
             clearTimeout(st);
             done();
