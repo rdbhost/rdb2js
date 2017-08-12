@@ -192,7 +192,7 @@ QUnit.test('preauth request http confirm-YES', 5, function(assert) {
             done();
         })
             .catch(function(e) {
-                ok(false, '2nd request confirm canceled');
+                ok(false, '2nd request confirm canceled '+e.message);
                 clearTimeout(st);
                 done();
             });
