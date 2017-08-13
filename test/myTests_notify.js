@@ -91,6 +91,38 @@ test('listen request ok', 4, function(assert){
 });
 
 
+// send reader request with two listens, verify both
+//
+test('listen double request ok', 4, function(assert){
+
+    var done = assert.async(),
+        g = {};
+
+    var e = MockReader(g)()
+        .query('SELECT %s AS a')
+        .params([1])
+        .listen('abc')
+        .listen('def');
+
+    var p = e.get_data();
+    ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is object');
+    p.then(function(d) {
+        ok(true, 'then called');
+        ok(d.result_sets.length == 1, 'result_sets len');
+        ok(d.result_sets[0].records.rows[0].a == 1, 'column value === 1');
+        clearTimeout(st);
+        done();
+    })
+        .catch(function(e) {
+            ok(false, 'then error called '+e.message);
+            clearTimeout(st);
+            done();
+        });
+
+    var st = setTimeout(function() { done(); }, 1000);
+});
+
+
 // send reader listen request with query, verify promise fulfilled
 //    and that notify is independently received
 //

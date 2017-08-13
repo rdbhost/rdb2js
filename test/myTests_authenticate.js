@@ -610,20 +610,6 @@ QUnit.test('registration with email ', function(assert) {
 
     reg.then(function(d) {
             ok(d.result_sets[0].records.rows[0].result === 'Success', 'identifier found');
-
-/*
-            var li = Rdbhost.Authenticate.password_login('me', 'abcd');
-            li.then(function(d) {
-
-                    ok(d.identifier == 'me', 'identifier should be me == '+d.identifier);
-                    ok(d.key == key0, 'keys match {0} == {1}'.replace('{0}', d.key).replace('{1}', key0));
-                    done();
-                })
-                .catch(function(e) {
-                    ok(false, 'should not happen');
-                    done();
-                });
-*/
             done();
         },
         function(e) {
