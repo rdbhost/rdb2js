@@ -107,7 +107,7 @@ test('test dynamic loading', function(assert) {
         }
         catch (e) {
             ok(true, 'function not defined yet.');
-            ok(e.message.indexOf(' no') >= 0, 'correct exception thrown '+e.message);
+            ok(e.message.indexOf(' no') >= 0 || e.message.indexOf('undefined') >= 0, 'correct exception thrown '+e.message);
         }
 
         Rdbhost.loader('dynamic/dynamic_load.js', function() {

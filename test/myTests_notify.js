@@ -95,10 +95,9 @@ test('listen request ok', 4, function(assert){
 //
 test('listen double request ok', 4, function(assert){
 
-    var done = assert.async(),
-        g = {};
+    var done = assert.async();
 
-    var e = MockReader(g)()
+    var e = Rdbhost.reader()
         .query('SELECT %s AS a')
         .params([1])
         .listen('abc')
@@ -107,7 +106,7 @@ test('listen double request ok', 4, function(assert){
     var p = e.get_data();
     ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is object');
     p.then(function(d) {
-        ok(true, 'then called');
+        ok(true, 'then called ');
         ok(d.result_sets.length == 1, 'result_sets len');
         ok(d.result_sets[0].records.rows[0].a == 1, 'column value === 1');
         clearTimeout(st);

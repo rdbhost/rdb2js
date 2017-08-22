@@ -184,7 +184,7 @@ QUnit.test('preauth request http confirm-YES', 5, function(assert) {
         ok(true, 'then called');
 
         var p1 = Rdbhost.preauth().query('SELECT 2 AS b;').form_data(fd).get_data();
-        ok(p1.constructor.toString().indexOf('Promise') >= 0, p1);
+        ok(p1.constructor.toString().indexOf('Promise') >= 0, 'prom'+p1);
         p1.then(function(d) {
             ok(true, '2nd request confirm not canceled');
             ok(d.status[1] === 'OK', d.status);
@@ -244,7 +244,7 @@ QUnit.test('preauth request confirm NO', 5, function(assert) {
             ok(d.result_sets[0].records.rows[0].a === 1, d.status);
 
             var p1 = Rdbhost.preauth().query('SELECT 2 AS b; /* testing-delete */').get_data();
-            ok(p1.constructor.toString().indexOf('Promise') >= 0, p1);
+            ok(p1.constructor.toString().indexOf('Promise') >= 0, 'promise'+p1);
             p1.then(function(d) {
                     ok(false, '2nd request confirm not canceled');
                     ok(d.status[1] === 'OK', d.status);
@@ -292,7 +292,7 @@ QUnit.test('preauth request confirm NO', 5, function(assert) {
         }, 100)
     });
 
-    var st = setTimeout(function() { done(); }, 15000);
+    var st = setTimeout(function() { done(); }, 5000);
 });
 
 

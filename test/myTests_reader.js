@@ -530,7 +530,7 @@ test('reader wrong-account request', 4, function(assert) {
             setTimeout(function() {
 
                 done();
-            }, 500);
+            }, 1000);
         });
 
     Rdbhost.once('connection-open-failed', function(evt) {
