@@ -122,6 +122,36 @@ test('listen double request ok', 4, function(assert){
 });
 
 
+// send reader request with two listens, verify both
+//
+test('listen list request ok', 4, function(assert){
+
+    var done = assert.async();
+
+    var e = Rdbhost.reader()
+        .query('SELECT %s AS a')
+        .params([1])
+        .listen(['abc', 'def']);
+
+    var p = e.get_data();
+    ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is object');
+    p.then(function(d) {
+        ok(true, 'then called ');
+        ok(d.result_sets.length == 1, 'result_sets len');
+        ok(d.result_sets[0].records.rows[0].a == 1, 'column value === 1');
+        clearTimeout(st);
+        done();
+    })
+        .catch(function(e) {
+            ok(false, 'then error called '+e.message);
+            clearTimeout(st);
+            done();
+        });
+
+    var st = setTimeout(function() { done(); }, 1000);
+});
+
+
 // send reader listen request with query, verify promise fulfilled
 //    and that notify is independently received
 //
@@ -152,6 +182,46 @@ test('listen request receives ok', 7, function(assert){
                 done();
             }
         })
+        .catch(function(e) {
+            ok(false, 'then error called');
+            clearTimeout(st);
+            done();
+        });
+
+    var st = setTimeout(function() { done(); }, 1000);
+});
+
+
+// send reader listen request with query, verify promise fulfilled
+//    and that notify is independently received
+//
+test('listen-list request receives ok', 7, function(assert){
+
+    var done = assert.async();
+    var notifyrecd = false;
+
+    Rdbhost.once('notify-received:abc', function f(ch, pl) {
+        ok('event', 'notify event received');
+        ok(ch === 'abc', 'channel is correct');
+        ok(pl.substr(0,6) === 'test m', 'payload is correct');
+        notifyrecd = true;
+    });
+
+    var r = Rdbhost.reader()
+        .query("NOTIFY \"abc\", 'test message on channel abc';")
+        .listen(['abc', 'def']);
+
+    var p = r.get_data();
+    ok(p.constructor.toString().indexOf('Promise') >= 0, 'promise is object');
+    p.then(function(d) {
+        ok(true, 'then called');
+        ok(d.result_sets.length == 1, 'result_sets len');
+        ok(d.result_sets[0].row_count[0] == -1, 'row_count === 1');
+        if ( notifyrecd ) {
+            clearTimeout(st);
+            done();
+        }
+    })
         .catch(function(e) {
             ok(false, 'then error called');
             clearTimeout(st);
